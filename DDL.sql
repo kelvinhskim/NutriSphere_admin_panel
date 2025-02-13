@@ -1,10 +1,13 @@
 -- -----------------------------------------------------
--- CS 340: Group 39 Project Step 2
+-- Project: NutriSphere: A Comprehensive Calorie Tracking System
+-- Group 39 
+-- Emily Ho, Hyun Seok Kim
 -- Data Definition Queries
 -- -----------------------------------------------------
 
-
+-- -----------------------------------------------------
 -- Disable commits and foreign key checks to prevent issues during table creation.
+-- -----------------------------------------------------
 SET FOREIGN_KEY_CHECKS=0;
 SET AUTOCOMMIT = 0;
 
@@ -12,12 +15,13 @@ SET AUTOCOMMIT = 0;
 -- -----------------------------------------------------
 -- Table `Users`
 -- Stores user information including username, email, and daily calorie goal.
+-- Each user can log food entries and exercises daily.
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Users` (
   `userID` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(50) NOT NULL,
   `email` VARCHAR(50) NOT NULL,
-  `dailyCalorieGoal` INT NOT NULL,
+  `dailyCalorieGoal` INT NOT NULL CHECK (dailyCalorieGoal > 0),
   PRIMARY KEY (`userID`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC)
@@ -30,56 +34,62 @@ CREATE TABLE IF NOT EXISTS `Users` (
 CREATE TABLE IF NOT EXISTS `Exercises` (
   `exerciseID` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
-  `exerciseMinutes` INT NOT NULL,
-  `caloriesBurned` INT NOT NULL,
+  `exerciseMinutes` INT NOT NULL CHECK (exerciseMinutes >= 0),
+  `caloriesBurned` INT NOT NULL CHECK (caloriesBurned >= 0),
   PRIMARY KEY (`exerciseID`)
 );
 
 -- -----------------------------------------------------
 -- Table `DailyTrackers`
 -- Stores users' daily calorie intake and exercises performed
+-- Links to `Users` and `Exercises` tables.
+-- If a user is deleted, their records in `DailyTrackers` will be removed (ON DELETE CASCADE).
+-- If an exercise is deleted, the reference in `DailyTrackers` is set to NULL (ON DELETE SET NULL).
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `DailyTrackers` (
   `dailyTrackerID` INT NOT NULL AUTO_INCREMENT,
   `date` DATE NOT NULL,
-  `caloriesConsumed` INT NOT NULL DEFAULT 0,
-  `caloriesRemaining` INT NULL,
+  `caloriesConsumed` INT NOT NULL DEFAULT 0 CHECK (caloriesConsumed >= 0),
+  `caloriesRemaining` INT NULL CHECK (caloriesRemaining >= 0),
   `userID` INT NOT NULL,
   `exerciseID` INT NULL,
   PRIMARY KEY (`dailyTrackerID`),
-  INDEX `fk_DailyTrackers_Users1_idx` (`userID` ASC),
-  INDEX `fk_DailyTrackers_Exercises1_idx` (`exerciseID` ASC),
-  CONSTRAINT `fk_DailyTrackers_Users1`
+  INDEX `fk_DailyTrackers_userID_idx` (`userID` ASC),
+  INDEX `fk_DailyTrackers_exerciseID_idx` (`exerciseID` ASC),
+  CONSTRAINT `fk_DailyTrackers_userID`
     FOREIGN KEY (`userID`)
     REFERENCES `Users` (`userID`)
     ON DELETE CASCADE     -- If a user is deleted, remove all their trackers                  
     ON UPDATE CASCADE,    -- If a user's ID is updated, update the tracker's ID
-  CONSTRAINT `fk_DailyTrackers_Exercises1`
+  CONSTRAINT `fk_DailyTrackers_exerciseID`
     FOREIGN KEY (`exerciseID`)
     REFERENCES `Exercises` (`exerciseID`)
-    ON DELETE SET NULL    -- If an exercise is deleted, set the tracker's exercise to NULL  
+    ON DELETE SET NULL    -- If an exercise is deleted, dissociate it from the tracker
     ON UPDATE CASCADE     -- If an exercise's ID is updated, update the tracker's exercise ID
 );
 
 -- -----------------------------------------------------
 -- Table `FoodItems`
--- Stores food items with nurtiriton information.
+-- Stores food items with nutriiton information.
+-- Includes calories, protein, fat, carbohydrates, and serving sizes.
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `FoodItems` (
   `foodItemID` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `brand` VARCHAR(100) NULL,
   `servingSize` VARCHAR(45) NOT NULL,
-  `calories` INT NOT NULL,
-  `protein` INT NULL,
-  `fat` INT NULL,
-  `carbohydrates` INT NULL,
+  `calories` INT NOT NULL CHECK (calories >= 0),
+  `protein` INT NULL CHECK (protein IS NULL OR protein >= 0),
+  `fat` INT NULL CHECK (fat IS NULL OR fat >= 0),
+  `carbohydrates` INT NULL CHECK (carbohydrates IS NULL OR carbohydrates >= 0),
   PRIMARY KEY (`foodItemID`)
 );
 
 -- -----------------------------------------------------
 -- Table `FoodEntries` (M:N Relationship)
 -- Links DailyTrackers and FoodItems to track food consumption.
+-- If a food item is deleted, remove all associated entries (ON DELETE CASCADE).
+-- If a daily tracker is deleted, dissociate its entries (ON DELETE SET NULL).
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `FoodEntries` (
   `foodEntryID` INT NOT NULL AUTO_INCREMENT,
@@ -87,22 +97,25 @@ CREATE TABLE IF NOT EXISTS `FoodEntries` (
   `foodItemID` INT NOT NULL,
   `dailyTrackerID` INT NOT NULL,
   PRIMARY KEY (`foodEntryID`),
-  INDEX `fk_FoodEntries_FoodItems1_idx` (`foodItemID` ASC),
-  INDEX `fk_FoodEntries_DailyTrackers1_idx` (`dailyTrackerID` ASC),
-  CONSTRAINT `fk_foodEntries_food`
+  INDEX `fk_FoodEntries_foodItemID_idx` (`foodItemID` ASC),
+  INDEX `fk_FoodEntries_dailyTrackerID_idx` (`dailyTrackerID` ASC),
+  CONSTRAINT `fk_FoodEntries_foodItemID`
     FOREIGN KEY (`foodItemID`)
     REFERENCES `FoodItems` (`foodItemID`)
     ON DELETE CASCADE   -- If a food item is deleted, remove all entries
     ON UPDATE CASCADE,  -- If a food item's ID is updated, update the entries
-  CONSTRAINT `fk_foodEntries_dailyTracker1`
+  CONSTRAINT `fk_FoodEntries_dailyTrackerID`
     FOREIGN KEY (`dailyTrackerID`)
     REFERENCES `DailyTrackers` (`dailyTrackerID`)
-    ON DELETE CASCADE   -- If a tracker is deleted, remove all entries
+    ON DELETE SET NULL   -- If a tracker is deleted, keep FoodEntries but set dailyTrackerID to NULL
     ON UPDATE CASCADE   -- If a tracker's ID is updated, update the entries
 );
 
 -- -----------------------------------------------------
 -- TRIGGER: Auto-update 'caloriesConsumed when a new FoodEntry is inserted.
+-- Automatically updates `caloriesConsumed` in `DailyTrackers`
+-- whenever a new food entry is added.
+-- Ensures that food consumption tracking remains accurate. 
 -- -----------------------------------------------------
 DELIMITER $$
 
@@ -124,6 +137,9 @@ DELIMITER ;
 
 -- -----------------------------------------------------
 -- TRIGGER: Auto-update 'caloriesRemaining' when 'caloriesConsumed' or 'exerciseID' changes.
+-- Automatically updates `caloriesRemaining` in `DailyTrackers`
+-- whenever `caloriesConsumed` or `exerciseID` changes.
+-- Ensures that calorie goals remain accurate.
 -- -----------------------------------------------------
 DELIMITER $$
 
@@ -149,7 +165,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- Insert sample data for Users
 -- -----------------------------------------------------
-INSERT INTO `Users` (`userID`, `username`, `email`, `dailyCalorieGoal`) 
+INSERT INTO `Users` (`username`, `email`, `dailyCalorieGoal`) 
 VALUES
 (1, 'Tyler', 'tyler@oregonstate.edu', 2400),
 (2, 'Jane', 'jane@oregonstate.edu', 2000),
@@ -158,7 +174,7 @@ VALUES
 -- -----------------------------------------------------
 -- Insert sample data for FoodItems
 -- -----------------------------------------------------
-INSERT INTO `FoodItems` (`foodItemID`, `name`, `brand`, `servingSize`, `calories`, `protein`, `fat`, `carbohydrates`) 
+INSERT INTO `FoodItems` (`name`, `brand`, `servingSize`, `calories`, `protein`, `fat`, `carbohydrates`) 
 VALUES
 (1, 'Oatmeal', "Bob\'s Red Mill", '1 cup', 153, 5, 3, 27),
 (2, 'Coffee', 'Starbucks', '1 cup (grande)', 15, 1, 0, 2),
@@ -170,7 +186,7 @@ VALUES
 -- -----------------------------------------------------
 -- Insert sample data for Exercises
 -- -----------------------------------------------------
-INSERT INTO `Exercises` (`exerciseID`, `name`, `exerciseMinutes`, `caloriesBurned`) 
+INSERT INTO `Exercises` (`name`, `exerciseMinutes`, `caloriesBurned`) 
 VALUES
 (1, 'Elliptical', 30, 250),
 (2, 'Hiking', 120, 600),
@@ -181,7 +197,7 @@ VALUES
 -- -----------------------------------------------------
 -- Insert sample data for DailyTrackers
 -- -----------------------------------------------------
-INSERT INTO `DailyTrackers` (`dailyTrackerID`, `date`, `caloriesConsumed`, `caloriesRemaining`, `userID`, `exerciseID`) 
+INSERT INTO `DailyTrackers` (`date`, `caloriesConsumed`, `caloriesRemaining`, `userID`, `exerciseID`) 
 VALUES
 (1, '2025-01-02', 0, NULL, 1, 1),
 (2, '2025-01-03', 0, NULL, 1, NULL),
@@ -192,7 +208,7 @@ VALUES
 -- -----------------------------------------------------
 -- Insert sample data for FoodEntries
 -- -----------------------------------------------------
-INSERT INTO `FoodEntries` (`foodEntryID`, `mealCategory`, `foodItemID`, `dailyTrackerID`) 
+INSERT INTO `FoodEntries` (`mealCategory`, `foodItemID`, `dailyTrackerID`) 
 VALUES
 (1, 'Breakfast', 1, 1),
 (2, 'Lunch', 2, 1),
