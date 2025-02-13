@@ -3,28 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Exercise - NutriSphere</title>
+    <title>Add Exercise</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
     <header>
-        <h1>Add a New Exercise</h1>
-        <a href="view_exercises.html" class="btn">View All Exercises</a>
+        <h1>Add New Exercise</h1>
+        <nav>
+            <a href="index.html">🏠 Home</a>
+            <a href="view_exercises.html">🏋️ View Exercises</a>
+        </nav>
     </header>
 
-    <form action="#" method="POST">
-        <label for="name">Exercise Name:</label>
-        <input type="text" id="name" name="name" required>
+    <main>
+        <form action="#" method="POST">
+            <label for="name">Exercise Name:</label>
+            <input type="text" id="name" name="name" required>
 
-        <label for="exerciseMinutes">Duration (minutes):</label>
-        <input type="number" id="exerciseMinutes" name="exerciseMinutes" required>
+            <label for="exerciseMinutes">Duration (Minutes):</label>
+            <input type="number" id="exerciseMinutes" name="exerciseMinutes" required>
 
-        <label for="caloriesBurned">Calories Burned:</label>
-        <input type="number" id="caloriesBurned" name="caloriesBurned" required>
+            <label for="caloriesBurned">Calories Burned:</label>
+            <input type="number" id="caloriesBurned" name="caloriesBurned" required>
 
-        <button type="submit">Add Exercise</button>
-    </form>
+            <button type="submit">💾 Save</button>
+        </form>
+    </main>
+
+    <footer>
+        <button onclick="location.href='index.html'">🏠 Home</button>
+    </footer>
 
     <footer>
         <p>&copy; 2025 NutriSphere</p>

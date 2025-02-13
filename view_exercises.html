@@ -3,26 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Exercises - NutriSphere</title>
+    <title>View Exercises</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
     <header>
         <h1>Exercise List</h1>
-        <a href="add_exercise.html" class="btn">Add New Exercise</a>
+        <nav>
+            <a href="index.html">🏠 Home</a>
+            <a href="add_exercise.html">➕ Add Exercise</a>
+        </nav>
     </header>
 
-    <table>
-        <tr>
-            <th>Exercise ID</th>
-            <th>Name</th>
-            <th>Duration (min)</th>
-            <th>Calories Burned</th>
-            <th>Actions</th>
-        </tr>
-        <!-- Dynamic rows inserted when backend is connected -->
-    </table>
+    <main>
+        <h2>List of Exercises</h2>
+        <table border="1">
+            <tr>
+                <th>Exercise ID</th>
+                <th>Name</th>
+                <th>Duration (min)</th>
+                <th>Calories Burned</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Running</td>
+                <td>30</td>
+                <td>300</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+        </table>
+    </main>
+
+    <footer>
+        <button onclick="location.href='index.html'">🏠 Home</button>
+    </footer>
 
     <footer>
         <p>&copy; 2025 NutriSphere</p>
