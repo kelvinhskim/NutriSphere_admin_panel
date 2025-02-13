@@ -54,6 +54,21 @@ nav a:hover {
     color: #333;
 }
 
+/* Get Started Button */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.btn:hover {
+    background: #0056b3;
+}
+
 /* Footer */
 footer {
     background: #007bff;
