@@ -3,30 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Meals - NutriSphere</title>
+    <title>Manage Meals</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
     <header>
         <h1>Manage Meals</h1>
+        <nav>
+            <a href="index.html">🏠 Home</a>
+            <a href="add_fooditem.html">🍎 Add Food Item</a>
+            <a href="view_fooditems.html">🥗 View Food Items</a>
+        </nav>
     </header>
 
-    <form action="#" method="POST">
-        <label for="user">Select User:</label>
-        <select id="user" name="user">
-            <option value="1">User 1</option>
-            <option value="2">User 2</option>
-        </select>
+    <main>
+        <h2>Meal Log</h2>
+        <table border="1">
+            <tr>
+                <th>Meal ID</th>
+                <th>Food Item</th>
+                <th>Calories</th>
+                <th>Meal Type</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Oatmeal</td>
+                <td>150</td>
+                <td>Breakfast</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+        </table>
+    </main>
 
-        <label for="food">Select Food Item:</label>
-        <select id="food" name="food">
-            <option value="1">Oatmeal</option>
-            <option value="2">Chicken</option>
-        </select>
-
-        <button type="submit">Log Meal</button>
-    </form>
+    <footer>
+        <button onclick="location.href='index.html'">🏠 Home</button>
+    </footer>
 
     <footer>
         <p>&copy; 2025 NutriSphere</p>
