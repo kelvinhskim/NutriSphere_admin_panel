@@ -4,6 +4,9 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure full height */
     text-align: center;
 }
 
@@ -12,6 +15,7 @@ header {
     background: #007bff;
     color: white;
     padding: 15px;
+    text-align: center;
 }
 
 header h1 {
@@ -27,11 +31,19 @@ nav a {
     text-decoration: none;
     padding: 10px 20px;
     display: inline-block;
+    font-weight: bold;
+    transition: 0.3s;
 }
 
 nav a:hover {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 5px;
+}
+
+/* Main Content */
+main {
+    flex: 1; /* Pushes footer to bottom */
+    padding: 20px;
 }
 
 /* Welcome Section */
@@ -54,27 +66,113 @@ nav a:hover {
     color: #333;
 }
 
-/* Get Started Button */
+/* Buttons */
 .btn {
     display: inline-block;
-    padding: 10px 20px;
+    padding: 12px 24px;
     background: #007bff;
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    margin-top: 20px;
+    font-weight: bold;
+    transition: 0.3s ease-in-out;
+    border: none;
+    cursor: pointer;
 }
 
 .btn:hover {
     background: #0056b3;
 }
 
-/* Footer */
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #007bff;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* Action Buttons */
+.edit-btn, .delete-btn {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.edit-btn {
+    background: #28a745;
+    color: white;
+}
+
+.edit-btn:hover {
+    background: #218838;
+}
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #c82333;
+}
+
+/* Form Styling */
+form {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+form input, form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+form button {
+    margin-top: 15px;
+}
+
+/* Sticky Footer */
 footer {
     background: #007bff;
     color: white;
     padding: 10px;
+    text-align: center;
+    width: 100%;
     position: relative;
     bottom: 0;
-    width: 100%;
+    margin-top: auto;
 }
+
