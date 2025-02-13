@@ -1,55 +1,54 @@
-/* General Styles */
+/* Ensure Full Page Layout */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    text-align: center;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensure full height */
+    min-height: 100vh; /* Makes sure the body fills the viewport */
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
 }
 
-/* Main Content */
+/* Main Content Pushes Footer Down */
 main {
-    flex: 1; /* Pushes footer to bottom */
+    flex: 1; /* Pushes the footer down if content is short */
     padding: 20px;
 }
 
-/* Sticky Footer with Space */
+/* Footer - Stays at Bottom & Adds Space */
 footer {
     background: #007bff;
     color: white;
     padding: 15px;
-    text-align: center;
-    width: 100%;
-    margin-top: 40px; /* Leaves space between content and footer */
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-/* Footer Buttons */
-footer .footer-left {
-    text-align: left;
-    padding-left: 20px;
+    width: 100%;
+    margin-top: 40px; /* Creates space between content & footer */
 }
 
-footer .footer-right {
-    text-align: right;
-    padding-right: 20px;
-}
-
-/* Footer Button Styling */
+/* Footer Button */
 .footer-btn {
+    background: #0056b3;
     color: white;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 8px 12px;
+    border: none;
+    padding: 10px 15px;
     border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
     transition: 0.3s;
 }
 
 .footer-btn:hover {
     background: rgba(255, 255, 255, 0.2);
+}
+
+/* Left & Right Alignment */
+.footer-left {
+    text-align: left;
+    padding-left: 20px;
+}
+
+.footer-right {
+    text-align: right;
+    padding-right: 20px;
 }
