@@ -8,7 +8,7 @@
 </head>
 <body>
     <header>
-        <h1>Food Items List</h1>
+        <h1>Food Items</h1>
         <nav>
             <a href="index.html">🏠 Home</a>
             <a href="add_fooditem.html">➕ Add Food Item</a>
@@ -20,7 +20,7 @@
     </header>
 
     <main>
-        <h2>List of Food Items</h2>
+        <h2>Food Library</h2>
         <table border="1">
             <tr>
                 <th>Food Item ID</th>
@@ -119,5 +119,39 @@
             </tr>
         </table>
     </main>
+
+    <!-- Update Food Item Form -->
+    <section>
+        <h2>Update Food Item</h2>
+        <form action="#">
+            <label>Food Item ID:</label>
+            <input type="number" value="1" disabled />
+
+            <label>Name:</label>
+            <input value="Oatmeal" />
+
+            <label>Brand:</label>
+            <input value="Quaker" />
+
+            <label>Serving Size:</label>
+            <input value="1 cup" required />
+
+            <label>Calories:</label>
+            <input value="153" required />
+
+            <label>Protein:</label>
+            <input value="5g" />
+
+            <label>Fat:</label>
+            <input value="3g" />
+
+            <label>Carbohydrates:</label>
+            <input value="27g" />
+
+            <button type="submit">Update Food Item</button>
+        </form>
+    </section>
+
+
 </body>
 </html>
