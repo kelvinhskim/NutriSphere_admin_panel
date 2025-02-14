@@ -64,11 +64,36 @@
 
 <!-- Add Daily Tracker Form -->
 <section>
-    <h2>Add a New Daily Tracker</h2>
-    <form>
+    <h2>Add New Daily Tracker</h2>
+    <form action="#">
+        <fieldset>
+            <label>Select a User</label>
+            <select>
+                <option value="" selected disabled hidden></option>
+                <option>Tyler</option>
+                <option>Jane</option>
+                <option>Alex</option>
+            </select>
 
+            <label>Date</label>
+            <input type="date" />
+
+            <label>Exercise</label>
+            <select>
+                <option value="" selected disabled hidden></option>
+                <option>Elliptical</option>
+                <option>Hiking</option>
+                <option>Swimming</option>
+                <option>Pickleball</option>
+            </select>
+
+            <button>Add</button>
+
+            <p>Note: Calorie goal, calories consumed, calories burned, calories remaining will be calculated and populated through a query after clicking Add.</p>
+        </fieldset>
     </form>
 </section>
+
 
 </body>
 </html>
