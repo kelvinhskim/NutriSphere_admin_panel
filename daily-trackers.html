@@ -45,7 +45,7 @@
             <td>2082</td>
             <td>Elliptical</td>
             <td>
-                <button class="edit-btn">✏️ Edit</button>
+                <button class="edit-btn" onclick="showForm()">✏️ Edit</button>
                 <button class="delete-btn">❌ Delete</button>
             </td>
         </tr>
@@ -63,7 +63,7 @@
 </main>
 
 <!-- Add Daily Tracker Form -->
-<section>
+<section id="add-daily-tracker">
     <h2>Add New Daily Tracker</h2>
     <form action="#">
         <fieldset>
@@ -94,6 +94,41 @@
     </form>
 </section>
 
+<!-- Update Daily Tracker Form -->
+<section id="update-daily-tracker">
+    <h2>Update Daily Tracker</h2>
+    <form action="#">
+        <fieldset>
+            <label>Daily Tracker ID:</label>
+            <input type="number" value="1" disabled />
+            <label>Username:</label>
+            <input type="text" value="Tyler" disabled />
+            <label>Date:</label>
+            <input type="date" value="2025-01-02" />
+
+            <label>Exercise</label>
+            <select>
+                <option>Elliptical</option>
+                <option>Hiking</option>
+                <option>Swimming</option>
+                <option>Pickleball</option>
+            </select>
+
+            <button>Save</button>
+        </fieldset>
+    </form>
+</section>
+
+<script>
+    function showForm() {
+        let form = document.getElementById("update-daily-tracker");
+        if (form.style.display === "none") {
+            form.style.display = "block";
+        } else {
+            form.style.display = "none"
+        }
+    }
+</script>
 
 </body>
 </html>
