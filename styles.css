@@ -25,6 +25,17 @@ nav {
     margin-top: 10px;
 }
 
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
 nav a {
     color: white;
     text-decoration: none;
@@ -38,67 +49,102 @@ nav a:hover {
     border-radius: 5px;
 }
 
-/* Centering Main Content */
+/* Main Content */
 .container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 75vh;
+    min-height: 75vh; /* Keeps content centered */
     padding: 20px;
 }
 
-/* Form Section */
-.form-section {
-    background: white;
-    padding: 30px;
-    max-width: 500px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: left;
-}
-
-.form-section h2 {
+/* Content Section */
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
     text-align: center;
+}
+
+/* Welcome Section */
+.welcome-section {
+    background: white;
+    padding: 40px;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.welcome-section h2 {
+    font-size: 2rem;
     color: #007bff;
-}
-
-/* Form Styling */
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group {
     margin-bottom: 15px;
 }
 
-.form-group label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
+.welcome-section p {
+    font-size: 1.2em;
+    color: #333;
 }
 
-.form-group input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* Button Styling */
+/* Call-to-Action Button */
 .btn {
+    display: inline-block;
+    padding: 12px 25px;
     background: #007bff;
     color: white;
-    font-size: 1rem;
-    padding: 10px;
-    border: none;
+    text-decoration: none;
     border-radius: 5px;
-    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
     transition: 0.3s ease-in-out;
+    margin-top: 20px;
 }
 
 .btn:hover {
     background: #0056b3;
+}
+
+/* Table Styling */
+table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    background: white;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #007bff;
+    color: white;
+}
+
+td {
+    background: #fff;
+}
+
+/* Buttons inside tables */
+button {
+    padding: 8px 12px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
 
 /* Footer */
@@ -106,16 +152,26 @@ footer {
     background: #007bff;
     color: white;
     padding: 15px;
+    text-align: center;
     position: relative;
     bottom: 0;
     width: 100%;
+    font-size: 1em;
 }
 
-.footer-link {
-    color: white;
-    text-decoration: none;
-}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .welcome-section {
+        max-width: 90%;
+        padding: 30px;
+    }
 
-.footer-link:hover {
-    text-decoration: underline;
+    table {
+        width: 95%;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 10px;
+    }
 }
