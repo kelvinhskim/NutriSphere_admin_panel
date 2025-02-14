@@ -147,6 +147,17 @@ button:hover {
     background-color: #0056b3;
 }
 
+
+/* Hide form */
+#update-daily-tracker {
+    display: none;
+}
+#delete-daily-tracker {
+    display: none;
+}
+
+
+
 /* Footer */
 footer {
     background: #007bff;
