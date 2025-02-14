@@ -20,7 +20,7 @@
     </header>
 
  <!-- Daily Trackers List Section -->
- <main>
+ <main id="daily-trackers-table">
     <h2>Daily Trackers List</h2>
     <table border="1">
         <tr>
@@ -121,11 +121,13 @@
 
 <script>
     function showForm() {
-        let form = document.getElementById("update-daily-tracker");
-        if (form.style.display === "none") {
-            form.style.display = "block";
+        let updateForm = document.getElementById("update-daily-tracker");
+        if (updateForm.style.display === "none") {
+            updateForm.style.display = "block";
+            document.getElementById("daily-trackers-table").style.display = "none";
+            document.getElementById("add-daily-tracker").style.display = "none";
         } else {
-            form.style.display = "none"
+            updateForm.style.display = "none"
         }
     }
 </script>
