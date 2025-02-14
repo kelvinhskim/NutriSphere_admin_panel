@@ -1,6 +1,6 @@
 -- -----------------------------------------------------
 -- Project: NutriSphere: A Comprehensive Calorie Tracking System
--- Group 39 
+-- Group 39
 -- Emily Ho, Hyun Seok Kim
 -- Data Definition Queries
 -- -----------------------------------------------------
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `DailyTrackers` (
   CONSTRAINT `fk_DailyTrackers_userID`
     FOREIGN KEY (`userID`)
     REFERENCES `Users` (`userID`)
-    ON DELETE CASCADE     -- If a user is deleted, remove all their trackers                  
+    ON DELETE CASCADE     -- If a user is deleted, remove all their trackers
     ON UPDATE CASCADE,    -- If a user's ID is updated, update the tracker's ID
   CONSTRAINT `fk_DailyTrackers_exerciseID`
     FOREIGN KEY (`exerciseID`)
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `FoodEntries` (
 -- TRIGGER: Auto-update 'caloriesConsumed when a new FoodEntry is inserted.
 -- Automatically updates `caloriesConsumed` in `DailyTrackers`
 -- whenever a new food entry is added.
--- Ensures that food consumption tracking remains accurate. 
+-- Ensures that food consumption tracking remains accurate.
 -- -----------------------------------------------------
 DELIMITER $$
 
@@ -125,7 +125,7 @@ FOR EACH ROW
 BEGIN
     UPDATE DailyTrackers
     SET caloriesConsumed = (
-        SELECT COALESCE(SUM(FI.calories), 0) 
+        SELECT COALESCE(SUM(FI.calories), 0)
         FROM FoodEntries FE
         JOIN FoodItems FI ON FE.foodItemID = FI.foodItemID
         WHERE FE.dailyTrackerID = NEW.dailyTrackerID
@@ -165,7 +165,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- Insert sample data for Users
 -- -----------------------------------------------------
-INSERT INTO `Users` (`username`, `email`, `dailyCalorieGoal`) 
+INSERT INTO `Users` (`username`, `email`, `dailyCalorieGoal`)
 VALUES
 (1, 'Tyler', 'tyler@oregonstate.edu', 2400),
 (2, 'Jane', 'jane@oregonstate.edu', 2000),
@@ -174,11 +174,11 @@ VALUES
 -- -----------------------------------------------------
 -- Insert sample data for FoodItems
 -- -----------------------------------------------------
-INSERT INTO `FoodItems` (`name`, `brand`, `servingSize`, `calories`, `protein`, `fat`, `carbohydrates`) 
+INSERT INTO `FoodItems` (`name`, `brand`, `servingSize`, `calories`, `protein`, `fat`, `carbohydrates`)
 VALUES
 (1, 'Oatmeal', "Bob\'s Red Mill", '1 cup', 153, 5, 3, 27),
 (2, 'Coffee', 'Starbucks', '1 cup (grande)', 15, 1, 0, 2),
-(3, 'Salad', 'Organic', '1 bowl', 250, 8, 10, 30),
+(3, 'Salad', NULL, '1 bowl', 250, 8, 10, 30),
 (4, 'Chicken ', "Trader Joe\'s", '113g', 150, 27, 5, 0),
 (5, 'Brown Rice', 'Nishiki', '210g', 340, 7, 3, 7),
 (6, 'Big Mac', "McDonald\'s", '1 burger', 580, 25, 34, NULL);
@@ -186,7 +186,7 @@ VALUES
 -- -----------------------------------------------------
 -- Insert sample data for Exercises
 -- -----------------------------------------------------
-INSERT INTO `Exercises` (`name`, `exerciseMinutes`, `caloriesBurned`) 
+INSERT INTO `Exercises` (`name`, `exerciseMinutes`, `caloriesBurned`)
 VALUES
 (1, 'Elliptical', 30, 250),
 (2, 'Hiking', 120, 600),
@@ -197,7 +197,7 @@ VALUES
 -- -----------------------------------------------------
 -- Insert sample data for DailyTrackers
 -- -----------------------------------------------------
-INSERT INTO `DailyTrackers` (`date`, `caloriesConsumed`, `caloriesRemaining`, `userID`, `exerciseID`) 
+INSERT INTO `DailyTrackers` (`date`, `caloriesConsumed`, `caloriesRemaining`, `userID`, `exerciseID`)
 VALUES
 (1, '2025-01-02', 0, NULL, 1, 1),
 (2, '2025-01-03', 0, NULL, 1, NULL),
@@ -208,7 +208,7 @@ VALUES
 -- -----------------------------------------------------
 -- Insert sample data for FoodEntries
 -- -----------------------------------------------------
-INSERT INTO `FoodEntries` (`mealCategory`, `foodItemID`, `dailyTrackerID`) 
+INSERT INTO `FoodEntries` (`mealCategory`, `foodItemID`, `dailyTrackerID`)
 VALUES
 (1, 'Breakfast', 1, 1),
 (2, 'Lunch', 2, 1),
