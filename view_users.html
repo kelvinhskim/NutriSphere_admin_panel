@@ -20,93 +20,115 @@
         </nav>
     </header>
 
- <!-- User List Section -->
- <main>
-    <h2>Users List</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>User ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Daily Calorie Goal</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        <!-- Sample Static Row (This will be dynamically populated later) -->
-            <tr>
-                <td>1</td>
-                <td>Tyler</td>
-                <td>tyler@oregonstate.edu</td>
-                <td>2400</td>
-                <td>
-                    <button class="edit-btn">✏️ Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Jane</td>
-                <td>jane@oregonstate.edu</td>
-                <td>2000</td>
-                <td>
-                    <button class="edit-btn">✏️ Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Alex</td>
-                <td>alex@oregonstate.edu</td>
-                <td>2200</td>
-                <td>
-                    <button class="edit-btn">✏️ Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</main>
+    <!-- User List Section -->
+    <main>
+        <h2>Users List</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Daily Calorie Goal</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- Sample Static Row (This will be dynamically populated later) -->
+                <tr>
+                    <td>1</td>
+                    <td>Tyler</td>
+                    <td>tyler@oregonstate.edu</td>
+                    <td>2400</td>
+                    <td>
+                        <button class="edit-btn">✏️ Edit</button>
+                        <button class="delete-btn">❌ Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Jane</td>
+                    <td>jane@oregonstate.edu</td>
+                    <td>2000</td>
+                    <td>
+                        <button class="edit-btn">✏️ Edit</button>
+                        <button class="delete-btn">❌ Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Alex</td>
+                    <td>alex@oregonstate.edu</td>
+                    <td>2200</td>
+                    <td>
+                        <button class="edit-btn">✏️ Edit</button>
+                        <button class="delete-btn">❌ Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
 
-<!-- Add User Form -->
-<section>
-    <h2>Add a New User</h2>
-    <form action="add_user.html" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+    <!-- Add User Form -->
+    <section>
+        <h2>Add a New User</h2>
+        <form action="add_user.html" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
 
-        <label for="calorieGoal">Daily Calorie Goal:</label>
-        <input type="number" id="calorieGoal" name="calorieGoal" required>
+            <label for="calorieGoal">Daily Calorie Goal:</label>
+            <input type="number" id="calorieGoal" name="calorieGoal" required>
 
-        <button type="submit">➕ Add User</button>
-    </form>
-</section>
+            <button type="submit">➕ Add User</button>
+        </form>
+    </section>
 
-<!-- Update User Form -->
-<section>
-    <h2>Update a User</h2>
-    <form action="add_user.html" method="post">
-        <label>Select a Username:</label>
-        <select>
-            <option value="" selected disabled hidden></option>
-            <option>Tyler</option>
-            <option>Jane</option>
-            <option>Alex</option>
-        </select>
+    <!-- Update User Form -->
+    <section>
+        <h2>Update a User</h2>
+        <form action="#">
+            <label>Select a Username:</label>
+            <select>
+                <option value="" selected disabled hidden></option>
+                <option>Tyler</option>
+                <option>Jane</option>
+                <option>Alex</option>
+            </select>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" placeholder="(dynamically populates)" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="(dynamically populates)" required>
 
-        <label for="calorieGoal">Daily Calorie Goal:</label>
-        <input type="number" id="calorieGoal" name="calorieGoal" placeholder="(dynamically populates)" required>
+            <label for="calorieGoal">Daily Calorie Goal:</label>
+            <input type="number" id="calorieGoal" name="calorieGoal" placeholder="(dynamically populates)" required>
 
-        <button type="submit">➕ Update User</button>
-    </form>
-</section>
+            <button type="submit">Update User</button>
+        </form>
+    </section>
+
+    <!-- Delete User Form -->
+    <section>
+        <h2>Delete a User</h2>
+        <form action="#">
+            <p>Are you sure you want to delete this user?</p>
+            <label>User Tracker ID:</label>
+            <input type="number" value="1" disabled />
+            <label>Username:</label>
+            <select disabled>
+                <option>Tyler</option>
+            </select>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="tyler@gmail.com" disabled>
+
+            <label for="calorieGoal">Daily Calorie Goal:</label>
+            <input type="number" id="calorieGoal" name="calorieGoal" placeholder="2400" disabled>
+
+            <button type="submit">Delete User</button>
+        </form>
+    </section>
 
 </body>
 </html>
