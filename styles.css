@@ -152,6 +152,9 @@ button:hover {
 #update-daily-tracker {
     display: none;
 }
+#delete-daily-tracker {
+    display: none;
+}
 
 
 
