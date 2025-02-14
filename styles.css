@@ -47,6 +47,13 @@ nav a:hover {
     height: 70vh;
 }
 
+/* Keeps the page layout structured */
+main {
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto 70px; /* Centers the section but keeps bottom spacing */
+}
+
 .welcome-section {
     background: white;
     padding: 40px;
