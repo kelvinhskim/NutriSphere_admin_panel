@@ -79,34 +79,3 @@ nav a:hover {
 .btn:hover {
     background: #0056b3;
 }
-
-/* Footer */
-footer {
-    background: #007bff;
-    color: white;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
-
-.footer-left .footer-btn {
-    background: white;
-    color: #007bff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.footer-left .footer-btn:hover {
-    background: #e0e0e0;
-}
-
-.footer-right p {
-    margin: 0;
-    font-size: 0.9em;
-}
