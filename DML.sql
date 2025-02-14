@@ -125,8 +125,9 @@ INSERT INTO DailyTrackers (date, userID, exerciseID)
 VALUES (:dateInput, :userID_from_dropdown_Input, :exerciseID_from_dropdown_Input);
 
 -- UPDATE: Updates a specific daily tracker entry based on submission of the Update Daily Tracker Entry form
+-- updates the date and/or exercise on a selected daily tracker
 UPDATE DailyTrackers
-SET date = :dateInput, userID = :userID_from_dropdown_Input, exerciseID = :exerciseID_from_dropdown_Input
+SET date = :dateInput, exerciseID = :exerciseID_from_dropdown_Input
 WHERE dailyTrackerID = :dailyTrackerID_from_update_form;
 
 -- DELETE: Deletes a daily tracker entry; associated food entries are removed due to ON DELETE CASCADE
