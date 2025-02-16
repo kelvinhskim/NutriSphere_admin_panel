@@ -88,19 +88,21 @@
 
     <!-- Update User Form -->
     <section>
-        <h2>Update User</h2>
+        <h2>Update a User</h2>
         <form action="#">
-            <label>User ID:</label>
-            <input type="number" value="1" disabled>
-
-            <label>Username:</label>
-            <input value="Tyler" disabled>
+            <label>Select a Username:</label>
+            <select>
+                <option value="" selected disabled hidden></option>
+                <option>Tyler</option>
+                <option>Jane</option>
+                <option>Alex</option>
+            </select>
 
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" placeholder="tyler@gmail.com" required>
+            <input type="email" id="email" name="email" placeholder="(dynamically populates)" required>
 
             <label for="calorieGoal">Daily Calorie Goal:</label>
-            <input type="number" id="calorieGoal" name="calorieGoal" placeholder="2400" required>
+            <input type="number" id="calorieGoal" name="calorieGoal" placeholder="(dynamically populates)" required>
 
             <button type="submit">Update User</button>
         </form>
