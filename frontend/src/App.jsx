@@ -4,6 +4,8 @@ import HomePage from "./pages/HomePage";
 import Navbar from "./components/navbar/NavBar";
 
 function App() {
+  console.log('App is running')
+  
   return (
     <>
       <Navbar />

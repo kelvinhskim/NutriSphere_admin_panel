@@ -1,9 +1,11 @@
-from flask import Flask, render_template, json
+from flask import Flask, render_template, json, jsonify
+from flask_cors import CORS
 import os
 import database.db_connector as db
 
 # Configuration
 app = Flask(__name__)
+cors = CORS(app, origins='*')
 db_connection = db.connect_to_database()
 
 
