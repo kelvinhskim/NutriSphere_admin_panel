@@ -5,6 +5,7 @@ import os
 
 app = Flask(__name__)
 
+
 mysql = MySQL(app)
 
 
@@ -29,5 +30,5 @@ def root():
 # Listener
 if __name__ == "__main__":
 
-    #Start the app on port 3000, it will be different once hosted
-    app.run(port=3000, debug=True)
+    #Start the app on the port below, it will be different once hosted
+    app.run(port=55241, debug=True)
