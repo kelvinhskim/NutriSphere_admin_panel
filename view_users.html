@@ -69,66 +69,97 @@
         </table>
     </main>
 
-    <!-- Add User Form -->
-    <section>
-        <h2>Add a New User</h2>
-        <form action="add_user.html" method="post">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+   <!-- Add Food Entry Form (INSERT into FoodEntries) -->
+   <section>
+    <h2>Log a Meal</h2>
+    <form action="insert_food_entry.php" method="POST">
+        <label for="foodItem">Food Item:</label>
+        <select name="foodItem" id="foodItem" required>
+            <option value="">-- Select Food Item --</option>
+            <!-- Populate dynamically -->
+        </select>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+        <label for="dailyTracker">Daily Tracker:</label>
+        <select name="dailyTracker" id="dailyTracker" required>
+            <option value="">-- Select Daily Tracker --</option>
+            <!-- Populate dynamically -->
+        </select>
 
-            <label for="calorieGoal">Daily Calorie Goal:</label>
-            <input type="number" id="calorieGoal" name="calorieGoal" required>
+        <label for="mealType">Meal Type:</label>
+        <select name="mealType" id="mealType" required>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack">Snack</option>
+        </select>
 
-            <button type="submit">➕ Add User</button>
-        </form>
-    </section>
+        <label for="calories">Calories:</label>
+        <input type="number" name="calories" id="calories" required>
 
-    <!-- Update User Form -->
-    <section>
-        <h2>Update a User</h2>
-        <form action="#">
-            <label>Select a Username:</label>
-            <select>
-                <option value="" selected disabled hidden></option>
-                <option>Tyler</option>
-                <option>Jane</option>
-                <option>Alex</option>
-            </select>
+        <button type="submit">➕ Log Meal</button>
+    </form>
+</section>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" placeholder="(dynamically populates)" required>
+<!-- Add User Form -->
+<section>
+    <h2>Add a New User</h2>
+    <form action="add_user.html" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
 
-            <label for="calorieGoal">Daily Calorie Goal:</label>
-            <input type="number" id="calorieGoal" name="calorieGoal" placeholder="(dynamically populates)" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
 
-            <button type="submit">Update User</button>
-        </form>
-    </section>
+        <label for="calorieGoal">Daily Calorie Goal:</label>
+        <input type="number" id="calorieGoal" name="calorieGoal" required>
 
-    <!-- Delete User Form -->
-    <section>
-        <h2>Delete a User</h2>
-        <form action="#">
-            <p>Are you sure you want to delete this user?</p>
-            <label>User Tracker ID:</label>
-            <input type="number" value="1" disabled />
-            <label>Username:</label>
-            <select disabled>
-                <option>Tyler</option>
-            </select>
+        <button type="submit">➕ Add User</button>
+    </form>
+</section>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" placeholder="tyler@gmail.com" disabled>
+<!-- Update User Form -->
+<section>
+    <h2>Update a User</h2>
+    <form action="#">
+        <label>Select a Username:</label>
+        <select>
+            <option value="" selected disabled hidden></option>
+            <option>Tyler</option>
+            <option>Jane</option>
+            <option>Alex</option>
+        </select>
 
-            <label for="calorieGoal">Daily Calorie Goal:</label>
-            <input type="number" id="calorieGoal" name="calorieGoal" placeholder="2400" disabled>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="(dynamically populates)" required>
 
-            <button type="submit">Delete User</button>
-        </form>
-    </section>
+        <label for="calorieGoal">Daily Calorie Goal:</label>
+        <input type="number" id="calorieGoal" name="calorieGoal" placeholder="(dynamically populates)" required>
+
+        <button type="submit">Update User</button>
+    </form>
+</section>
+
+<!-- Delete User Form -->
+<section>
+    <h2>Delete a User</h2>
+    <form action="#">
+        <p>Are you sure you want to delete this user?</p>
+        <label>User Tracker ID:</label>
+        <input type="number" value="1" disabled />
+        <label>Username:</label>
+        <select disabled>
+            <option>Tyler</option>
+        </select>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="tyler@gmail.com" disabled>
+
+        <label for="calorieGoal">Daily Calorie Goal:</label>
+        <input type="number" id="calorieGoal" name="calorieGoal" placeholder="2400" disabled>
+
+        <button type="submit">Delete User</button>
+    </form>
+</section>
 
 </body>
 </html>
