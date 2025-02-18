@@ -8,15 +8,30 @@ const Navbar = () => {
         </Link>
       </div>
 
-      <h1>My website name</h1>
-      
+      <h1>NutriSphere</h1>
+
       <nav>
         <ul>
           <li>
             <Link to="/">Home</Link>
           </li>
           <li>
-            <Link to="/"></Link>
+            <Link to="/">Users</Link>
+          </li>
+          <li>
+            <Link to="/">Daily Trackers</Link>
+          </li>
+          <li>
+            <Link to="/">Daily Trackers</Link>
+          </li>
+          <li>
+            <Link to="/">Food Items</Link>
+          </li>
+          <li>
+            <Link to="/">Food Entries</Link>
+          </li>
+          <li>
+            <Link to="/">Exercise</Link>
           </li>
         </ul>
       </nav>
