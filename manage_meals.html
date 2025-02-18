@@ -12,12 +12,19 @@
         <nav>
             <a href="index.html">🏠 Home</a>
             <a href="add_fooditem.html">🍎 Add Food Item</a>
+            <a href="daily_trackers.html">📅 Daily Trackers</a>
         </nav>
     </header>
 
     <main>
         <h2>Add a Food Entry</h2>
         <form action="insert_food_entry.php" method="POST">
+            <label for="dailyTracker">Daily Tracker:</label>
+            <select name="dailyTracker" id="dailyTracker" required>
+                <option value="">-- Select Daily Tracker --</option>
+                <!-- Populate dynamically with available DailyTrackers -->
+            </select>
+            
             <label for="foodItem">Food Item:</label>
             <select name="foodItem" id="foodItem" required>
                 <option value="">-- Select Food Item --</option>
