@@ -148,10 +148,16 @@ button:hover {
 }
 
 
-#update-daily-tracker,
+/* #update-daily-tracker,
 #delete-daily-tracker {
     display: none;
+} */
+
+#update-daily-tracker,
+#delete-daily-tracker {
+    display: block; /* Ensure the forms are visible */
 }
+
 
 
 /* Footer */
