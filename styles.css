@@ -153,12 +153,6 @@ button:hover {
     display: none;
 }
 
-/* When the form is active, display it */
-#update-daily-tracker.active,
-#delete-daily-tracker.active {
-    display: block;
-}
-
 
 /* Footer */
 footer {
