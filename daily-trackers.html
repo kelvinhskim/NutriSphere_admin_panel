@@ -22,7 +22,7 @@
 
     <!-- Daily Trackers List Section -->
     <main id="daily-trackers-table">
-        <h2>List of Daily Trackers</h2>
+        <h2>Daily Trackers</h2>
         <table border="1">
             <tr>
                 <th>Daily Tracker ID</th>
@@ -105,9 +105,12 @@
                 <label>Date</label>
                 <input type="date" />
 
+                <label>Calorie Goal</label>
+                <input type="number">
+
                 <label>Exercise</label>
                 <select>
-                    <option value="" selected disabled hidden></option>
+                    <option value="" selected></option>
                     <option>Elliptical</option>
                     <option>Hiking</option>
                     <option>Swimming</option>
@@ -116,7 +119,7 @@
 
                 <button>Add</button>
 
-                <p>Note: Calorie goal, calories consumed, calories burned, calories remaining will be calculated and populated
+                <p>Note: Calories consumed, calories burned, and calories remaining would be calculated and populated
                     through a query after adding a daily tracker.</p>
             </fieldset>
         </form>
@@ -129,9 +132,9 @@
                 <h2>Update Daily Tracker</h2>
                 <label>Select a Daily Tracker:</label>
                 <select>
-                    <option>1, Tyler, 2025-01-02</option>
-                    <option>2, Tyler, 2025-01-03</option>
-                    <option>3, Jane, 2025-01-20</option>
+                    <option>1: Tyler, 2025-01-02</option>
+                    <option>2: Tyler, 2025-01-03</option>
+                    <option>3: Jane, 2025-01-20</option>
                 </select>
                 <label>Username:</label>
                 <select>
