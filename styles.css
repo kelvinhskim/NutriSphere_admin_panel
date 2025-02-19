@@ -148,13 +148,18 @@ button:hover {
 }
 
 
-/* Hide form
-#update-daily-tracker {
-    display: none;
-}
+#update-daily-tracker,
 #delete-daily-tracker {
     display: none;
-} */
+}
+
+/* When the form is active, display it */
+#update-daily-tracker.active,
+#delete-daily-tracker.active {
+    display: block;
+}
+
+
 
 
 
