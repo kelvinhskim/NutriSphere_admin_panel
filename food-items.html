@@ -20,6 +20,27 @@
     </header>
 
     <main>
+        <h2>Add a New Food Item</h2>
+        <form action="insert_fooditem.php" method="POST">
+            <label for="foodName">Food Name:</label>
+            <input type="text" id="foodName" name="foodName" required>
+
+            <label for="calories">Calories:</label>
+            <input type="number" id="calories" name="calories" required>
+
+            <label for="category">Category:</label>
+            <select name="category" id="category" required>
+                <option value="Vegetable">Vegetable</option>
+                <option value="Fruit">Fruit</option>
+                <option value="Protein">Protein</option>
+                <option value="Grain">Grain</option>
+                <option value="Dairy">Dairy</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <button type="submit">➕ Add Food Item</button>
+        </form>
+
         <h2>List of Food Items</h2>
         <table border="1">
             <tr>
