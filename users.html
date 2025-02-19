@@ -69,37 +69,6 @@
         </table>
     </main>
 
-   <!-- Add Food Entry Form (INSERT into FoodEntries) -->
-   <section>
-    <h2>Log a Meal</h2>
-    <form action="insert_food_entry.php" method="POST">
-        <label for="foodItem">Food Item:</label>
-        <select name="foodItem" id="foodItem" required>
-            <option value="">-- Select Food Item --</option>
-            <!-- Populate dynamically -->
-        </select>
-
-        <label for="dailyTracker">Daily Tracker:</label>
-        <select name="dailyTracker" id="dailyTracker" required>
-            <option value="">-- Select Daily Tracker --</option>
-            <!-- Populate dynamically -->
-        </select>
-
-        <label for="mealType">Meal Type:</label>
-        <select name="mealType" id="mealType" required>
-            <option value="Breakfast">Breakfast</option>
-            <option value="Lunch">Lunch</option>
-            <option value="Dinner">Dinner</option>
-            <option value="Snack">Snack</option>
-        </select>
-
-        <label for="calories">Calories:</label>
-        <input type="number" name="calories" id="calories" required>
-
-        <button type="submit">➕ Log Meal</button>
-    </form>
-</section>
-
 <!-- Add User Form -->
 <section>
     <h2>Add a New User</h2>
