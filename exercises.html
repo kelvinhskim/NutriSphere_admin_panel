@@ -19,6 +19,7 @@
         </nav>
     </header>
 
+    <!-- Exercises List Section -->
     <main>
         <h2>List of Exercises</h2>
         <table border="1">
@@ -41,7 +42,7 @@
             </tr>
             <tr>
                 <td>2</td>
-                <td>HiKing</td>
+                <td>Hiking</td>
                 <td>120</td>
                 <td>600</td>
                 <td>
@@ -81,5 +82,45 @@
             </tr>
         </table>
     </main>
+
+    <!-- Add Exercise Form -->
+    <section>
+        <h2>Add a New Exercise</h2>
+        <form action="#">
+            <fieldset>
+                <label>Name</label>
+                <input type="text">
+                <label>Duration (in min)</label>
+                <input type="number">
+                <label>Calories Burned</label>
+                <input type="number">
+
+                <button>Add</button>
+            </fieldset>
+        </form>
+    </section>
+
+    <!-- Update Exercise Form -->
+    <section>
+        <form>
+            <fieldset>
+                <label>Name</label>
+                <select>
+                    <option>1, Elliptical</option>
+                    <option>2, Hiking</option>
+                    <option>3, Swimming</option>
+                    <option>4, Pickleball</option>
+                    <option>5, Weight Lifting</option>
+                </select>
+                <label>Duration</label>
+                <input type="number" value="30">
+                <label>Calories Burned</label>
+                <input type="number" value="250">
+
+                <button>Save</button>
+            </fieldset>
+        </form>
+    </section>
+
 </body>
 </html>
