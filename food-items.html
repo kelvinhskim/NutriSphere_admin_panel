@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Food Items</title>
+    <title>NutriSphere: Food Items</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Food Items</h1>
+        <h1>NutriSphere: Food Items</h1>
         <nav>
             <a href="index.html">🏠 Home</a>
             <a href="users.html">👤 Users</a>
@@ -20,7 +20,7 @@
     </header>
 
     <main>
-        <h2>Food Library</h2>
+        <h2>Food Items</h2>
         <table border="1">
             <tr>
                 <th>Food Item ID</th>
@@ -120,70 +120,83 @@
         </table>
     </main>
 
-    <!-- Update Food Item Form -->
+    <!-- INSERT Food Item form -->
     <section>
-        <h2>Update Food Item</h2>
-        <form action="#">
-            <label>Food Item ID:</label>
-            <input type="number" value="1" disabled>
+        <h2>Add New Food</h2>
+        <form action="insert_fooditem.php" method="POST">
+            <label for="foodName">Food Name:</label>
+            <input type="text" id="foodName" name="foodName" required>
 
-            <label>Name:</label>
-            <input value="Oatmeal">
+            <label>Brand</label>
+            <input type="text">
 
-            <label>Brand:</label>
-            <input value="Quaker">
+            <label>Serving Size</label>
+            <input type="text">
 
-            <label>Serving Size:</label>
-            <input value="1 cup" required>
+            <label for="calories">Calories:</label>
+            <input type="number" id="calories" name="calories" required>
 
-            <label>Calories:</label>
-            <input value="153" required>
+            <label>Protein (g):</label>
+            <input type="number">
+            <label>Fat (g):</label>
+            <input type="number">
+            <label>Carbohydrates (g):</label>
+            <input type="number">
 
-            <label>Protein:</label>
-            <input value="5g">
-
-            <label>Fat:</label>
-            <input value="3g">
-
-            <label>Carbohydrates:</label>
-            <input value="27g">
-
-            <button type="submit">Update Food Item</button>
+            <button type="submit">➕ Add</button>
         </form>
     </section>
 
-    <!-- Delete Food Item Form -->
+    <!-- UPDATE Food Item form -->
     <section>
-        <h2>Delete Food</h2>
-        <form action="#">
-            <p>Are you sure you want to delete this food item?</p>
-            <label>Food Item ID:</label>
-            <input type="number" value="1" disabled>
+        <form>
+            <h2>Update Food</h2>
+            <label for="foodName">Select Food:</label>
+            <select>
+                <option>1: Oatmeal, Quaker</option>
+                <option>2: Coffee, Starbucks</option>
+                <option>3: Salad</option>
+            </select>
 
-            <label>Name:</label>
-            <input value="Oatmeal" disabled>
+            <label>Serving Size</label>
+            <input type="text" value="1 cup">
 
-            <label>Brand:</label>
-            <input value="Quaker" disabled>
+            <label for="calories">Calories:</label>
+            <input type="number" id="calories" name="calories" value="153" required>
 
-            <label>Serving Size:</label>
-            <input value="1 cup" disabled>
+            <label>Protein (g):</label>
+            <input type="number" value="5">
+            <label>Fat (g):</label>
+            <input type="number" value="3">
+            <label>Carbohydrates (g):</label>
+            <input type="number" value="27">
 
-            <label>Calories:</label>
-            <input value="153" disabled>
-
-            <label>Protein:</label>
-            <input value="5g" disabled>
-
-            <label>Fat:</label>
-            <input value="3g" disabled>
-
-            <label>Carbohydrates:</label>
-            <input value="27g" disabled>
-
-            <button type="submit">Delete Food Item</button>
+            <button type="submit">Save</button>
         </form>
     </section>
 
+    <!-- DELETE Food Item form -->
+    <section>
+        <form>
+            <h2>Delete Food</h2>
+            <p>Are you sure you want to delete this item?</p>
+            <label for="foodName">Food ID:</label>
+            <input type="text" id="foodName" name="foodName" value="1" disabled>
+
+            <label>Name</label>
+            <input type="text" value="Oatmeal" disabled>
+
+            <label>Brand</label>
+            <input type="text" value="Quaker" disabled>
+
+            <label>Serving Size</label>
+            <input type="text" value="1 cup" disabled>
+
+            <label for="calories">Calories:</label>
+            <input type="number" id="calories" name="calories" value="153" disabled>
+
+            <button type="submit">Delete</button>
+        </form>
+    </section>
 </body>
 </html>
