@@ -4,21 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriSphere: Users</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to CSS file for styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Link to CSS file for styling -->
 </head>
 <body>
     <!-- Navigation Bar -->
     <header>
         <h1>NutriSphere: Users</h1>
         <nav>
-            <a href="index.html">🏠 Home</a>
-            <a href="users.html">👤 Users</a>
-            <a href="daily-trackers.html">🗓️ Daily Trackers</a>
-            <a href="food-entries.html">🍽️ Food Entries</a>
-            <a href="food-items.html">🥗 Food Items</a>
-            <a href="exercises.html">🏋️ Exercises</a>
+            <a href="{{ url_for('home') }}">🏠 Home</a>
+            <a href="{{ url_for('users') }}">👤 Users</a>
+            <a href="{{ url_for('daily_trackers') }}">🗓️ Daily Trackers</a>
+            <a href="{{ url_for('food_entries') }}">🍽️ Food Entries</a>
+            <a href="{{ url_for('food_items') }}">🥗 Food Items</a>
+            <a href="{{ url_for('exercises') }}">🏋️ Exercises</a>
         </nav>
     </header>
+    
 
     <!-- User List Section -->
     <main>
@@ -34,100 +35,123 @@
                 </tr>
             </thead>
             <tbody>
-            <!-- Sample Static Row (This will be dynamically populated later) -->
+                <!-- Dynamic Users (From Flask & MySQL) -->
+                {% for user in users %}
                 <tr>
-                    <td>1</td>
-                    <td>Tyler</td>
-                    <td>tyler@oregonstate.edu</td>
-                    <td>2400</td>
+                    <td>{{ user.userID }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.dailyCalorieGoal }}</td>
                     <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
+                        <!-- Update Button -->
+                        <form action="{{ url_for('update_user', user_id=user.userID) }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="email" value="{{ user.email }}">
+                            <input type="hidden" name="dailyCalorieGoal" value="{{ user.dailyCalorieGoal }}">
+                            <button type="submit" class="edit-btn">✏️ Edit</button>
+                        </form>
+
+                        <!-- Delete Button -->
+                        <form action="{{ url_for('delete_user', user_id=user.userID) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure?')">❌ Delete</button>
+                        </form>
                     </td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jane</td>
-                    <td>jane@oregonstate.edu</td>
-                    <td>2000</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Alex</td>
-                    <td>alex@oregonstate.edu</td>
-                    <td>2200</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </main>
 
-<!-- Add User Form -->
-<section>
-    <h2>Add a New User</h2>
-    <form action="insert_user.php" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+    <!-- Add User Form -->
+    <section>
+        <h2>Add a New User</h2>
+        <form action="{{ url_for('add_user') }}" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
 
-        <label for="calorieGoal">Daily Calorie Goal:</label>
-        <input type="number" id="calorieGoal" name="calorieGoal" required>
+            <label for="calorieGoal">Daily Calorie Goal:</label>
+            <input type="number" id="calorieGoal" name="calorieGoal" required>
 
-        <button type="submit">➕ Add User</button>
-    </form>
-</section>
+            <button type="submit">➕ Add User</button>
+        </form>
+    </section>
 
-<!-- Update User Form -->
-<section>
-    <h2>Update a User</h2>
-    <form action="#">
-        <label>Select a User:</label>
-        <select>
-            <option>1: Tyler</option>
-            <option>2: Jane</option>
-            <option>3: Alex</option>
-        </select>
+    <!-- Update User Form -->
+    <section>
+        <h2>Update a User</h2>
+        <form action="{{ url_for('update_user', user_id=users[0].userID if users else 0) }}" method="POST">
+            <label>Select a User:</label>
+            <select name="user_id" id="user_id" onchange="updateForm(this)">
+                {% for user in users %}
+                    <option value="{{ user.userID }}">{{ user.userID }}: {{ user.username }}</option>
+                {% endfor %}
+            </select>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="tyler@oregonstate.edu" required>
+            <label for="update_email">Email:</label>
+            <input type="email" id="update_email" name="email" value="{{ users[0].email if users else '' }}" required>
 
-        <label for="calorieGoal">Daily Calorie Goal:</label>
-        <input type="number" id="calorieGoal" name="calorieGoal" value="2400" required>
+            <label for="update_calorieGoal">Daily Calorie Goal:</label>
+            <input type="number" id="update_calorieGoal" name="calorieGoal" value="{{ users[0].dailyCalorieGoal if users else '' }}" required>
 
-        <button type="submit">Update User</button>
-    </form>
-</section>
+            <button type="submit">Update User</button>
+        </form>
+    </section>
 
-<!-- Delete User Form -->
-<section>
-    <h2>Delete a User</h2>
-    <form action="#">
-        <p>Are you sure you want to delete this user?</p>
-        <label>User ID:</label>
-        <input type="number" value="1" disabled>
-        <label>Username:</label>
-        <select disabled>
-            <option>Tyler</option>
-        </select>
+    <!-- Delete User Form -->
+    <section>
+        <h2>Delete a User</h2>
+        <form action="{{ url_for('delete_user', user_id=users[0].userID if users else 0) }}" method="POST">
+            <p>Are you sure you want to delete this user?</p>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="tyler@gmail.com" disabled>
+            <!-- User ID (Read-Only) -->
+            <label>User ID:</label>
+            <input type="number" id="userID_delete" value="1" disabled>
 
-        <label for="calorieGoal">Daily Calorie Goal:</label>
-        <input type="number" id="calorieGoal" name="calorieGoal" value="2400" disabled>
+            <!-- Username (Dropdown, Read-Only) -->
+            <label>Username:</label>
+            <select id="username_delete" disabled>
+                <option>Tyler</option>
+                {% for user in users %}
+                    <option value="{{ user.userID }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
 
-        <button type="submit">Delete User</button>
-    </form>
-</section>
+            <!-- Email (Read-Only) -->
+            <label for="email_delete">Email:</label>
+            <input type="email" id="email_delete" name="email" value="tyler@oregonstate.edu" disabled>
+
+            <!-- Daily Calorie Goal (Read-Only) -->
+            <label for="calorieGoal_delete">Daily Calorie Goal:</label>
+            <input type="number" id="calorieGoal_delete" name="calorieGoal" value="2400" disabled>
+
+            <!-- Delete Button -->
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this user?')">Delete User</button>
+        </form>
+    </section>
+
+    <script>
+        var users = JSON.parse('{{ users | tojson | safe }}');
+    
+        function updateForm(select) {
+            var selectedUser = users.find(user => user.userID == select.value);
+            if (selectedUser) {
+                document.getElementById('update_email').value = selectedUser.email;
+                document.getElementById('update_calorieGoal').value = selectedUser.dailyCalorieGoal;
+            }
+        }
+    
+        function updateDeleteForm(select) {
+            var selectedUser = users.find(user => user.userID == select.value);
+            if (selectedUser) {
+                document.getElementById('userID_delete').value = selectedUser.userID;
+                document.getElementById('email_delete').value = selectedUser.email;
+                document.getElementById('calorieGoal_delete').value = selectedUser.dailyCalorieGoal;
+            }
+        }
+    </script>
+    
 
 </body>
 </html>

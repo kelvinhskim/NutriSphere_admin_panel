@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriSphere: Food Entries</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Link to CSS file for styling -->
 </head>
 <body>
     <header>
         <h1>NutriSphere: Food Entries</h1>
         <nav>
-            <a href="index.html">🏠 Home</a>
-            <a href="users.html">👤 Users</a>
-            <a href="daily-trackers.html">🗓️ Daily Trackers</a>
-            <a href="food-entries.html">🍽️ Food Entries</a>
-            <a href="food-items.html">🥗 Food Items</a>
-            <a href="exercises.html">🏋️ Exercises</a>
+            <a href="{{ url_for('home') }}">🏠 Home</a>
+            <a href="{{ url_for('users') }}">👤 Users</a>
+            <a href="{{ url_for('daily_trackers') }}">🗓️ Daily Trackers</a>
+            <a href="{{ url_for('food_entries') }}">🍽️ Food Entries</a>
+            <a href="{{ url_for('food_items') }}">🥗 Food Items</a>
+            <a href="{{ url_for('exercises') }}">🏋️ Exercises</a>
         </nav>
     </header>
 

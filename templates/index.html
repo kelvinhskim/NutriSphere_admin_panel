@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriSphere: A Comprehensive Calorie Tracking System</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Link to CSS file for styling -->
 </head>
 <body>
     <!-- Header & Navigation -->
     <header>
         <h1>NutriSphere: A Comprehensive Calorie Tracking System</h1>
         <nav>
-            <a href="index.html">🏠 Home</a>
-            <a href="users.html">👤 Users</a>
-            <a href="daily-trackers.html">🗓️ Daily Trackers</a>
-            <a href="food-items.html">🥗 Food Items</a>
-            <a href="food-entries.html">🍽️ Food Entries</a>
-            <a href="exercises.html">🏋️ Exercises</a>
+            <a href="{{ url_for('home') }}">🏠 Home</a>
+            <a href="{{ url_for('users') }}">👤 Users</a>
+            <a href="{{ url_for('daily_trackers') }}">🗓️ Daily Trackers</a>
+            <a href="{{ url_for('food_items') }}">🥗 Food Items</a>
+            <a href="{{ url_for('food_entries') }}">🍽️ Food Entries</a>
+            <a href="{{ url_for('exercises') }}">🏋️ Exercises</a>
         </nav>
     </header>
 
@@ -25,7 +25,7 @@
         <section class="welcome-section">
             <h2>Welcome to NutriSphere's Admin Portal</h2>
             <p>Your ultimate solution for managing the database behind our users' nutrition metrics and exercise patterns.</p>
-            <a href="users.html" class="btn">Get Started</a>
+            <a href="{{ url_for('users') }}" class="btn">Get Started</a>
         </section>
     </main>
 </body>
