@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriSphere: Food Entries</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to CSS file for styling -->
+</head>
+<body>
+    <header>
+        <h1>NutriSphere: Food Entries</h1>
+        <nav>
+            <a href="index.html">🏠 Home</a>
+            <a href="users.html">👤 Users</a>
+            <a href="daily-trackers.html">🗓️ Daily Trackers</a>
+            <a href="food-items.html">🥗 Food Items</a>
+            <a href="food-entries.html">🍽️ Food Entries</a>
+            <a href="exercises.html">🏋️ Exercises</a>
+        </nav>
+        
+    </header>
+
+    <main>
+        <h2>Food Entries</h2>
+        <table border="1">
+            <tr>
+                <th>Food Entry ID</th>
+                <th>Meal Category</th>
+                <th>Food</th>
+                <th>Calories</th>
+                <th>Daily Tracker</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Breakfast</td>
+                <td>Oatmeal</td>
+                <td>150</td>
+                <td>1: Tyler, 2025-01-02</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Lunch</td>
+                <td>Coffee</td>
+                <td>15</td>
+                <td>1: Tyler, 2025-01-02</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Lunch</td>
+                <td>Salad</td>
+                <td>250</td>
+                <td>1: Tyler, 2025-01-02</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Dinner</td>
+                <td>Chicken</td>
+                <td>150</td>
+                <td>1: Tyler, 2025-01-02</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Lunch</td>
+                <td>Big Mac</td>
+                <td>580</td>
+                <td>2: Jane, 2025-01-03</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Dinner</td>
+                <td>Salad</td>
+                <td>250</td>
+                <td>2: Jane, 2025-01-03</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Dinner</td>
+                <td>Chicken</td>
+                <td>150</td>
+                <td>2: Jane, 2025-01-03</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>Breakfast</td>
+                <td>Coffee</td>
+                <td>15</td>
+                <td>3: Alex, 2025-01-20</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>Lunch</td>
+                <td>Chicken</td>
+                <td>150</td>
+                <td>4: Alex, 2025-02-01</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>Dinner</td>
+                <td>Big Mac</td>
+                <td>580</td>
+                <td>5: Alex, 2025-02-04</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>Breakfast</td>
+                <td>Oatmeal</td>
+                <td>153</td>
+                <td>3: Alex, 2025-01-20</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+        </table>
+    </main>
+
+    <!-- Add Food Entry form -->
+    <section>
+        <h2>Add a Food Entry</h2>
+        <form>
+            <label>Select a User:</label>
+            <select>
+                <option>Tyler</option>
+                <option>Jane</option>
+                <option>Alex</option>
+            </select>
+
+            <label>Select a Date</label>
+            <input type="date">
+
+            <label for="mealType">Meal:</label>
+            <select name="mealType" id="mealType" required>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Snack">Snack</option>
+            </select>
+            
+            <label for="foodItem">Food Item:</label>
+            <select name="foodItem" id="foodItem" required>
+                <option>1: Oatmeal, Quaker</option>
+                <option>2: Coffee, Starbucks</option>
+                <option>3: Salad</option>
+                <!-- Dynamic options will be loaded from the database -->
+            </select>
+
+            <label for="calories">Calories:</label>
+            <input type="number" name="calories" id="calories" required>
+
+            <button type="submit">➕ Add Food Entry</button>
+        </form>
+    </section>
+
+    <!-- Update a Food Entry -->
+    <section>
+        <h2>Update a Food Entry</h2>
+        <form action="insert_food_entry.php" method="POST">
+            <label for="foodEntry">Select a Food Entry Row</label>
+            <select name="foodEntry" id="foodEntry" required>
+                <option value="">1: Breakfast, Oatmeal</option>
+                <option value="">2: Lunch, Coffee</option>
+                <option value="">3: Lunch, Salad</option>
+                <option value="">4: Dinner, Chicken</option>
+                <option value="">5: Lunch, Big Mac</option>
+                <option value="">6: Dinner, Sald</option>
+                <option value="">7: Dinner, Chicken</option>
+                <option value="">8: Breakfast, Coffee</option>
+                <option value="">9: Lunch, Chicken</option>
+                <option value="">10: Dinner, Big Mac</option>
+                <option value="">11: Breakfast, Oatmeal</option>
+                <!-- Populate dynamically with available DailyTrackers -->
+            </select>
+
+            <label for="mealType">Meal:</label>
+            <select name="mealType" id="mealType" required>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Snack">Snack</option>
+            </select>
+
+            <label for="foodItem">Food:</label>
+            <select name="foodItem" id="foodItem" required>
+                <option value="">-- Select Food --</option>
+                <!-- Dynamic options will be loaded from the database -->
+            </select>
+
+            <label for="calories">Calories:</label>
+            <input type="number" name="calories" id="calories" value="50" required>
+
+            <label>Daily Tracker</label>
+            <select>
+                <option>1: Tyler, 2025-01-02</option>
+            </select>
+
+            <button type="submit">Save</button>
+        </form>
+    </section>
+
+    <!-- Delete a Food Entry -->
+    <section>
+        <form>
+            <h2>Delete a Food Entry</h2>
+            <p>Are you sure you want to delete this?</p>
+    
+            <!-- Select a Food Entry -->
+            <label>Select a Food Entry:</label>
+            <select id="deleteFoodEntrySelect" onchange="populateFoodEntryForm(this.value)">
+                <option value="1">1: Breakfast - Oatmeal</option>
+                <option value="2">2: Lunch - Coffee</option>
+                <option value="3">3: Lunch - Salad</option>
+                <option value="4">4: Dinner - Chicken</option>
+                <option value="5">5: Lunch - Big Mac</option>
+                <option value="6">6: Dinner - Salad</option>
+                <option value="7">7: Dinner - Chicken</option>
+                <option value="8">8: Breakfast - Coffee</option>
+                <option value="9">9: Lunch - Chicken</option>
+                <option value="10">10: Dinner - Big Mac</option>
+                <option value="11">11: Breakfast - Oatmeal</option>
+            </select>
+    
+            <!-- Food Entry ID (Read-Only) -->
+            <label for="foodEntryID">Food Entry ID:</label>
+            <input type="text" id="foodEntryID_delete" value="1" disabled>
+    
+            <!-- Meal Type (Read-Only) -->
+            <label for="mealType">Meal:</label>
+            <input type="text" id="mealType_delete" value="Breakfast" disabled>
+    
+            <!-- Food Item (Read-Only) -->
+            <label for="foodItem">Food:</label>
+            <input type="text" id="foodItem_delete" value="Oatmeal" disabled>
+    
+            <!-- Calories (Read-Only) -->
+            <label for="calories">Calories:</label>
+            <input type="number" id="calories_delete" value="153" disabled>
+    
+            <!-- Delete Button -->
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this food entry?')">Delete</button>
+        </form>
+    </section>
+    
+    <script>
+        // Sample food entries data
+        const foodEntries = {
+            "1": { meal: "Breakfast", food: "Oatmeal", calories: 153 },
+            "2": { meal: "Lunch", food: "Coffee", calories: 15 },
+            "3": { meal: "Lunch", food: "Salad", calories: 250 },
+            "4": { meal: "Dinner", food: "Chicken", calories: 150 },
+            "5": { meal: "Lunch", food: "Big Mac", calories: 580 },
+            "6": { meal: "Dinner", food: "Salad", calories: 250 },
+            "7": { meal: "Dinner", food: "Chicken", calories: 150 },
+            "8": { meal: "Breakfast", food: "Coffee", calories: 15 },
+            "9": { meal: "Lunch", food: "Chicken", calories: 150 },
+            "10": { meal: "Dinner", food: "Big Mac", calories: 580 },
+            "11": { meal: "Breakfast", food: "Oatmeal", calories: 153 }
+        };
+    
+        function populateFoodEntryForm(foodEntryId) {
+            const selectedEntry = foodEntries[foodEntryId];
+    
+            if (selectedEntry) {
+                document.getElementById("foodEntryID_delete").value = foodEntryId;
+                document.getElementById("mealType_delete").value = selectedEntry.meal;
+                document.getElementById("foodItem_delete").value = selectedEntry.food;
+                document.getElementById("calories_delete").value = selectedEntry.calories;
+            }
+        }
+    </script>
+
+</body>
+</html>

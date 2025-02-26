@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriSphere: Food Items</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to CSS file for styling -->
+</head>
+<body>
+    <header>
+        <h1>NutriSphere: Food Items</h1>
+        <nav>
+            <a href="index.html">🏠 Home</a>
+            <a href="users.html">👤 Users</a>
+            <a href="daily-trackers.html">🗓️ Daily Trackers</a>
+            <a href="food-items.html">🥗 Food Items</a>
+            <a href="food-entries.html">🍽️ Food Entries</a>
+            <a href="exercises.html">🏋️ Exercises</a>
+        </nav>        
+    </header>
+
+    <main>
+        <h2>Food Items</h2>
+        <table border="1">
+            <tr>
+                <th>Food Item ID</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Serving Size</th>
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Fat</th>
+                <th>Carbohydrates</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Oatmeal</td>
+                <td>Quaker</td>
+                <td>1 cup</td>
+                <td>153</td>
+                <td>5g</td>
+                <td>3g</td>
+                <td>27g</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Coffee</td>
+                <td>Starbucks</td>
+                <td>1 cup (grande)</td>
+                <td>15</td>
+                <td>1g</td>
+                <td>0g</td>
+                <td>2g</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Salad</td>
+                <td>NULL</td>
+                <td>1 bowl</td>
+                <td>250</td>
+                <td>7g</td>
+                <td>10g</td>
+                <td>30g</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Chicken</td>
+                <td>Trader Joe's</td>
+                <td>113g</td>
+                <td>150</td>
+                <td>27g</td>
+                <td>4g</td>
+                <td>0g</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Brown Rice</td>
+                <td>Nishiki</td>
+                <td>210g</td>
+                <td>340</td>
+                <td>7g</td>
+                <td>2g</td>
+                <td>7g</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Big Mac</td>
+                <td>McDonald's</td>
+                <td>1 burger</td>
+                <td>580</td>
+                <td>25g</td>
+                <td>34g</td>
+                <td>NULL</td>
+                <td>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">❌ Delete</button>
+                </td>
+            </tr>
+        </table>
+    </main>
+
+    <!-- INSERT Food Item form -->
+    <section>
+        <h2>Add New Food</h2>
+        <form action="insert_fooditem.php" method="POST">
+            <label for="foodName">Food Name:</label>
+            <input type="text" id="foodName" name="foodName" required>
+
+            <label>Brand</label>
+            <input type="text">
+
+            <label>Serving Size</label>
+            <input type="text">
+
+            <label for="calories">Calories:</label>
+            <input type="number" id="calories" name="calories" required>
+
+            <label>Protein (g):</label>
+            <input type="number">
+            <label>Fat (g):</label>
+            <input type="number">
+            <label>Carbohydrates (g):</label>
+            <input type="number">
+
+            <button type="submit">➕ Add</button>
+        </form>
+    </section>
+
+    <!-- UPDATE Food Item form -->
+    <section>
+        <form>
+            <h2>Update Food</h2>
+            <label for="foodName">Select Food:</label>
+            <select>
+                <option>1: Oatmeal, Quaker</option>
+                <option>2: Coffee, Starbucks</option>
+                <option>3: Salad</option>
+                <option>4: Chicken</option>
+                <option>5: Brown Rice</option>
+                <option>6: Big Mac</option>
+            </select>
+
+            <label>Serving Size</label>
+            <input type="text" value="1 cup">
+
+            <label for="calories">Calories:</label>
+            <input type="number" id="calories" name="calories" value="153" required>
+
+            <label>Protein (g):</label>
+            <input type="number" value="5">
+            <label>Fat (g):</label>
+            <input type="number" value="3">
+            <label>Carbohydrates (g):</label>
+            <input type="number" value="27">
+
+            <button type="submit">Save</button>
+        </form>
+    </section>
+
+    <!-- DELETE Food Item form -->
+    <section>
+        <form>
+            <h2>Delete Food</h2>
+            <p>Are you sure you want to delete this item?</p>
+    
+            <!-- Select a Food Item -->
+            <label>Select a Food Item:</label>
+            <select id="deleteFoodSelect" onchange="populateFoodForm(this.value)">
+                <option value="1">1: Oatmeal (Bob's Red Mill)</option>
+                <option value="2">2: Coffee (Starbucks)</option>
+                <option value="3">3: Salad (No Brand)</option>
+                <option value="4">4: Chicken (Trader Joe's)</option>
+                <option value="5">5: Brown Rice (Nishiki)</option>
+                <option value="6">6: Big Mac (McDonald's)</option>
+            </select>
+    
+            <!-- Food ID (Read-Only) -->
+            <label for="foodID">Food ID:</label>
+            <input type="text" id="foodID_delete" value="1" disabled>
+    
+            <!-- Name (Read-Only) -->
+            <label>Name:</label>
+            <input type="text" id="foodName_delete" value="Oatmeal" disabled>
+    
+            <!-- Brand (Read-Only) -->
+            <label>Brand:</label>
+            <input type="text" id="foodBrand_delete" value="Bob's Red Mill" disabled>
+    
+            <!-- Serving Size (Read-Only) -->
+            <label>Serving Size:</label>
+            <input type="text" id="foodServing_delete" value="1 cup" disabled>
+    
+            <!-- Calories (Read-Only) -->
+            <label for="calories">Calories:</label>
+            <input type="number" id="foodCalories_delete" value="153" disabled>
+    
+            <!-- Delete Button -->
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this food item?')">Delete</button>
+        </form>
+    </section>
+    
+    <script>
+        // Sample food items data
+        const foodItems = {
+            "1": { name: "Oatmeal", brand: "Bob's Red Mill", servingSize: "1 cup", calories: 153 },
+            "2": { name: "Coffee", brand: "Starbucks", servingSize: "1 cup (grande)", calories: 15 },
+            "3": { name: "Salad", brand: "No Brand", servingSize: "1 bowl", calories: 250 },
+            "4": { name: "Chicken", brand: "Trader Joe's", servingSize: "113g", calories: 150 },
+            "5": { name: "Brown Rice", brand: "Nishiki", servingSize: "210g", calories: 340 },
+            "6": { name: "Big Mac", brand: "McDonald's", servingSize: "1 burger", calories: 580 }
+        };
+    
+        function populateFoodForm(foodId) {
+            const selectedFood = foodItems[foodId];
+    
+            if (selectedFood) {
+                document.getElementById("foodID_delete").value = foodId;
+                document.getElementById("foodName_delete").value = selectedFood.name;
+                document.getElementById("foodBrand_delete").value = selectedFood.brand;
+                document.getElementById("foodServing_delete").value = selectedFood.servingSize;
+                document.getElementById("foodCalories_delete").value = selectedFood.calories;
+            }
+        }
+    </script>
+</body>
+</html>
