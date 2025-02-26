@@ -39,8 +39,8 @@
                     <td>30</td>
                     <td>250</td>
                     <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
+                        <button onclick="populateUpdateForm(1)">✏️ Edit</button>
+                        <button onclick="deleteExercise(1, true)">❌ Delete</button>
                     </td>
                 </tr>
                 <tr>
@@ -49,8 +49,8 @@
                     <td>120</td>
                     <td>600</td>
                     <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
+                        <button onclick="populateUpdateForm(2)">✏️ Edit</button>
+                        <button onclick="deleteExercise(2, true)">❌ Delete</button>
                     </td>
                 </tr>
                 <tr>
@@ -59,8 +59,8 @@
                     <td>30</td>
                     <td>300</td>
                     <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
+                        <button onclick="populateUpdateForm(3)">✏️ Edit</button>
+                        <button onclick="deleteExercise(3, true)">❌ Delete</button>
                     </td>
                 </tr>
                 <tr>
@@ -69,8 +69,8 @@
                     <td>60</td>
                     <td>400</td>
                     <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
+                        <button onclick="populateUpdateForm(4)">✏️ Edit</button>
+                        <button onclick="deleteExercise(4, true)">❌ Delete</button>
                     </td>
                 </tr>
                 <tr>
@@ -79,10 +79,24 @@
                     <td>60</td>
                     <td>150</td>
                     <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
+                        <button onclick="populateUpdateForm(5)">✏️ Edit</button>
+                        <button onclick="deleteExercise(5, true)">❌ Delete</button>
                     </td>
                 </tr>
+
+                <!-- Database Exercises -->
+                {% for exercise in exercises %}
+                <tr id="exerciseRow-{{ exercise.exerciseID }}">
+                    <td>{{ exercise.exerciseID }}</td>
+                    <td>{{ exercise.name }}</td>
+                    <td>{{ exercise.exerciseMinutes }}</td>
+                    <td>{{ exercise.caloriesBurned }}</td>
+                    <td>
+                        <button onclick="populateUpdateForm({{ exercise.exerciseID }})">✏️ Edit</button>
+                        <button onclick="deleteExercise({{ exercise.exerciseID }}, false)">❌ Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </main>
@@ -106,12 +120,6 @@
     <section>
         <h2>Update an Exercise</h2>
         <form action="{{ url_for('update_exercise', exercise_id=exercises[0].exerciseID if exercises else 0) }}" method="POST">
-            <label>Select an Exercise:</label>
-            <select id="updateExerciseSelect" name="exercise_id" onchange="populateUpdateForm(this.value)">
-                {% for exercise in exercises %}
-                    <option value="{{ exercise.exerciseID }}">{{ exercise.exerciseID }}: {{ exercise.name }}</option>
-                {% endfor %}
-            </select>
 
             <label>Name</label>
             <input type="text" id="updateName" name="name" required>
@@ -127,37 +135,84 @@
     <!-- Delete Exercise -->
     <section>
         <h2>Delete an Exercise</h2>
-        <form action="{{ url_for('delete_exercise', exercise_id=exercises[0].exerciseID if exercises else 0) }}" method="POST">
+        <form id="deleteExerciseForm" action="#" method="POST">
             <p>Are you sure you want to delete this?</p>
+
+            <label>Select an Exercise:</label>
+            <select id="deleteExerciseSelect" name="exercise_id" onchange="populateDeleteForm(this.value)">
+                {% for exercise in exercises %}
+                    <option value="{{ exercise.exerciseID }}">{{ exercise.exerciseID }}: {{ exercise.name }}</option>
+                {% endfor %}
+            </select>
+
             <label>Exercise ID:</label>
-            <input type="number" id="deleteExerciseID" value="{{ exercises[0].exerciseID if exercises else '' }}" disabled>
+            <input type="number" id="deleteExerciseID" disabled>
 
-            <label>Name</label>
-            <input type="text" id="deleteExerciseName" value="{{ exercises[0].name if exercises else '' }}" disabled>
+            <label>Name:</label>
+            <input type="text" id="deleteExerciseName" disabled>
 
-            <label>Duration (min)</label>
-            <input type="number" id="deleteExerciseDuration" value="{{ exercises[0].exerciseMinutes if exercises else '' }}" disabled>
+            <label>Duration (min):</label>
+            <input type="number" id="deleteExerciseDuration" disabled>
 
-            <label>Calories Burned</label>
-            <input type="number" id="deleteExerciseCalories" value="{{ exercises[0].caloriesBurned if exercises else '' }}" disabled>
+            <label>Calories Burned:</label>
+            <input type="number" id="deleteExerciseCalories" disabled>
 
             <button type="submit" onclick="return confirm('Are you sure you want to delete this exercise?')">Delete</button>
         </form>
     </section>
 
     <script>
-        // Ensure Flask data is correctly passed as a JavaScript variable
-        var exercises = JSON.parse('{{ exercises | tojson | safe }}');
-
+        // Ensure all exercises are loaded properly
+        let exercises = {
+            "1": { name: "Elliptical", duration: 30, calories: 250 },
+            "2": { name: "Hiking", duration: 120, calories: 600 },
+            "3": { name: "Swimming", duration: 30, calories: 300 },
+            "4": { name: "Pickleball", duration: 60, calories: 400 },
+            "5": { name: "Weight Lifting", duration: 60, calories: 150 }
+        };
+    
+        // Add database exercises from Flask
+        {% for exercise in exercises %}
+            exercises["{{ exercise.exerciseID }}"] = {
+                name: "{{ exercise.name }}",
+                duration: {{ exercise.exerciseMinutes }},
+                calories: {{ exercise.caloriesBurned }}
+            };
+        {% endfor %}
+    
         function populateUpdateForm(exerciseID) {
-            var selectedExercise = exercises.find(ex => ex.exerciseID == exerciseID);
+            console.log("Populating form for:", exerciseID);
+    
+            let selectedExercise = exercises[exerciseID];
+    
             if (selectedExercise) {
-                document.getElementById('updateName').value = selectedExercise.name;
-                document.getElementById('updateDuration').value = selectedExercise.exerciseMinutes;
-                document.getElementById('updateCalories').value = selectedExercise.caloriesBurned;
+                document.getElementById("updateName").value = selectedExercise.name;
+                document.getElementById("updateDuration").value = selectedExercise.duration;
+                document.getElementById("updateCalories").value = selectedExercise.calories;
+    
+                // Update the form action for correct exercise update
+                document.getElementById("updateExerciseForm").action = `/update_exercise/${exerciseID}`;
             }
         }
+    
+        // Ensure dropdown updates properly on page load
+        function populateDropdown() {
+            let dropdown = document.getElementById("updateExerciseSelect");
+            dropdown.innerHTML = "";
+    
+            for (let id in exercises) {
+                let option = document.createElement("option");
+                option.value = id;
+                option.textContent = `${id}: ${exercises[id].name}`;
+                dropdown.appendChild(option);
+            }
+        }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            populateDropdown();
+        });
     </script>
+    
 
 </body>
 </html>
