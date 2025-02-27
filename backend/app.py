@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, json
 import os
 import database.db_connector as db
 from flask_cors import CORS
@@ -15,7 +15,11 @@ def root():
 
 @app.get('/api/users')
 def users():
-    return "TA-DA! This is the users route"
+    """Fetches all users from the database and displays them."""
+    query = 'SELECT * FROM Users;'
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = json.dumps(cursor.fetchall())
+    return results
 
 # Listener
 if __name__ == "__main__":
