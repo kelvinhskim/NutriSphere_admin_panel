@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriSphere: Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Link to CSS file for styling -->
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <h1>NutriSphere: Users</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">🏠 Home</a>
+            <a href="{{ url_for('users') }}">👤 Users</a>
+            <a href="{{ url_for('daily_trackers') }}">🗓️ Daily Trackers</a>
+            <a href="{{ url_for('food_entries') }}">🍽️ Food Entries</a>
+            <a href="{{ url_for('food_items') }}">🥗 Food Items</a>
+            <a href="{{ url_for('exercises') }}">🏋️ Exercises</a>
+        </nav>
+    </header>
+    
+
+    <!-- User List Section -->
+    <main>
+        <h2>Browse Users</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Daily Calorie Goal</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sample Data (Static) -->
+                <tr>
+                    <td>1</td>
+                    <td>Tyler</td>
+                    <td>tyler@oregonstate.edu</td>
+                    <td>2400</td>
+                    <td>
+                        <button onclick="populateUpdateForm(1)">✏️ Edit</button>
+                        <button onclick="deleteUser(1, true)">❌ Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Jane</td>
+                    <td>jane@oregonstate.edu</td>
+                    <td>2000</td>
+                    <td>
+                        <button onclick="populateUpdateForm(2)">✏️ Edit</button>
+                        <button onclick="deleteUser(2, true)">❌ Delete</button>
+                    </td> 
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Alex</td>
+                    <td>alex@oregonstate.edu</td>
+                    <td>2200</td>
+                    <td>
+                        <button onclick="populateUpdateForm(3)">✏️ Edit</button>
+                        <button onclick="deleteUser(3, true)">❌ Delete</button>
+                </tr>
+
+                <!-- ✅ Database Users -->
+                {% for user in users %}
+                <tr id="userRow-{{ user.userID }}">
+                    <td>{{ user.userID }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.dailyCalorieGoal }}</td>
+                    <td>
+                        <button onclick="populateUpdateForm({{ user.userID }})">✏️ Edit</button>
+                        <button onclick="deleteUser({{ user.userID }}, false)">❌ Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Add User Form -->
+    <section>
+        <h2>Add a New User</h2>
+        <form action="{{ url_for('add_user') }}" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="dailyCalorieGoal">Daily Calorie Goal:</label>
+            <input type="number" id="dailyCalorieGoal" name="dailyCalorieGoal" required>
+
+            <button type="submit">➕ Add User</button>
+        </form>
+    </section>
+
+   <!-- Update User Form -->
+    <h2>Update User</h2>
+    <form id="updateUserForm" action="/update_user" method="POST">
+        <input type="hidden" id="update_user_id" name="user_id">
+
+        <label for="update_email">Email:</label>
+        <input type="email" id="update_email" name="email" required>
+
+        <label for="update_calorieGoal">Daily Calorie Goal:</label>
+        <input type="number" id="update_calorieGoal" name="dailyCalorieGoal" required>
+
+        <button type="submit">Update User</button>
+    </form>
+
+   <!-- Delete User Form -->
+    <section>
+        <h2>Delete a User</h2>
+        <form id="deleteUserForm" action="/delete_user" method="POST">
+            <p>Are you sure you want to delete this user?</p>
+    
+            <label>Select a User:</label>
+            <select id="deleteUserSelect" name="user_id" onchange="populateDeleteForm(this.value)">
+                <option value="1">1: Tyler</option>
+                <option value="2">2: Jane</option>
+                <option value="3">3: Alex</option>
+                {% for user in users %}
+                    <option value="{{ user.userID }}">{{ user.userID }}: {{ user.username }}</option>
+                {% endfor %}
+            </select>
+    
+
+            <!-- Delete Button -->
+            <button type="submit">Delete User</button>
+            </form>
+    </section>
+
+    <script>
+        // Define sample user data
+        let users = {
+            "1": { username: "Tyler", email: "tyler@oregonstate.edu", calorieGoal: 2400 },
+            "2": { username: "Jane", email: "jane@oregonstate.edu", calorieGoal: 2000 },
+            "3": { username: "Alex", email: "alex@oregonstate.edu", calorieGoal: 2200 }
+        };    
+    
+        // Load database users from Flask (dynamic)
+        {% for user in users %}
+        users["{{ user.userID }}"] = {
+            username: "{{ user.username }}",
+            email: "{{ user.email }}",
+            calorieGoal: "{{ user.dailyCalorieGoal }}"
+        };
+        {% endfor %}
+    
+        // Function to populate the update form with user data
+        function populateUpdateForm(userID) {
+            if (userID && users[userID]) {
+                document.getElementById("update_user_id").value = userID;
+                document.getElementById("update_email").value = users[userID].email;
+                document.getElementById("update_calorieGoal").value = users[userID].calorieGoal;
+            }
+        }
+
+        /// Function to populate the update form with user data
+        function populateUpdateForm(userID) {
+            if (userID && users[userID]) {
+                document.getElementById("update_user_id").value = userID;
+                document.getElementById("update_email").value = users[userID].email;
+                document.getElementById("update_calorieGoal").value = users[userID].calorieGoal;
+            }
+        }
+
+        // Function to populate delete form when a user is selected
+        function populateDeleteForm(userID) {
+            if (userID && users[userID]) {
+                document.getElementById("delete_user_id").value = userID;
+                document.getElementById("username_delete").value = users[userID].username;
+                document.getElementById("email_delete").value = users[userID].email;
+                document.getElementById("calorieGoal_delete").value = users[userID].calorieGoal;
+            } else {
+                // Clear fields if no valid selection
+                document.getElementById("delete_user_id").value = "";
+                document.getElementById("username_delete").value = "";
+                document.getElementById("email_delete").value = "";
+                document.getElementById("calorieGoal_delete").value = "";
+            }
+        }
+        
+        // Define the deleteUser function
+        function deleteUser(userID, isSampleUser) {
+            console.log("Attempting to delete user ID:", userID, "Is Sample:", isSampleUser);
+
+            // Handle the confirmation prompt
+            if (!userID) {
+                alert("No user ID provided!");
+            return;
+            }
+
+            if (confirm(`Are you sure you want to delete user ID ${userID}?`)) {
+                fetch(`/delete_user/${userID}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert(`User ${userID} deleted successfully!`);
+                        document.getElementById(`userRow-${userID}`).remove();  // Remove row from table
+                    } else {
+                        alert("Failed to delete user!");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while deleting the user.");
+                });
+            }
+        }
+    </script>
+    
+</body>
+</html>
