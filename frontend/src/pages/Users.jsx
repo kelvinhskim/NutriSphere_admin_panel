@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import UsersTableRow from '../components/users/UsersTableRow';
 
 const Users = () => {
     console.log('hi users')
@@ -35,38 +36,14 @@ const Users = () => {
                         <th>Actions</th>
                     </tr>
                 </thead>
-                
+
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Tyler</td>
-                        <td>tyler@oregonstate.edu</td>
-                        <td>2400</td>
-                        <td>
-                            <button class="edit-btn">✏️ Edit</button>
-                            <button class="delete-btn">❌ Delete</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Jane</td>
-                        <td>jane@oregonstate.edu</td>
-                        <td>2000</td>
-                        <td>
-                            <button class="edit-btn">✏️ Edit</button>
-                            <button class="delete-btn">❌ Delete</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Alex</td>
-                        <td>alex@oregonstate.edu</td>
-                        <td>2200</td>
-                        <td>
-                            <button class="edit-btn">✏️ Edit</button>
-                            <button class="delete-btn">❌ Delete</button>
-                        </td>
-                    </tr>
+                    {usersData.map((user) => (
+                        <UsersTableRow 
+                            key={usersData.userID}
+                            user={user}
+                        />
+                    ))}
                 </tbody>
             </table>
         </main>
