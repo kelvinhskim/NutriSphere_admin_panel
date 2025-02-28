@@ -163,6 +163,7 @@
         }
 
         /// Function to populate the update form with user data
+        
         function populateUpdateForm(userID) {
             if (userID && users[userID]) {
                 document.getElementById("update_user_id").value = userID;
@@ -194,7 +195,7 @@
             // Handle the confirmation prompt
             if (!userID) {
                 alert("No user ID provided!");
-            return;
+                return;
             }
 
             if (confirm(`Are you sure you want to delete user ID ${userID}?`)) {

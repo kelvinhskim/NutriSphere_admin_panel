@@ -101,6 +101,10 @@ def add_user():
 # Update - Modify a User (POST Request)
 @app.route("/update_user", methods=["POST"])
 def update_user():
+    """
+    Updates a user's email or calorie goal in the database.
+    """
+
     # Get data from the form (use .get() to avoid KeyError)
     user_id = request.form.get("user_id")
     email = request.form.get("email", "").strip()
@@ -136,27 +140,20 @@ def update_user():
         # Close the cursor
         cursor.close()
         print(f"✅ User {user_id} updated successfully!")
+        return redirect(url_for('users'))
 
     except Exception as e:
         print(f"❌ Error updating user: {e}")
         return "Error updating user", 500
 
-    return redirect(url_for('users'))
-
-
-
+    
 # --------------------------------------------------
 # Delete - Remove a User (POST Request)
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
-def delete_user(user_id=None):
+def delete_user(user_id):
     """
     Deletes a user from the database.
     """
-    user_id = request.form.get('user_id')
-
-    if not user_id:
-        return redirect(url_for('users')) 
-
     try:
         cursor = mysql.connection.cursor()
         
@@ -164,7 +161,7 @@ def delete_user(user_id=None):
         query = "DELETE FROM Users WHERE userID = %s;"
         
         # Execute the query with the user ID to be deleted
-        cursor.execute(query, (user_id,))
+        cursor.execute("DELETE FROM Users WHERE userID = %s;", (user_id,))
         
         # Commit the transaction to the database
         mysql.connection.commit()

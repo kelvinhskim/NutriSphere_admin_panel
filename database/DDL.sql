@@ -94,8 +94,8 @@ CREATE TABLE IF NOT EXISTS `FoodItems` (
 CREATE TABLE IF NOT EXISTS `FoodEntries` (
   `foodEntryID` INT NOT NULL AUTO_INCREMENT,
   `mealCategory` ENUM('Breakfast', 'Lunch', 'Dinner', 'Snacks') NOT NULL,
-  `foodItemID` INT NOT NULL,
-  `dailyTrackerID` INT NOT NULL,
+  `foodItemID` INT,
+  `dailyTrackerID` INT,
   PRIMARY KEY (`foodEntryID`),
   INDEX `fk_FoodEntries_foodItemID_idx` (`foodItemID` ASC),
   INDEX `fk_FoodEntries_dailyTrackerID_idx` (`dailyTrackerID` ASC),
