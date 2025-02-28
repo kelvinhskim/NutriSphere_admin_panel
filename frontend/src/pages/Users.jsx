@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import UsersTableRow from '../components/users/UsersTableRow';
 import AddUser from '../components/users/AddUser';
+import DeleteUser from '../components/users/DeleteUser';
 
 const Users = () => {
     console.log('hi users')
@@ -24,6 +25,19 @@ const Users = () => {
         getUserData();
     }, [])
 
+    const handleDeleteClick = (userID) => {
+        const URL = import.meta.env.VITE_API_URL + 'delete_user/' + userID;
+        console.log("API DELETE URL:", URL);
+        axios.delete(URL)
+        .then(() => {
+            console.log('Deleted user:', userID)
+            getUserData()
+        })
+        .catch((error) => {
+            console.log(`Error deleting user ${userID}:`, error);
+        })
+    }
+ 
     return (
         <>
             <main>
@@ -44,6 +58,7 @@ const Users = () => {
                             <UsersTableRow 
                                 key={user.userID}
                                 user={user}
+                                handleDeleteClick={handleDeleteClick}
                             />
                         ))}
                     </tbody>
@@ -51,6 +66,11 @@ const Users = () => {
             </main>
             <section>
                 <AddUser
+                    getUserData={getUserData}
+                />
+            </section>
+            <section>
+                <DeleteUser
                     getUserData={getUserData}
                 />
             </section>

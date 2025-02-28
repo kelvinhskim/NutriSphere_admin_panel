@@ -1,4 +1,5 @@
-const UsersTableRow = ({ user }) => {
+const UsersTableRow = ({ user, handleDeleteClick }) => {
+
     return (
         <tr key={user.userID}>
             <td>{user.userID}</td>
@@ -7,7 +8,11 @@ const UsersTableRow = ({ user }) => {
             <td>{user.dailyCalorieGoal}</td>
             <td>
                 <button className="edit-btn">✏️ Edit</button>
-                <button className="delete-btn">❌ Delete</button>
+                <button className="delete-btn"
+                    onClick={() => handleDeleteClick(user.userID)}
+                >
+                    ❌ Delete
+                </button>
             </td>
         </tr>
     )

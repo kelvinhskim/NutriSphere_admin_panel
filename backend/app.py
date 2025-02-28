@@ -14,7 +14,7 @@ cors = CORS(app, origins='*')
 def root():
     return "Hello World!!"
 
-@app.route('/api/users', methods=['POST', 'GET'])
+@app.route('/api/users', methods=['POST', 'GET', 'DELETE'])
 def users():
     print('REQ METHOD', request.method)
     # Insert a new user into the Users entity
@@ -28,7 +28,7 @@ def users():
         # cur.execute(query, (username, email, dailyCalorieGoal))
         db.execute_query(db_connection=db_connection, query=query, query_params=(username, email, dailyCalorieGoal))
         db_connection.commit()
-        return redirect("/api/users")
+        return redirect('/api/users')
 
     # Grabs all users data to send to frontend browse users table
     if request.method == "GET":
@@ -36,7 +36,14 @@ def users():
         cursor = db.execute_query(db_connection=db_connection, query=query)
         results = json.dumps(cursor.fetchall())
         return results
-
+    
+@app.route('/api/delete_user/<int:userID>', methods=['DELETE'])
+def delete_user(userID):
+    print('DELETE USER REQ', userID)
+    query = 'DELETE FROM Users WHERE userID = %s;'
+    db.execute_query(db_connection=db_connection, query=query, query_params=(userID,))
+    db_connection.commit()
+    return jsonify({'message': f'Deleted user: {userID}'}) 
 
 # Listener
 if __name__ == "__main__":
