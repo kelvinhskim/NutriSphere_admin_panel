@@ -50,7 +50,9 @@ const Users = () => {
                 </table>
             </main>
             <section>
-                <AddUser />
+                <AddUser
+                    getUserData={getUserData}
+                />
             </section>
         </>
     );
