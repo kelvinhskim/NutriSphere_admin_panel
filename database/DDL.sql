@@ -167,9 +167,9 @@ DELIMITER ;
 -- -----------------------------------------------------
 INSERT INTO `Users` (`username`, `email`, `dailyCalorieGoal`)
 VALUES
-('Tyler', 'tyler@oregonstate.edu', 2400),
-('Jane', 'jane@oregonstate.edu', 2000),
-('Alex', 'alex@oregonstate.edu', 2200);
+('Tyler', 'tyler@gmail.com', 2400),
+('Jane', 'jane@yahoo.com', 2000),
+('Alex', 'alex@hotmail.com', 2200);
 
 -- -----------------------------------------------------
 -- Insert sample data for FoodItems
