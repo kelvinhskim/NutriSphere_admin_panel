@@ -167,60 +167,60 @@ DELIMITER ;
 -- -----------------------------------------------------
 INSERT INTO `Users` (`username`, `email`, `dailyCalorieGoal`)
 VALUES
-(1, 'Tyler', 'tyler@oregonstate.edu', 2400),
-(2, 'Jane', 'jane@oregonstate.edu', 2000),
-(3, 'Alex', 'alex@oregonstate.edu', 2200);
+('Tyler', 'tyler@oregonstate.edu', 2400),
+('Jane', 'jane@oregonstate.edu', 2000),
+('Alex', 'alex@oregonstate.edu', 2200);
 
 -- -----------------------------------------------------
 -- Insert sample data for FoodItems
 -- -----------------------------------------------------
 INSERT INTO `FoodItems` (`name`, `brand`, `servingSize`, `calories`, `protein`, `fat`, `carbohydrates`)
 VALUES
-(1, 'Oatmeal', "Bob\'s Red Mill", '1 cup', 153, 5, 3, 27),
-(2, 'Coffee', 'Starbucks', '1 cup (grande)', 15, 1, 0, 2),
-(3, 'Salad', NULL, '1 bowl', 250, 8, 10, 30),
-(4, 'Chicken ', "Trader Joe\'s", '113g', 150, 27, 5, 0),
-(5, 'Brown Rice', 'Nishiki', '210g', 340, 7, 3, 7),
-(6, 'Big Mac', "McDonald\'s", '1 burger', 580, 25, 34, NULL);
+('Oatmeal', "Bob\'s Red Mill", '1 cup', 153, 5, 3, 27),
+('Coffee', 'Starbucks', '1 cup (grande)', 15, 1, 0, 2),
+('Salad', NULL, '1 bowl', 250, 8, 10, 30),
+('Chicken ', "Trader Joe\'s", '113g', 150, 27, 5, 0),
+('Brown Rice', 'Nishiki', '210g', 340, 7, 3, 7),
+('Big Mac', "McDonald\'s", '1 burger', 580, 25, 34, NULL);
 
 -- -----------------------------------------------------
 -- Insert sample data for Exercises
 -- -----------------------------------------------------
 INSERT INTO `Exercises` (`name`, `exerciseMinutes`, `caloriesBurned`)
 VALUES
-(1, 'Elliptical', 30, 250),
-(2, 'Hiking', 120, 600),
-(3, 'Swimming', 30, 300),
-(4, 'Pickleball', 60, 400),
-(5, 'Weight Lifting', 60, 150);
+('Elliptical', 30, 250),
+('Hiking', 120, 600),
+('Swimming', 30, 300),
+('Pickleball', 60, 400),
+('Weight Lifting', 60, 150);
 
 -- -----------------------------------------------------
 -- Insert sample data for DailyTrackers
 -- -----------------------------------------------------
 INSERT INTO `DailyTrackers` (`date`, `caloriesConsumed`, `caloriesRemaining`, `userID`, `exerciseID`)
 VALUES
-(1, '2025-01-02', 0, NULL, 1, 1),
-(2, '2025-01-03', 0, NULL, 1, NULL),
-(3, '2025-01-20', 0, NULL, 2, 4),
-(4, '2025-02-01', 0, NULL, 2, 4),
-(5, '2025-02-04', 0, NULL, 3, 5);
+('2025-01-02', 0, NULL, 1, 1),
+('2025-01-03', 0, NULL, 1, NULL),
+('2025-01-20', 0, NULL, 2, 4),
+('2025-02-01', 0, NULL, 2, 4),
+('2025-02-04', 0, NULL, 3, 5);
 
 -- -----------------------------------------------------
 -- Insert sample data for FoodEntries
 -- -----------------------------------------------------
 INSERT INTO `FoodEntries` (`mealCategory`, `foodItemID`, `dailyTrackerID`)
 VALUES
-(1, 'Breakfast', 1, 1),
-(2, 'Lunch', 2, 1),
-(3, 'Lunch', 3, 1),
-(4, 'Dinner', 4, 1),
-(5, 'Lunch', 6, 2),
-(6, 'Dinner', 3, 2),
-(7, 'Dinner', 4, 2),
-(8, 'Breakfast', 2, 3),
-(9, 'Lunch', 4, 4),
-(10, 'Dinner', 6, 5),
-(11, 'Breakfast', 1, 3);
+('Breakfast', 1, 1),
+('Lunch', 2, 1),
+('Lunch', 3, 1),
+('Dinner', 4, 1),
+('Lunch', 6, 2),
+('Dinner', 3, 2),
+('Dinner', 4, 2),
+('Breakfast', 2, 3),
+('Lunch', 4, 4),
+('Dinner', 6, 5),
+('Breakfast', 1, 3);
 
 -- -----------------------------------------------------
 -- Turn commits and foreign key checks back on.
