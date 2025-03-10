@@ -29,6 +29,7 @@
             {% for food in recommended_foods %}
             <tr id="rec-{{ food.id }}">
                 <td>{{ loop.index }}</td>
+                <td>{{ loop.index + recommended_foods|length }}</td>
                 <td>{{ food.name }}</td><td>{{ food.brand }}</td><td>{{ food.servingSize }}</td>
                 <td>{{ food.calories }}</td><td>{{ food.protein }}</td><td>{{ food.fat }}</td><td>{{ food.carbohydrates }}</td>
                 <td>
@@ -52,7 +53,7 @@
     </main>
 
     <!-- INSERT Food Item form -->
-    section>
+    <section>
         <h2>Add New Food Item</h2>
         <form action="{{ url_for('add_food_item') }}" method="POST">
             <label>Food Name:</label><input type="text" name="name" required>
@@ -67,7 +68,7 @@
     </section>
 
     <!-- UPDATE Food Item form -->
-    section>
+    <section>
         <h2>Update Food Item</h2>
         <form id="updateFoodForm" method="POST" onsubmit="return handleFoodUpdate()">
             <input type="hidden" id="updateID" name="foodItemID">
@@ -83,11 +84,11 @@
     </section>
 
     <script>
-        // Load all fodd items from Flask using tojson
+        // Load all food items from Flask using tojson
         const foodItems = {{ food_items | tojson }};
         const recommendedFoods = {{ recommended_foods | tojson }};
         
-        // Function to populate the Update Food Itemn Form (on Edit button click)
+        // Function to populate the Update Food Item Form (on Edit button click)
         function populateUpdateForm(id) {
             const item = foodItems.find(e => e.foodItemID === id);
             if (item) {
@@ -113,10 +114,28 @@
                         } else {
                             alert('❌ Failed to delete food item.');
                         }
+                    })
+                    .catch(error => {
+                        console.error('❌ Error deleting food item:', error);
+                        alert('❌ Error deleting food item.');
                     });
             }
         }
 
+        function populateRecommendedForm(id) {
+            const item = recommendedFoods.find(e => e.id === id);
+            if (item) {
+                document.getElementById('updateID').value = item.id;
+                document.getElementById('updateName').value = item.name;
+                document.getElementById('updateBrand').value = item.brand;
+                document.getElementById('updateServingSize').value = item.servingSize;
+                document.getElementById('updateCalories').value = item.calories;
+                document.getElementById('updateProtein').value = item.protein;
+                document.getElementById('updateFat').value = item.fat;
+                document.getElementById('updateCarbohydrates').value = item.carbohydrates;
+                document.getElementById('updateFoodForm').action = '';
+            }
+        }
         function handleFoodUpdate() { return true; }
 
         function populateRecommendedForm(id) {
