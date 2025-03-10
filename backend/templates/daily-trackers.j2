@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Link to CSS file for styling -->
     
     <script language="JavaScript">
+        // dynamically populates calorie goal on Add New Tracker form when a user is selected from the dropdown
         function getSelectedUser() {
             let selectedUser = document.getElementById("selectedUser");
             let userID = selectedUser.value;
             let username = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-username")
             let calorieGoal = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-calorie-goal")
-            console.log("selectedUserID:", userID, username, calorieGoal)
+            console.log("selectedUser:", userID, username, calorieGoal)
             
             // populates default field value for Calorie Goal in Add Daily Tracker form
             document.getElementById("calorieGoal").value = calorieGoal
@@ -40,7 +41,7 @@
             <thead>
                 <!-- Access queried table headers passed from daily-trackers route -->
                 <tr>
-                    {% for key in dailytrackers_data[0].keys() %}
+                    {% for key in daily_trackers[0].keys() %}
                     <th>{{ key }}</th>
                     {% endfor %}
                     <th>Actions</th>
@@ -49,7 +50,7 @@
 
             <!-- Access queried table data passed from daily-trackers route -->
             <tbody>
-                {% for tracker in dailytrackers_data %}
+                {% for tracker in daily_trackers %}
                 <tr>
                     {% for key in tracker.keys() %}
                     <td> {{tracker[key]}} </td>
@@ -72,7 +73,7 @@
                 <label>Select a User</label>
                 <select id="selectedUser" onchange="getSelectedUser()">
                     <option value="" selected disabled hidden></option>
-                    {% for user in users_data %}
+                    {% for user in users %}
                     <option 
                         value="{{ user.userID }}"
                         data-username="{{ user.username }}"
@@ -91,11 +92,10 @@
 
                 <label>Exercise</label>
                 <select>
-                    <option value="" selected></option>
-                    <option>Elliptical</option>
-                    <option>Hiking</option>
-                    <option>Swimming</option>
-                    <option>Pickleball</option>
+                    <option value="NULL" selected></option>
+                    {% for exercise in exercises %}
+                    <option value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
+                    {% endfor %}
                 </select>
 
                 <button>Add</button>

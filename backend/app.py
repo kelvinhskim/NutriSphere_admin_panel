@@ -195,13 +195,20 @@ def daily_trackers():
         cur.execute(query)
         dailytrackers_data = cur.fetchall()
 
-        # query to retrieve id and username for dropdown in Add Daily Tracker form
+        # query to retrieve userID and username for dropdown in Add Daily Tracker form
         query2 = "SELECT userID, username, dailyCalorieGoal FROM Users;"
         cur = mysql.connection.cursor()
         cur.execute(query2)
         users_data = cur.fetchall()
 
-        return render_template("daily-trackers.j2", dailytrackers_data=dailytrackers_data, users_data=users_data)
+        # query to retrieve exerciseID and exercise name for dropdown in Add Daily Tracker form
+        query3 = "SELECT exerciseID, name, caloriesBurned FROM Exercises;"
+        cur = mysql.connection.cursor()
+        cur.execute(query3)
+        exercises_data = cur.fetchall()
+        print(exercises_data)
+
+        return render_template("daily-trackers.j2", daily_trackers=dailytrackers_data, users=users_data, exercises=exercises_data)
     except Exception as e:
         print("❌ Error fetching daily trackers data:", e)
 
