@@ -13,11 +13,11 @@ app = Flask(__name__)
 # app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 # database connection info
-app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_kimh22'
-app.config['MYSQL_PASSWORD'] = '0612' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_kimh22'
-app.config['MYSQL_CURSORCLASS'] = "DictCursor"
+# app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
+# app.config['MYSQL_USER'] = 'cs340_kimh22'
+# app.config['MYSQL_PASSWORD'] = '0612' #last 4 of onid
+# app.config['MYSQL_DB'] = 'cs340_kimh22'
+# app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 mysql = MySQL(app) # Initialize MySQL with Flask app
 
@@ -184,7 +184,7 @@ def daily_trackers():
         # query to retrieve all daily trackers along with associated users and exercises
         query = (
             "SELECT "
-            "dt.dailyTrackerID AS `Daily Tracker ID`, u.username AS `Username`, dt.date AS `Date`, u.dailyCalorieGoal AS `Calorie Goal`, dt.caloriesConsumed AS `Calories Consumed`, e.caloriesBurned AS `Calories Burned`, dt.caloriesRemaining AS `Calories Remaining`, "
+            "dt.dailyTrackerID AS `Daily Tracker ID`, u.username AS `Username`, dt.date AS `Date`, calorieGoal AS `Calorie Goal`, dt.caloriesConsumed AS `Calories Consumed`, e.caloriesBurned AS `Calories Burned`, dt.caloriesRemaining AS `Calories Remaining`, "
             "COALESCE(e.name, 'No Exercise Logged') AS `Exercise Logged` "
             "FROM DailyTrackers AS dt "
             "LEFT JOIN Users AS u ON dt.userID = u.userID "
@@ -206,7 +206,7 @@ def daily_trackers():
         cur = mysql.connection.cursor()
         cur.execute(query3)
         exercises_data = cur.fetchall()
-        print(exercises_data)
+        # print(exercises_data)
 
         return render_template("daily-trackers.j2", daily_trackers=dailytrackers_data, users=users_data, exercises=exercises_data)
     except Exception as e:
@@ -219,17 +219,26 @@ def add_daily_tracker():
         if request.form.get("Add_Daily_Tracker"):
             date = request.form["date"]
             userID = request.form["userID"]
-            username = request.form["username"]
+            # username = request.form["username"]
             calorieGoal = request.form["calorieGoal"]
             exerciseID = request.form["exerciseID"]
-            # query to insert a new daily tracker into DailyTrackers
-            query = "INSERT INTO dailyTrackers (date, userID, exerciseID) VALUES (%s, %s, %s)"
-            cur = mysql.connection.cursor() 
-            cur.execute(query, (date, calorieGoal, userID, exerciseID))
-            mysql.connection.commit()
-            cur.close()   
+
+            # query if no exercise is input in the exercise field
+            if exerciseID == "NULL":
+                query = "INSERT INTO DailyTrackers (date, calorieGoal, userID) VALUES (%s, %s, %s)"
+                cur = mysql.connection.cursor() 
+                cur.execute(query, (date, calorieGoal, userID))
+                mysql.connection.commit()
+                cur.close()   
+            else:
+                # query to insert a new daily tracker into DailyTrackers
+                query = "INSERT INTO DailyTrackers (date, calorieGoal, userID, exerciseID) VALUES (%s, %s, %s, %s)"
+                cur = mysql.connection.cursor() 
+                cur.execute(query, (date, calorieGoal, userID, exerciseID))
+                mysql.connection.commit()
+                cur.close()   
         
-        print(f"✅  {date} DailyTracker for {username} added successfully!")
+        print(f"✅  DailyTracker for added successfully!")
         return redirect("/daily-trackers")
     except Exception as e:
         print("❌ Error adding new daily tracker:", e)    
