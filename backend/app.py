@@ -194,12 +194,19 @@ def daily_trackers():
         cur = mysql.connection.cursor()
         cur.execute(query)
         dailytrackers_data = cur.fetchall()
-        return render_template("daily-trackers.j2", dailytrackers_data=dailytrackers_data)
+
+        # query to retrieve id and username for dropdown in Add Daily Tracker form
+        query2 = "SELECT userID, username, dailyCalorieGoal FROM Users;"
+        cur = mysql.connection.cursor()
+        cur.execute(query2)
+        users_data = cur.fetchall()
+
+        return render_template("daily-trackers.j2", dailytrackers_data=dailytrackers_data, users_data=users_data)
     except Exception as e:
         print("❌ Error fetching daily trackers data:", e)
 
 # Create - Inserts a new daily tracker into the DailyTrackers table (POST Request)
-@app.route('add-daily-tracker', methods=["POST"])
+@app.route('/add-daily-tracker', methods=["POST"])
 def add_daily_tracker():
     try:
         if request.form.get("Add_Daily_Tracker"):
