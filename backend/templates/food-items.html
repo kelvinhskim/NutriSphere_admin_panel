@@ -26,11 +26,22 @@
                 <th>Food Item ID</th><th>Name</th><th>Brand</th><th>Serving Size</th>
                 <th>Calories</th><th>Protein</th><th>Fat</th><th>Carbohydrates</th><th>Actions</th>
             </tr>
+            {% for food in recommended_foods %}
+            <tr id="rec-{{ food.id }}">
+                <td>{{ loop.index }}</td>
+                <td>{{ food.name }}</td><td>{{ food.brand }}</td><td>{{ food.servingSize }}</td>
+                <td>{{ food.calories }}</td><td>{{ food.protein }}</td><td>{{ food.fat }}</td><td>{{ food.carbohydrates }}</td>
+                <td>
+                    <button type="button" onclick="populateRecommendedForm({{ food.id }})">✏️ Edit</button>
+                    <button type="button" onclick="deleteRecommendedFood({{ food.id }})">❌ Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
             {% for food in food_items %}
             <tr id="foodRow-{{ food.foodItemID }}">
-                <td>{{ food.foodItemID }}</td><td>{{ food.name }}</td><td>{{ food.brand }}</td>
-                <td>{{ food.servingSize }}</td><td>{{ food.calories }}</td><td>{{ food.protein }}</td>
-                <td>{{ food.fat }}</td><td>{{ food.carbohydrates }}</td>
+                <td>{{ loop.index + recommended_foods|length }}</td>
+                <td>{{ food.name }}</td><td>{{ food.brand }}</td><td>{{ food.servingSize }}</td>
+                <td>{{ food.calories }}</td><td>{{ food.protein }}</td><td>{{ food.fat }}</td><td>{{ food.carbohydrates }}</td>
                 <td>
                     <button type="button" onclick="populateUpdateForm({{ food.foodItemID }})">✏️ Edit</button>
                     <button type="button" onclick="deleteFood({{ food.foodItemID }})">❌ Delete</button>
@@ -74,6 +85,7 @@
     <script>
         // Load all fodd items from Flask using tojson
         const foodItems = {{ food_items | tojson }};
+        const recommendedFoods = {{ recommended_foods | tojson }};
         
         // Function to populate the Update Food Itemn Form (on Edit button click)
         function populateUpdateForm(id) {
@@ -91,24 +103,33 @@
                 document.getElementById('updateFoodForm').action = `/update_food_item/${id}`;
             }
         }
-        function handleFoodUpdate() { return true; }
-
-        // function to delete a food item (on Delete button click)
         function deleteFood(id) {
             if (confirm('Are you sure you want to delete this food item?')) {
                 fetch(`/delete_food_item/${id}`, { method: 'POST' })
-                .then(response => {
-                    if (response.ok) {
-                        document.getElementById(`foodRow-${id}`).remove();
-                        alert('✅ Food item deleted!');
-                    } else {
-                        alert('❌ Failed to delete food item.');
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Error deleting food item:', error);
-                    alert('❌ Error deleting food item.');
-                });
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById(`foodRow-${id}`).remove();
+                            alert('✅ Food item deleted!');
+                        } else {
+                            alert('❌ Failed to delete food item.');
+                        }
+                    });
+            }
+        }
+
+        function handleFoodUpdate() { return true; }
+
+        function populateRecommendedForm(id) {
+            const item = recommendedFoods.find(e => e.id === id);
+            if (item) {
+                alert('Edit Recommended Food: ' + item.name);
+            }
+        }
+
+        function deleteRecommendedFood(id) {
+            if (confirm('Are you sure you want to delete this recommended food item?')) {
+                document.getElementById(`rec-${id}`).remove();
+                alert('✅ Recommended food item deleted!');
             }
         }
     </script>
