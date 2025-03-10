@@ -24,49 +24,35 @@
         <table border="1">
         <thead>
             <tr>
-                <th>Food Item ID</th><th>Name</th><th>Brand</th><th>Serving Size</th>
-                <th>Calories</th><th>Protein</th><th>Fat</th><th>Carbohydrates</th><th>Actions</th>
+                <th>Food Item ID</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Serving Size</th>
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Fat</th>
+                <th>Carbohydrates</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody id="foodTable">
-
-            <!-- Hardcoded Recommended Foods -->
-            {% set index = 1 %}
-            {% for rec in recommended_foods %}
-                <tr id="rec-{{ rec.id }}">
-                    <td>{{ rec.id }}</td>
-                    <td>{{ rec.name }}</td>
-                    <td>{{ rec.brand }}</td>
-                    <td>{{ rec.servingSize }}</td>
-                    <td>{{ rec.calories }}</td>
-                    <td>{{ rec.protein }}</td>
-                    <td>{{ rec.fat }}</td>
-                    <td>{{ rec.carbohydrates }}</td>
-                    <td>
-                        <button onclick="populateRecommendedForm({{ rec.id }})">✏️ Edit</button>
-                        <button onclick="deleteRecommendedFood({{ rec.id }})">❌ Delete</button>
-                    </td>
-                </tr>
-                {% set index = index + 1 %}
-                {% endfor %}
-                {% for food in food_items %}
-                <tr id="foodRow-{{ food.foodItemID }}">
-                    <td>{{ index }}</td>
-                    <td>{{ food.name }}</td>
-                    <td>{{ food.brand }}</td>
-                    <td>{{ food.servingSize }}</td>
-                    <td>{{ food.calories }}</td>
-                    <td>{{ food.protein }}</td>
-                    <td>{{ food.fat }}</td>
-                    <td>{{ food.carbohydrates }}</td>
-                    <td>
-                        <button onclick="populateUpdateForm({{ food.foodItemID }})">✏️ Edit</button>
-                        <button onclick="deleteFood({{ food.foodItemID }})">❌ Delete</button>
-                    </td>
-                </tr>
-                {% set index = index + 1 %}
-                {% endfor %}
-            </tbody>
+            {% for food in food_items %}
+            <tr id="foodRow-{{ food.foodItemID }}">
+                <td>{{ food.foodItemID }}</td>
+                <td>{{ food.name }}</td>
+                <td>{{ food.brand }}</td>
+                <td>{{ food.servingSize }}</td>
+                <td>{{ food.calories }}</td>
+                <td>{{ food.protein }}</td>
+                <td>{{ food.fat }}</td>
+                <td>{{ food.carbohydrates }}</td>
+                <td>
+                    <button onclick="populateUpdateForm({{ food.foodItemID }})">✏️ Edit</button>
+                    <button onclick="deleteFood({{ food.foodItemID }})">❌ Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
         </table>
     </main>
 
@@ -104,7 +90,6 @@
     <script>
         // Load all food items from Flask using tojson
         const foodItems = {{ food_items | tojson }};
-        const recommendedFoods = {{ recommended_foods | tojson }};
         
         // Function to populate the Update Food Item Form (on Edit button click)
         function populateUpdateForm(id) {
@@ -141,28 +126,10 @@
             }
         }
 
-        function populateRecommendedForm(id) {
-            const item = recommendedFoods.find(e => e.id === id);
-            if (item) {
-                alert('Recommended Food cannot be edited: ' + item.name);
-            }
-        }
-        
+
         function handleFoodUpdate() { return true; }
 
-        function populateRecommendedForm(id) {
-            const item = recommendedFoods.find(e => e.id === id);
-            if (item) {
-                alert('Edit Recommended Food: ' + item.name);
-            }
-        }
-
-        function deleteRecommendedFood(id) {
-            if (confirm('Are you sure you want to delete this recommended food item?')) {
-                document.getElementById(`rec-${id}`).remove();
-                alert('✅ Recommended food item deleted!');
-            }
-        }
+        
     </script>
     
 </body>
