@@ -150,14 +150,13 @@
     <!-- UPDATE Food Item form -->
     <section>
         <form>
-            <h2>Update Food</h2>
+            <h2>Update a Food Item</h2>
             <form id="updateFoodForm" action="#" method="POST">
-            <label for="foodName">Select Food:</label>
-            <select>
-                <option>1: Oatmeal, Quaker</option>
-                <option>2: Coffee, Starbucks</option>
-                <option>3: Salad</option>
-            </select>
+            <label>Food Name</label>
+            <input type="text" id="updateName" name="name" required>
+            
+            <label>Brand</label>
+            <input type="text" id="updateBrand" name="brand">
 
             <label>Serving Size</label>
             <input type="text" value="1 cup">
@@ -177,11 +176,14 @@
     </section>
 
     <script>
+        // Load all fodd items from Flask using tojson
         const foodItems = {{ food_items | tojson }};
         
+        // Function to populate the Update Food Itemn Form (on Edit button click)
         function populateUpdateForm(id) {
             const item = foodItems.find(e => e.foodItemID === id);
             if (item) {
+                // Populate form fields
                 document.getElementById('updateName').value = item.name;
                 document.getElementById('updateBrand').value = item.brand;
                 document.getElementById('updateServingSize').value = item.servingSize;
@@ -190,19 +192,27 @@
                 document.getElementById('updateFat').value = item.fat;
                 document.getElementById('updateCarbohydrates').value = item.carbohydrates;
                 document.getElementById('updateFoodForm').action = `/update_food_item/${id}`;
+            
+                // Set form action dynamically to update the correct item
+                document.getElementById('updateFoodItemForm').action = `/update_food_item/${id}`;
             }
         }
         
+        // function to delete a food item (on Delete button click)
         function deleteFood(id) {
             if (confirm('Are you sure you want to delete this food item?')) {
                 fetch(`/delete_food_item/${id}`, { method: 'POST' })
                 .then(response => {
                     if (response.ok) {
                         document.getElementById(`foodRow-${id}`).remove();
-                        alert('Food item deleted!');
+                        alert('✅ Food item deleted!');
                     } else {
-                        alert('Failed to delete food item.');
+                        alert('❌ Failed to delete food item.');
                     }
+                })
+                .catch(error => {
+                    console.error('❌ Error deleting food item:', error);
+                    alert('❌ Error deleting food item.');
                 });
             }
         }

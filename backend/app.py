@@ -195,9 +195,117 @@ def food_entries():
 
 
 # --------------------------------------------------
-@app.route('/food-items')
+# READ - Display Food Items
+@app.route('/food-items', methods=['GET'])
 def food_items():
-    return render_template("food-items.html")
+    """
+    Fetches all food items from the database and displays them.
+    """
+    try:
+        cursor = mysql.connection.cursor()
+        query = """
+            SELECT foodItemID, name, brand, servingSize, calories, protein, fat, carbohydrates
+            FROM FoodItems
+            ORDER BY name;
+        """
+        cursor.execute(query)
+        food_items_data = cursor.fetchall()
+        return render_template("food-items.html", food_items=food_items_data)
+    except Exception as e:
+        print("❌ Error fetching food items:", e)
+        return redirect(url_for('home'))
+
+
+# --------------------------------------------------
+# CREATE - Add a Food Item
+@app.route('/add_food_item', methods=['POST'])
+def add_food_item():
+    """
+    Adds a new food item to the database.
+    """
+    name = request.form.get('name', '').strip()
+    brand = request.form.get('brand', '').strip()
+    serving_size = request.form.get('servingSize', '').strip()
+    calories = request.form.get('calories', '')
+    protein = request.form.get('protein', '')
+    fat = request.form.get('fat', '')
+    carbohydrates = request.form.get('carbohydrates', '')
+
+    # Validate numeric inputs
+    numeric_fields = [calories, protein, fat, carbohydrates]
+    if not name or not all(field.isdigit() for field in numeric_fields):
+        print("❌ Invalid input for adding food item.")
+        return redirect(url_for('food_items'))
+
+    try:
+        cursor = mysql.connection.cursor()
+        query = """
+            INSERT INTO FoodItems (name, brand, servingSize, calories, protein, fat, carbohydrates)
+            VALUES (%s, %s, %s, %s, %s, %s, %s);
+        """
+        cursor.execute(query, (name, brand, serving_size, int(calories), int(protein), int(fat), int(carbohydrates)))
+        mysql.connection.commit()
+        print(f"✅ Food item '{name}' added successfully!")
+    except Exception as e:
+        print("❌ Error adding food item:", e)
+
+    return redirect(url_for('food_items'))
+
+
+# --------------------------------------------------
+# UPDATE - Modify a Food Item
+@app.route('/update_food_item/<int:food_item_id>', methods=['POST'])
+def update_food_item(food_item_id):
+    """
+    Updates an existing food item in the database.
+    """
+    name = request.form.get('name', '').strip()
+    brand = request.form.get('brand', '').strip()
+    serving_size = request.form.get('servingSize', '').strip()
+    calories = request.form.get('calories', '')
+    protein = request.form.get('protein', '')
+    fat = request.form.get('fat', '')
+    carbohydrates = request.form.get('carbohydrates', '')
+
+    # Validate numeric inputs
+    numeric_fields = [calories, protein, fat, carbohydrates]
+    if not name or not all(field.isdigit() for field in numeric_fields):
+        print("❌ Invalid input for updating food item.")
+        return redirect(url_for('food_items'))
+
+    try:
+        cursor = mysql.connection.cursor()
+        query = """
+            UPDATE FoodItems
+            SET name = %s, brand = %s, servingSize = %s, calories = %s, protein = %s, fat = %s, carbohydrates = %s
+            WHERE foodItemID = %s;
+        """
+        cursor.execute(query, (name, brand, serving_size, int(calories), int(protein), int(fat), int(carbohydrates), food_item_id))
+        mysql.connection.commit()
+        print(f"✅ Food item '{name}' updated successfully!")
+    except Exception as e:
+        print("❌ Error updating food item:", e)
+
+    return redirect(url_for('food_items'))
+
+
+# --------------------------------------------------
+# DELETE - Remove a Food Item
+@app.route('/delete_food_item/<int:food_item_id>', methods=['POST'])
+def delete_food_item(food_item_id):
+    """
+    Deletes a food item from the database.
+    """
+    try:
+        cursor = mysql.connection.cursor()
+        query = "DELETE FROM FoodItems WHERE foodItemID = %s;"
+        cursor.execute(query, (food_item_id,))
+        mysql.connection.commit()
+        print(f"✅ Food item ID {food_item_id} deleted successfully!")
+    except Exception as e:
+        print("❌ Error deleting food item:", e)
+
+    return redirect(url_for('food_items'))
 
 
 # --------------------------------------------------
