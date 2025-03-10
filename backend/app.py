@@ -308,7 +308,7 @@ def update_food_item(food_item_id):
     return redirect(url_for('food_items'))
 
 
- --------------------------------------------------
+#--------------------------------------------------
 # DELETE - Remove a Food Item
 @app.route('/delete_food_item/<int:food_item_id>', methods=['POST'])
 def delete_food_item(food_item_id):

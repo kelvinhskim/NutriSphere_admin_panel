@@ -26,31 +26,59 @@
                 <th>Food Item ID</th><th>Name</th><th>Brand</th><th>Serving Size</th>
                 <th>Calories</th><th>Protein</th><th>Fat</th><th>Carbohydrates</th><th>Actions</th>
             </tr>
-            {% for food in recommended_foods %}
-            <tr id="rec-{{ food.id }}">
-                <td>{{ loop.index }}</td>
-                <td>{{ loop.index + recommended_foods|length }}</td>
-                <td>{{ food.name }}</td><td>{{ food.brand }}</td><td>{{ food.servingSize }}</td>
-                <td>{{ food.calories }}</td><td>{{ food.protein }}</td><td>{{ food.fat }}</td><td>{{ food.carbohydrates }}</td>
-                <td>
-                    <button type="button" onclick="populateRecommendedForm({{ food.id }})">✏️ Edit</button>
-                    <button type="button" onclick="deleteRecommendedFood({{ food.id }})">❌ Delete</button>
-                </td>
-            </tr>
-            {% endfor %}
-            {% for food in food_items %}
-            <tr id="foodRow-{{ food.foodItemID }}">
-                <td>{{ loop.index + recommended_foods|length }}</td>
-                <td>{{ food.name }}</td><td>{{ food.brand }}</td><td>{{ food.servingSize }}</td>
-                <td>{{ food.calories }}</td><td>{{ food.protein }}</td><td>{{ food.fat }}</td><td>{{ food.carbohydrates }}</td>
-                <td>
-                    <button type="button" onclick="populateUpdateForm({{ food.foodItemID }})">✏️ Edit</button>
-                    <button type="button" onclick="deleteFood({{ food.foodItemID }})">❌ Delete</button>
-                </td>
-            </tr>
-            {% endfor %}
+        </thead>
+        <tbody id="foodTable">
+
+            <!-- Hardcoded Recommended Foods -->
+            {% for rec in recommended_foods %}
+                <tr id="rec-{{ rec.id }}">
+                    <td>{{ rec.id }}</td>
+                    <td>{{ rec.name }}</td>
+                    <td>{{ rec.brand }}</td>
+                    <td>{{ rec.servingSize }}</td>
+                    <td>{{ rec.calories }}</td>
+                    <td>{{ rec.protein }}</td>
+                    <td>{{ rec.fat }}</td>
+                    <td>{{ rec.carbohydrates }}</td>
+                    <td>
+                        <button onclick="populateRecommendedForm({{ rec.id }})">✏️ Edit</button>
+                        <button onclick="deleteRecommendedFood({{ rec.id }})">❌ Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>My Food Items</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>#</th><th>Name</th><th>Brand</th><th>Serving Size</th>
+                    <th>Calories</th><th>Protein</th><th>Fat</th><th>Carbohydrates</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set next_id = recommended_foods|length + 1 %}
+                {% for food in food_items %}
+                <tr id="foodRow-{{ food.foodItemID }}">
+                    <td>{{ next_id + loop.index0 }}</td>
+                    <td>{{ food.name }}</td>
+                    <td>{{ food.brand }}</td>
+                    <td>{{ food.servingSize }}</td>
+                    <td>{{ food.calories }}</td>
+                    <td>{{ food.protein }}</td>
+                    <td>{{ food.fat }}</td>
+                    <td>{{ food.carbohydrates }}</td>
+                    <td>
+                        <button onclick="populateUpdateForm({{ food.foodItemID }})">✏️ Edit</button>
+                        <button onclick="deleteFood({{ food.foodItemID }})">❌ Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </main>
+
 
     <!-- INSERT Food Item form -->
     <section>
