@@ -177,10 +177,26 @@ def delete_user(user_id):
 
 
 # --------------------------------------------------
-# Additional Routes for Missing Pages
-@app.route('/daily-trackers')
+# Read - Display DailyTrackers (GET Request)
+@app.route('/daily-trackers', methods=["GET"])
 def daily_trackers():
-    return render_template("daily-trackers.html")
+    try:
+        # query to retrieve all daily trackers along with associated users and exercises
+        query = (
+            "SELECT "
+            "dt.dailyTrackerID AS `Daily Tracker ID`, u.username AS `Username`, dt.date AS `Date`, u.dailyCalorieGoal AS `Calorie Goal`, dt.caloriesConsumed AS `Calories Consumed`, e.caloriesBurned AS `Calories Burned`, dt.caloriesRemaining AS `Calories Remaining`, "
+            "COALESCE(e.name, 'No Exercise Logged') AS `Exercise Logged` "
+            "FROM DailyTrackers AS dt "
+            "LEFT JOIN Users AS u ON dt.userID = u.userID "
+            "LEFT JOIN Exercises AS e ON dt.exerciseID = e.exerciseID "
+            "ORDER BY dt.date DESC;"
+        )
+        cursor = mysql.connection.cursor()
+        cursor.execute(query)
+        dailytrackers_data = cursor.fetchall()
+        return render_template("daily-trackers.j2", daily_trackers=dailytrackers_data)
+    except Exception as e:
+        print("❌ Error fetching daily trackers data:", e)
 
 
 # --------------------------------------------------
