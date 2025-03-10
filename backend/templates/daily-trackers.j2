@@ -24,68 +24,31 @@
     <main id="daily-trackers-table">
         <h2>Daily Trackers</h2>
         <table border="1">
-            <tr>
-                <th>Daily Tracker ID</th>
-                <th>Username</th>
-                <th>Date</th>
-                <th>Calorie Goal</th>
-                <th>Calories Consumed</th>
-                <th>Calories Burned</th>
-                <th>Calories Remaining</th>
-                <th>Exercise Logged</th>
-                <th>Actions</th>
-            </tr>
-            <!-- Sample Static Row (This will be dynamically populated later) -->
-            <tr>
-                <td>1</td>
-                <td>Tyler</td>
-                <td>2025-01-02</td>
-                <td>2400</td>
-                <td>568</td>
-                <td>250</td>
-                <td>2082</td>
-                <td>Elliptical</td>
-                <td>
-                    <button class="edit-btn">✏️  Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                    <!-- <button class="edit-btn" onclick="showUpdateForm()">✏️ Edit</button>
-                    <button class="delete-btn" onclick="showDeleteForm()">❌ Delete</button> -->
-                </td>
-            </tr>
+            <thead>
+                <!-- Access queried table headers passed from daily-trackers route -->
+                <tr>
+                    {% for key in daily_trackers[0].keys() %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
 
-            <tr>
-                <td>2</td>
-                <td>Jane</td>
-                <td>2025-01-03</td>
-                <td>2400</td>
-                <td>980</td>
-                <td>0</td>
-                <td>1420</td>
-                <td>Null</td>
-                <td>
-                    <button class="edit-btn">✏️  Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                    <!-- <button class="edit-btn" onclick="showUpdateForm()">✏️ Edit</button>
-                    <button class="delete-btn" onclick="showDeleteForm()">❌ Delete</button> -->
-                </td>
-            </tr>
-
-            <tr>
-                <td>3</td>
-                <td>Alex</td>
-                <td>2025-01-20</td>
-                <td>2000</td>
-                <td>168</td>
-                <td>400</td>
-                <td>2232</td>
-                <td>Pickleball</td>
-                <td>
-                    <button class="edit-btn">✏️  Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                    <!-- <button class="edit-btn" onclick="showUpdateForm()">✏️ Edit</button>
-                    <button class="delete-btn" onclick="showDeleteForm()">❌ Delete</button> -->
-                </td>
-            </tr>
+            <!-- Access queried table data passed from daily-trackers route -->
+            <tbody>
+                {% for tracker in daily_trackers %}
+                <tr>
+                    {% for key in tracker.keys() %}
+                    <td> {{tracker[key]}} </td>
+                    {% endfor %} 
+                    <td>
+                        <button class="edit-btn">✏️ Edit</button>
+                        <button class="delete-btn">❌ Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+   
         </table>
     </main>
 
