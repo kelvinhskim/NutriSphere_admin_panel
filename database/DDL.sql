@@ -49,10 +49,11 @@ CREATE OR REPLACE TABLE `Exercises` (
 CREATE OR REPLACE TABLE `DailyTrackers` (
   `dailyTrackerID` INT NOT NULL AUTO_INCREMENT,
   `date` DATE NOT NULL,
+  `calorieGoal` INT,
   `caloriesConsumed` INT NOT NULL DEFAULT 0 CHECK (caloriesConsumed >= 0),
   `caloriesRemaining` INT NULL CHECK (caloriesRemaining >= 0),
   `userID` INT NOT NULL,
-  `exerciseID` INT NULL,
+  `exerciseID` INT DEFAULT NULL,
   PRIMARY KEY (`dailyTrackerID`),
   INDEX `fk_DailyTrackers_userID_idx` (`userID` ASC),
   INDEX `fk_DailyTrackers_exerciseID_idx` (`exerciseID` ASC),
@@ -197,13 +198,13 @@ VALUES
 -- -----------------------------------------------------
 -- Insert sample data for DailyTrackers
 -- -----------------------------------------------------
-INSERT INTO `DailyTrackers` (`date`, `caloriesConsumed`, `caloriesRemaining`, `userID`, `exerciseID`)
+INSERT INTO `DailyTrackers` (`date`, `calorieGoal`, `caloriesConsumed`, `caloriesRemaining`, `userID`, `exerciseID`)
 VALUES
-('2025-01-02', 0, NULL, 1, 1),
-('2025-01-03', 0, NULL, 1, NULL),
-('2025-01-20', 0, NULL, 2, 4),
-('2025-02-01', 0, NULL, 2, 4),
-('2025-02-04', 0, NULL, 3, 5);
+('2025-01-02', 2400, 0, NULL, 1, 1),
+('2025-01-03', 2400, 0, NULL, 1, NULL),
+('2025-01-20', 2000, 0, NULL, 2, 4),
+('2025-02-01', 2000, 0, NULL, 2, 4),
+('2025-02-04', 2200, 0, NULL, 3, 5);
 
 -- -----------------------------------------------------
 -- Insert sample data for FoodEntries
