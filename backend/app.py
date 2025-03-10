@@ -210,7 +210,18 @@ def food_items():
         """
         cursor.execute(query)
         food_items_data = cursor.fetchall()
+
+        recommended_foods = [
+            {'id': 1, 'name': 'Oatmeal', 'brand': 'Quaker', 'servingSize': '1 cup', 'calories': 153, 'protein': 5, 'fat': 3, 'carbohydrates': 27},
+            {'id': 2, 'name': 'Coffee', 'brand': 'Starbucks', 'servingSize': '1 cup (grande)', 'calories': 15, 'protein': 1, 'fat': 0, 'carbohydrates': 2},
+            {'id': 3, 'name': 'Salad', 'brand': 'NULL', 'servingSize': '1 bowl', 'calories': 250, 'protein': 7, 'fat': 10, 'carbohydrates': 30},
+            {'id': 4, 'name': 'Chicken', 'brand': "Trader Joe's", 'servingSize': '113g', 'calories': 150, 'protein': 27, 'fat': 4, 'carbohydrates': 0},
+            {'id': 5, 'name': 'Brown Rice', 'brand': 'Nishiki', 'servingSize': '210g', 'calories': 340, 'protein': 7, 'fat': 2, 'carbohydrates': 7}
+            {'id': 6, 'name': 'Big Mac', 'brand': "McDonald's", 'servingSize': '1 burger', 'calories': 580, 'protein': 25, 'fat': 34, 'carbohydrates': 45}
+        ]  
+
         return render_template("food-items.html", food_items=food_items_data)
+    
     except Exception as e:
         print("❌ Error fetching food items:", e)
         return redirect(url_for('home'))
