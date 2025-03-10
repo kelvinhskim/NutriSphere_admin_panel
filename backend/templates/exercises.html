@@ -28,15 +28,23 @@
 
     <!-- Exercises List Section -->
     <main>
-        <!-- ✅ Recommended Exercises (Editable via JS only) -->
-        <h2>🏋️ Recommended Exercises</h2>
+        <h2>Exercises</h2>
         <table border="1">
             <thead>
-                <tr><th>Name</th><th>Duration (min)</th><th>Calories Burned</th><th>Actions</th></tr>
+                <tr>
+                    <th>Exercise ID</th>
+                    <th>Name</th>
+                    <th>Duration (min)</th>
+                    <th>Calories Burned</th>
+                    <th>Actions</th>
+                </tr>
             </thead>
-            <tbody id="recommendedTable">
+            <tbody id="exerciseTable">
+
+                <!-- ✅ Hardcoded Recommended Exercises -->
                 {% for rec in recommended_exercises %}
                 <tr id="rec-{{ rec.id }}">
+                    <td>{{ rec.id }}</td>
                     <td>{{ rec.name }}</td>
                     <td>{{ rec.exerciseMinutes }}</td>
                     <td>{{ rec.caloriesBurned }}</td>
@@ -46,16 +54,8 @@
                     </td>
                 </tr>
                 {% endfor %}
-            </tbody>
-        </table>
 
-        <!-- ✅ User Exercises (DB) -->
-        <h2>💪 Your Exercises</h2>
-        <table border="1">
-            <thead>
-                <tr><th>ID</th><th>Name</th><th>Duration (min)</th><th>Calories Burned</th><th>Actions</th></tr>
-            </thead>
-            <tbody>
+                <!-- ✅ Database Exercises -->
                 {% for exercise in exercises %}
                 <tr id="exerciseRow-{{ exercise.exerciseID }}">
                     <td>{{ exercise.exerciseID }}</td>
@@ -83,7 +83,7 @@
         </form>
 
         <!-- ✅ Update DB Exercise Form -->
-        <h2>Update an Exercise (DB)</h2>
+        <h2>Update an Exercise</h2>
         <form id="updateExerciseForm" method="POST">
             <label>Name</label><input type="text" id="updateName" name="name" required>
             <label>Duration (min)</label><input type="number" id="updateDuration" name="exerciseMinutes" required>
@@ -92,7 +92,7 @@
         </form>
 
         <!-- ✅ Update Recommended Exercise Form (JS only) -->
-        <h2>Update Recommended Exercise (JS only)</h2>
+        <h2>Update Recommended Exercise</h2>
         <form id="updateRecommendedForm" onsubmit="return saveRecommended()">
             <input type="hidden" id="recID">
             <label>Name</label><input type="text" id="recName" required>
@@ -130,8 +130,7 @@
 
         function deleteRecommended(id) {
             if (confirm('Are you sure you want to delete this recommended exercise?')) {
-                const row = document.getElementById('rec-' + id);
-                row.remove();
+                document.getElementById('rec-' + id).remove();
             }
         }
 
