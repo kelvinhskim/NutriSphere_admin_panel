@@ -1,3 +1,9 @@
+<!--Citation for the following function --> 
+<!-- Date: 02/27/2025  (Update to the date you copied/used it) -->
+<!-- Copied from /OR/ Adapted from /OR/ Based on: -->
+<!-- Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app -->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,7 +132,7 @@
                 <option value="2">2: Jane</option>
                 <option value="3">3: Alex</option>
                 {% for user in users %}
-                    <option value="{{ user.userID }}">{{ user.userID }}: {{ user.username }}</option>
+                <option value="{{ user.userID }}">{{ user.userID }}: {{ user.username }}</option>
                 {% endfor %}
             </select>
     
@@ -138,12 +144,8 @@
 
     <script>
         // Define sample user data
-        let users = {
-            "1": { username: "Tyler", email: "tyler@oregonstate.edu", calorieGoal: 2400 },
-            "2": { username: "Jane", email: "jane@oregonstate.edu", calorieGoal: 2000 },
-            "3": { username: "Alex", email: "alex@oregonstate.edu", calorieGoal: 2200 }
-        };    
-    
+        let users = {};  // Initialize the users object
+        
         // Load database users from Flask (dynamic)
         {% for user in users %}
         users["{{ user.userID }}"] = {
@@ -162,31 +164,22 @@
             }
         }
 
-        /// Function to populate the update form with user data
-        
-        function populateUpdateForm(userID) {
-            if (userID && users[userID]) {
-                document.getElementById("update_user_id").value = userID;
-                document.getElementById("update_email").value = users[userID].email;
-                document.getElementById("update_calorieGoal").value = users[userID].calorieGoal;
-            }
-        }
-
+    
         // Function to populate delete form when a user is selected
         function populateDeleteForm(userID) {
-            if (userID && users[userID]) {
-                document.getElementById("delete_user_id").value = userID;
-                document.getElementById("username_delete").value = users[userID].username;
-                document.getElementById("email_delete").value = users[userID].email;
-                document.getElementById("calorieGoal_delete").value = users[userID].calorieGoal;
-            } else {
-                // Clear fields if no valid selection
-                document.getElementById("delete_user_id").value = "";
-                document.getElementById("username_delete").value = "";
-                document.getElementById("email_delete").value = "";
-                document.getElementById("calorieGoal_delete").value = "";
+            console.log(`🛠️ Populating delete form for user ID: ${userID}`);
+
+            if (!userID || !users[userID]) {
+                alert("❌ Error: User not found or invalid selection.");
+                return;
             }
-        }
+
+            // Populate the form fields
+            document.getElementById("delete_user_id").value = userID;
+            document.getElementById("delete_username").innerText = users[userID].username;
+            document.getElementById("delete_email").innerText = users[userID].email;
+            document.getElementById("delete_calorieGoal").innerText = users[userID].calorieGoal;
+        }   
         
         // Define the deleteUser function
         function deleteUser(userID, isSampleUser) {
@@ -201,24 +194,67 @@
             if (confirm(`Are you sure you want to delete user ID ${userID}?`)) {
                 fetch(`/delete_user/${userID}`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
+                    headers: { "Content-Type": "application/json" }
                 })
-                .then(response => {
-                    if (response.ok) {
-                        alert(`User ${userID} deleted successfully!`);
-                        document.getElementById(`userRow-${userID}`).remove();  // Remove row from table
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(`✅ User ${userID} deleted successfully!`);
+                
+                        // Remove row from table dynamically
+                        let userRow = document.getElementById(`userRow-${userID}`);
+                        if (userRow) {
+                            userRow.remove();
+                        } else {
+                            console.warn("User row not found in the table.");
+                        }
+
+                        // Remove from local users object
+                        delete users[userID];
+
                     } else {
-                        alert("Failed to delete user!");
+                        alert("❌ Failed to delete user!");
                     }
                 })
                 .catch(error => {
                     console.error("Error:", error);
-                    alert("An error occurred while deleting the user.");
+                    alert("❌ An error occurred while deleting the user.");
                 });
             }
         }
+        document.getElementById("addUserForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent full page reload
+
+            let formData = new FormData(this);
+
+            fetch("/add_user", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                } else {
+                    let newRow = document.createElement("tr");
+                    newRow.id = `userRow-${data.userID}`;
+                    newRow.innerHTML = `
+                        <td>${data.username}</td>
+                        <td>${data.email}</td>
+                        <td>${data.dailyCalorieGoal}</td>
+                        <td>
+                            <button onclick="populateUpdateForm(${data.userID})">Update</button>
+                            <button onclick="deleteUser(${data.userID})">Delete</button>
+                        </td>
+                    `;
+                    document.getElementById("usersTable").appendChild(newRow);
+            
+                    users[data.userID] = { username: data.username, email: data.email, calorieGoal: data.dailyCalorieGoal };
+                    alert(`✅ User ${data.username} added successfully!`);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
     </script>
     
 </body>

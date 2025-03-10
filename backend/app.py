@@ -1,4 +1,10 @@
-from flask import Flask, render_template, request, json, redirect, url_for
+# Citation for the following function:
+# Date: 02/27/2025  (Update to the date you copied/used it)
+# Copied from /OR/ Adapted from /OR/ Based on:
+# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+
+
+from flask import Flask, render_template, request, json, redirect, url_for, jsonify
 from flask_mysqldb import MySQL
 import os
 
@@ -161,19 +167,18 @@ def delete_user(user_id):
         query = "DELETE FROM Users WHERE userID = %s;"
         
         # Execute the query with the user ID to be deleted
-        cursor.execute("DELETE FROM Users WHERE userID = %s;", (user_id,))
+        cursor.execute(query, (user_id,))
         
         # Commit the transaction to the database
         mysql.connection.commit()
         cursor.close()
         
         print(f"✅ User {user_id} deleted successfully!")
-        
-        return redirect(url_for('users'))
+        return jsonify({"message": "User deleted", "user_id": user_id}), 200
     
     except Exception as e:
-        print("❌ Error deleting user:", e)
-        return redirect(url_for('users'))
+        print(f"❌ Error deleting user:", e)
+        return jsonify({"error": "Internal Server Error"}), 500
 
 
 # --------------------------------------------------
