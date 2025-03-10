@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriSphere: Daily Trackers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Link to CSS file for styling -->
+    
+    <script language="JavaScript">
+        function getSelectedUser() {
+            let selectedUser = document.getElementById("selectedUser");
+            let userID = selectedUser.value;
+            let username = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-username")
+            let calorieGoal = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-calorie-goal")
+            console.log("selectedUserID:", userID, username, calorieGoal)
+            
+            // populates default field value for Calorie Goal in Add Daily Tracker form
+            document.getElementById("calorieGoal").value = calorieGoal
+        }
+    </script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -20,14 +33,14 @@
         </nav>
     </header>
 
-    <!-- Daily Trackers List Section -->
+    <!-- Daily Trackers Table Section -->
     <main id="daily-trackers-table">
         <h2>Daily Trackers</h2>
         <table border="1">
             <thead>
                 <!-- Access queried table headers passed from daily-trackers route -->
                 <tr>
-                    {% for key in daily_trackers[0].keys() %}
+                    {% for key in dailytrackers_data[0].keys() %}
                     <th>{{ key }}</th>
                     {% endfor %}
                     <th>Actions</th>
@@ -36,7 +49,7 @@
 
             <!-- Access queried table data passed from daily-trackers route -->
             <tbody>
-                {% for tracker in daily_trackers %}
+                {% for tracker in dailytrackers_data %}
                 <tr>
                     {% for key in tracker.keys() %}
                     <td> {{tracker[key]}} </td>
@@ -48,28 +61,33 @@
                 </tr>
                 {% endfor %}
             </tbody>
-   
         </table>
     </main>
 
     <!-- Add Daily Tracker Form -->
     <section id="add-daily-tracker">
-        <form action="#">
+        <form action="/daily-trackers" method="post">
             <fieldset>
                 <h2>Add New Daily Tracker</h2>
                 <label>Select a User</label>
-                <select>
+                <select id="selectedUser" onchange="getSelectedUser()">
                     <option value="" selected disabled hidden></option>
-                    <option>Tyler</option>
-                    <option>Jane</option>
-                    <option>Alex</option>
+                    {% for user in users_data %}
+                    <option 
+                        value="{{ user.userID }}"
+                        data-username="{{ user.username }}"
+                        data-calorie-goal="{{ user.dailyCalorieGoal }}"
+                    >
+                        {{ user.username }}
+                    </option>
+                    {% endfor %}
                 </select>
 
                 <label>Date</label>
-                <input type="date" />
+                <input type="date">
 
                 <label>Calorie Goal</label>
-                <input type="number">
+                <input id="calorieGoal" type="number" value="">
 
                 <label>Exercise</label>
                 <select>
