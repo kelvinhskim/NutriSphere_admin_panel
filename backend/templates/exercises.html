@@ -84,21 +84,15 @@
         </form>
 
         <!-- ✅ Update DB Exercise Form -->
-        <h2>Update an Exercise</h2>
-        <form id="updateExerciseForm" method="POST">
+        <h2>Update Exercise</h2>
+        <form id="updateExerciseForm" method="POST" onsubmit="return handleExerciseUpdate()">
+            <input type="hidden" id="updateID">
+            <input type="hidden" id="isRecommended">
+        
             <label>Name</label><input type="text" id="updateName" name="name" required>
             <label>Duration (min)</label><input type="number" id="updateDuration" name="exerciseMinutes" required>
             <label>Calories Burned</label><input type="number" id="updateCalories" name="caloriesBurned" required>
-            <button type="submit">💾 Save</button>
-        </form>
-
-        <!-- ✅ Update Recommended Exercise Form (JS only) -->
-        <h2>Update Recommended Exercise</h2>
-        <form id="updateRecommendedForm" onsubmit="return saveRecommended()">
-            <input type="hidden" id="recID">
-            <label>Name</label><input type="text" id="recName" required>
-            <label>Duration (min)</label><input type="number" id="recDuration" required>
-            <label>Calories Burned</label><input type="number" id="recCalories" required>
+        
             <button type="submit">💾 Save</button>
         </form>
     </main>
@@ -135,11 +129,41 @@
             }
         }
 
-        function populateUpdateForm(id, name, minutes, calories) {
+        function populateUpdateForm(id, name, minutes, calories, isRecommended = false) {
+            document.getElementById('updateID').value = id;
             document.getElementById('updateName').value = name;
             document.getElementById('updateDuration').value = minutes;
             document.getElementById('updateCalories').value = calories;
-            document.getElementById('updateExerciseForm').action = `/update_exercise/${id}`;
+            document.getElementById('isRecommended').value = isRecommended ? 'true' : 'false';
+        }
+
+        function handleExerciseUpdate() {
+            const id = document.getElementById('updateID').value;
+            const name = document.getElementById('updateName').value;
+            const minutes = document.getElementById('updateDuration').value;
+            const calories = document.getElementById('updateCalories').value;
+            const isRecommended = document.getElementById('isRecommended').value === 'true';
+
+            if (isRecommended) {
+                const row = document.getElementById('rec-' + id);
+                row.children[1].innerText = name;
+                row.children[2].innerText = minutes;
+                row.children[3].innerText = calories;
+                alert('Recommended exercise updated!');
+            } else {
+           
+                document.getElementById('updateExerciseForm').action = `/update_exercise/${id}`;
+                return true; 
+            }
+
+            return false; 
+        }
+
+        function deleteRecommended(id) {
+            if (confirm('Are you sure you want to delete this recommended exercise?')) {
+                document.getElementById('rec-' + id).remove();
+                alert('Recommended exercise deleted!');
+            }
         }
     </script>
 </body>
