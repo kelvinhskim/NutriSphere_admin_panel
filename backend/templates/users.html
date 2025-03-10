@@ -120,28 +120,6 @@
         <button type="submit">Update User</button>
     </form>
 
-   <!-- Delete User Form -->
-    <section>
-        <h2>Delete a User</h2>
-        <form id="deleteUserForm" action="/delete_user" method="POST">
-            <p>Are you sure you want to delete this user?</p>
-    
-            <label>Select a User:</label>
-            <select id="deleteUserSelect" name="user_id" onchange="populateDeleteForm(this.value)">
-                <option value="1">1: Tyler</option>
-                <option value="2">2: Jane</option>
-                <option value="3">3: Alex</option>
-                {% for user in users %}
-                <option value="{{ user.userID }}">{{ user.userID }}: {{ user.username }}</option>
-                {% endfor %}
-            </select>
-    
-
-            <!-- Delete Button -->
-            <button type="submit">Delete User</button>
-            </form>
-    </section>
-
     <script>
         // Define sample user data
         let users = {};  // Initialize the users object
