@@ -22,6 +22,7 @@
     <main>
         <h2>Food Items</h2>
         <table border="1">
+        <thead>
             <tr>
                 <th>Food Item ID</th><th>Name</th><th>Brand</th><th>Serving Size</th>
                 <th>Calories</th><th>Protein</th><th>Fat</th><th>Carbohydrates</th><th>Actions</th>
@@ -30,6 +31,7 @@
         <tbody id="foodTable">
 
             <!-- Hardcoded Recommended Foods -->
+            {% set index = 1 %}
             {% for rec in recommended_foods %}
                 <tr id="rec-{{ rec.id }}">
                     <td>{{ rec.id }}</td>
@@ -45,23 +47,11 @@
                         <button onclick="deleteRecommendedFood({{ rec.id }})">❌ Delete</button>
                     </td>
                 </tr>
+                {% set index = index + 1 %}
                 {% endfor %}
-            </tbody>
-        </table>
-
-        <h2>My Food Items</h2>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>#</th><th>Name</th><th>Brand</th><th>Serving Size</th>
-                    <th>Calories</th><th>Protein</th><th>Fat</th><th>Carbohydrates</th><th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% set next_id = recommended_foods|length + 1 %}
                 {% for food in food_items %}
                 <tr id="foodRow-{{ food.foodItemID }}">
-                    <td>{{ next_id + loop.index0 }}</td>
+                    <td>{{ index }}</td>
                     <td>{{ food.name }}</td>
                     <td>{{ food.brand }}</td>
                     <td>{{ food.servingSize }}</td>
@@ -74,11 +64,11 @@
                         <button onclick="deleteFood({{ food.foodItemID }})">❌ Delete</button>
                     </td>
                 </tr>
+                {% set index = index + 1 %}
                 {% endfor %}
             </tbody>
         </table>
     </main>
-
 
     <!-- INSERT Food Item form -->
     <section>
@@ -132,6 +122,7 @@
                 document.getElementById('updateFoodForm').action = `/update_food_item/${id}`;
             }
         }
+
         function deleteFood(id) {
             if (confirm('Are you sure you want to delete this food item?')) {
                 fetch(`/delete_food_item/${id}`, { method: 'POST' })
@@ -153,17 +144,10 @@
         function populateRecommendedForm(id) {
             const item = recommendedFoods.find(e => e.id === id);
             if (item) {
-                document.getElementById('updateID').value = item.id;
-                document.getElementById('updateName').value = item.name;
-                document.getElementById('updateBrand').value = item.brand;
-                document.getElementById('updateServingSize').value = item.servingSize;
-                document.getElementById('updateCalories').value = item.calories;
-                document.getElementById('updateProtein').value = item.protein;
-                document.getElementById('updateFat').value = item.fat;
-                document.getElementById('updateCarbohydrates').value = item.carbohydrates;
-                document.getElementById('updateFoodForm').action = '';
+                alert('Recommended Food cannot be edited: ' + item.name);
             }
         }
+        
         function handleFoodUpdate() { return true; }
 
         function populateRecommendedForm(id) {
