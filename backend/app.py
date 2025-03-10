@@ -320,7 +320,17 @@ def exercises():
         query = "SELECT exerciseID, name, exerciseMinutes, caloriesBurned FROM Exercises ORDER BY name;"
         cursor.execute(query)
         exercises_data = cursor.fetchall()
-        return render_template("exercises.html", exercises=exercises_data)
+
+        # Recommended Exercises (Hardcoded)
+        recommended_exercises = [
+            {'id': -1, 'name': 'Elliptical', 'exerciseMinutes': 30, 'caloriesBurned': 250},
+            {'id': -2, 'name': 'Hiking', 'exerciseMinutes': 120, 'caloriesBurned': 600},
+            {'id': -3, 'name': 'Swimming', 'exerciseMinutes': 30, 'caloriesBurned': 300},
+            {'id': -4, 'name': 'Pickleball', 'exerciseMinutes': 60, 'caloriesBurned': 400},
+            {'id': -5, 'name': 'Weight Lifting', 'exerciseMinutes': 60, 'caloriesBurned': 150}
+        ]
+
+        return render_template("exercises.html", exercises=exercises_data, recommended_exercises=recommended_exercises)
     except Exception as e:
         print("❌ Error fetching exercises:", e)
         return redirect(url_for('home'))
@@ -352,7 +362,6 @@ def add_exercise():
 
     return redirect(url_for('exercises'))
 
-
 # --------------------------------------------------
 # UPDATE - Modify an Exercise
 @app.route('/update_exercise/<int:exercise_id>', methods=['POST'])
@@ -379,7 +388,6 @@ def update_exercise(exercise_id):
 
     return redirect(url_for('exercises'))
 
-
 # --------------------------------------------------
 # DELETE - Remove an Exercise
 @app.route('/delete_exercise/<int:exercise_id>', methods=['POST'])
@@ -397,7 +405,6 @@ def delete_exercise(exercise_id):
         print("❌ Error deleting exercise:", e)
 
     return redirect(url_for('exercises'))
-
 
 # --------------------------------------------------
 # Start Application
