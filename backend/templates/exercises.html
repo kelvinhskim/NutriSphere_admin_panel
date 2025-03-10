@@ -56,9 +56,10 @@
                 {% endfor %}
 
                 <!-- ✅ Database Exercises -->
+                {% set next_id = recommended_exercises|length + 1 %}
                 {% for exercise in exercises %}
                 <tr id="exerciseRow-{{ exercise.exerciseID }}">
-                    <td>{{ exercise.exerciseID }}</td>
+                    <td>{{ next_id + loop.index0 }}</td>
                     <td>{{ exercise.name }}</td>
                     <td>{{ exercise.exerciseMinutes }}</td>
                     <td>{{ exercise.caloriesBurned }}</td>
@@ -121,9 +122,9 @@
 
             // Update table row
             const row = document.getElementById('rec-' + id);
-            row.children[0].innerText = name;
-            row.children[1].innerText = minutes;
-            row.children[2].innerText = calories;
+            row.children[1].innerText = name;
+            row.children[2].innerText = minutes;
+            row.children[3].innerText = calories;
 
             return false; // prevent form submission
         }

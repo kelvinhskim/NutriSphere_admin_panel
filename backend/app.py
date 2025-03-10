@@ -323,11 +323,11 @@ def exercises():
 
         # Recommended Exercises (Hardcoded)
         recommended_exercises = [
-            {'id': -1, 'name': 'Elliptical', 'exerciseMinutes': 30, 'caloriesBurned': 250},
-            {'id': -2, 'name': 'Hiking', 'exerciseMinutes': 120, 'caloriesBurned': 600},
-            {'id': -3, 'name': 'Swimming', 'exerciseMinutes': 30, 'caloriesBurned': 300},
-            {'id': -4, 'name': 'Pickleball', 'exerciseMinutes': 60, 'caloriesBurned': 400},
-            {'id': -5, 'name': 'Weight Lifting', 'exerciseMinutes': 60, 'caloriesBurned': 150}
+            {'id': 1, 'name': 'Elliptical', 'exerciseMinutes': 30, 'caloriesBurned': 250},
+            {'id': 2, 'name': 'Hiking', 'exerciseMinutes': 120, 'caloriesBurned': 600},
+            {'id': 3, 'name': 'Swimming', 'exerciseMinutes': 30, 'caloriesBurned': 300},
+            {'id': 4, 'name': 'Pickleball', 'exerciseMinutes': 60, 'caloriesBurned': 400},
+            {'id': 5, 'name': 'Weight Lifting', 'exerciseMinutes': 60, 'caloriesBurned': 150}
         ]
 
         return render_template("exercises.html", exercises=exercises_data, recommended_exercises=recommended_exercises)
