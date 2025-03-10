@@ -23,155 +23,51 @@
         <h2>Food Items</h2>
         <table border="1">
             <tr>
-                <th>Food Item ID</th>
-                <th>Name</th>
-                <th>Brand</th>
-                <th>Serving Size</th>
-                <th>Calories</th>
-                <th>Protein</th>
-                <th>Fat</th>
-                <th>Carbohydrates</th>
-                <th>Actions</th>
+                <th>Food Item ID</th><th>Name</th><th>Brand</th><th>Serving Size</th>
+                <th>Calories</th><th>Protein</th><th>Fat</th><th>Carbohydrates</th><th>Actions</th>
             </tr>
-            <tr>
-                <td>1</td>
-                <td>Oatmeal</td>
-                <td>Quaker</td>
-                <td>1 cup</td>
-                <td>153</td>
-                <td>5g</td>
-                <td>3g</td>
-                <td>27g</td>
+            {% for food in food_items %}
+            <tr id="foodRow-{{ food.foodItemID }}">
+                <td>{{ food.foodItemID }}</td><td>{{ food.name }}</td><td>{{ food.brand }}</td>
+                <td>{{ food.servingSize }}</td><td>{{ food.calories }}</td><td>{{ food.protein }}</td>
+                <td>{{ food.fat }}</td><td>{{ food.carbohydrates }}</td>
                 <td>
-                    <button class="edit-btn">✏️ Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
+                    <button type="button" onclick="populateUpdateForm({{ food.foodItemID }})">✏️ Edit</button>
+                    <button type="button" onclick="deleteFood({{ food.foodItemID }})">❌ Delete</button>
                 </td>
             </tr>
-            <tr>
-                <td>2</td>
-                <td>Coffee</td>
-                <td>Starbucks</td>
-                <td>1 cup (grande)</td>
-                <td>15</td>
-                <td>1g</td>
-                <td>0g</td>
-                <td>2g</td>
-                <td>
-                    <button class="edit-btn">✏️ Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Salad</td>
-                <td>NULL</td>
-                <td>1 bowl</td>
-                <td>250</td>
-                <td>7g</td>
-                <td>10g</td>
-                <td>30g</td>
-                <td>
-                    <button class="edit-btn">✏️ Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Chicken</td>
-                <td>Trader Joe's</td>
-                <td>113g</td>
-                <td>150</td>
-                <td>27g</td>
-                <td>4g</td>
-                <td>0g</td>
-                <td>
-                    <button class="edit-btn">✏️ Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Brown Rice</td>
-                <td>Nishiki</td>
-                <td>210g</td>
-                <td>340</td>
-                <td>7g</td>
-                <td>2g</td>
-                <td>7g</td>
-                <td>
-                    <button class="edit-btn">✏️ Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>Big Mac</td>
-                <td>McDonald's</td>
-                <td>1 burger</td>
-                <td>580</td>
-                <td>25g</td>
-                <td>34g</td>
-                <td>NULL</td>
-                <td>
-                    <button class="edit-btn">✏️ Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                </td>
-            </tr>
+            {% endfor %}
         </table>
     </main>
 
     <!-- INSERT Food Item form -->
-    <section>
+    section>
         <h2>Add New Food Item</h2>
         <form action="{{ url_for('add_food_item') }}" method="POST">
-            <label for="foodName">Food Name:</label>
-            <input type="text" id="foodName" name="foodName" required>
-
-            <label>Brand</label>
-            <input type="text">
-
-            <label>Serving Size</label>
-            <input type="text">
-
-            <label for="calories">Calories:</label>
-            <input type="number" id="calories" name="calories" required>
-
-            <label>Protein (g):</label>
-            <input type="number">
-            <label>Fat (g):</label>
-            <input type="number">
-            <label>Carbohydrates (g):</label>
-            <input type="number">
-
+            <label>Food Name:</label><input type="text" name="name" required>
+            <label>Brand:</label><input type="text" name="brand">
+            <label>Serving Size:</label><input type="text" name="servingSize">
+            <label>Calories:</label><input type="number" name="calories" required>
+            <label>Protein (g):</label><input type="number" name="protein">
+            <label>Fat (g):</label><input type="number" name="fat">
+            <label>Carbohydrates (g):</label><input type="number" name="carbohydrates">
             <button type="submit">➕ Add</button>
         </form>
     </section>
 
     <!-- UPDATE Food Item form -->
-    <section>
-        <form>
-            <h2>Update a Food Item</h2>
-            <form id="updateFoodForm" action="#" method="POST">
-            <label>Food Name</label>
-            <input type="text" id="updateName" name="name" required>
-            
-            <label>Brand</label>
-            <input type="text" id="updateBrand" name="brand">
-
-            <label>Serving Size</label>
-            <input type="text" value="1 cup">
-
-            <label for="calories">Calories:</label>
-            <input type="number" id="calories" name="calories" value="153" required>
-
-            <label>Protein (g):</label>
-            <input type="number" value="5">
-            <label>Fat (g):</label>
-            <input type="number" value="3">
-            <label>Carbohydrates (g):</label>
-            <input type="number" value="27">
-
-            <button type="submit">Save</button>
+    section>
+        <h2>Update Food Item</h2>
+        <form id="updateFoodForm" method="POST" onsubmit="return handleFoodUpdate()">
+            <input type="hidden" id="updateID" name="foodItemID">
+            <label>Food Name:</label><input type="text" id="updateName" name="name" required>
+            <label>Brand:</label><input type="text" id="updateBrand" name="brand">
+            <label>Serving Size:</label><input type="text" id="updateServingSize" name="servingSize">
+            <label>Calories:</label><input type="number" id="updateCalories" name="calories" required>
+            <label>Protein (g):</label><input type="number" id="updateProtein" name="protein">
+            <label>Fat (g):</label><input type="number" id="updateFat" name="fat">
+            <label>Carbohydrates (g):</label><input type="number" id="updateCarbohydrates" name="carbohydrates">
+            <button type="submit">💾 Save</button>
         </form>
     </section>
 
@@ -184,6 +80,7 @@
             const item = foodItems.find(e => e.foodItemID === id);
             if (item) {
                 // Populate form fields
+                document.getElementById('updateID').value = item.foodItemID;
                 document.getElementById('updateName').value = item.name;
                 document.getElementById('updateBrand').value = item.brand;
                 document.getElementById('updateServingSize').value = item.servingSize;
@@ -192,12 +89,10 @@
                 document.getElementById('updateFat').value = item.fat;
                 document.getElementById('updateCarbohydrates').value = item.carbohydrates;
                 document.getElementById('updateFoodForm').action = `/update_food_item/${id}`;
-            
-                // Set form action dynamically to update the correct item
-                document.getElementById('updateFoodItemForm').action = `/update_food_item/${id}`;
             }
         }
-        
+        function handleFoodUpdate() { return true; }
+
         // function to delete a food item (on Delete button click)
         function deleteFood(id) {
             if (confirm('Are you sure you want to delete this food item?')) {
