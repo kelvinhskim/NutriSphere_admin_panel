@@ -66,7 +66,6 @@ CREATE OR REPLACE TABLE `DailyTrackers` (
     FOREIGN KEY (`exerciseID`)
     REFERENCES `Exercises` (`exerciseID`)
     ON DELETE SET NULL    -- If an exercise is deleted, dissociate it from the tracker
-    ON UPDATE CASCADE     -- If an exercise's ID is updated, update the tracker's exercise ID
 );
 
 -- -----------------------------------------------------
@@ -168,9 +167,9 @@ DELIMITER ;
 -- -----------------------------------------------------
 INSERT INTO `Users` (`username`, `email`, `dailyCalorieGoal`)
 VALUES
-('Tyler', 'tyler@gmail.com', 2400),
-('Jane', 'jane@yahoo.com', 2000),
-('Alex', 'alex@hotmail.com', 2200);
+('tyler', 'tyler@gmail.com', 2400),
+('jane', 'jane@yahoo.com', 2000),
+('alex', 'alex@hotmail.com', 2200);
 
 -- -----------------------------------------------------
 -- Insert sample data for FoodItems
