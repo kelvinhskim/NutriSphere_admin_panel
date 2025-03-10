@@ -17,7 +17,7 @@ SET AUTOCOMMIT = 0;
 -- Stores user information including username, email, and daily calorie goal.
 -- Each user can log food entries and exercises daily.
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Users` (
+CREATE OR REPLACE TABLE `Users` (
   `userID` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(50) NOT NULL,
   `email` VARCHAR(50) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `Users` (
 -- Table `Exercises`
 -- Stores exercise information including name, duration, and calories burned.
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Exercises` (
+CREATE OR REPLACE TABLE `Exercises` (
   `exerciseID` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
   `exerciseMinutes` INT NOT NULL CHECK (exerciseMinutes >= 0),
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `Exercises` (
 -- If a user is deleted, their records in `DailyTrackers` will be removed (ON DELETE CASCADE).
 -- If an exercise is deleted, the reference in `DailyTrackers` is set to NULL (ON DELETE SET NULL).
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `DailyTrackers` (
+CREATE OR REPLACE TABLE `DailyTrackers` (
   `dailyTrackerID` INT NOT NULL AUTO_INCREMENT,
   `date` DATE NOT NULL,
   `caloriesConsumed` INT NOT NULL DEFAULT 0 CHECK (caloriesConsumed >= 0),
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `DailyTrackers` (
 -- Stores food items with nutriiton information.
 -- Includes calories, protein, fat, carbohydrates, and serving sizes.
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `FoodItems` (
+CREATE OR REPLACE TABLE `FoodItems` (
   `foodItemID` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `brand` VARCHAR(100) NULL,
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `FoodItems` (
 -- If a food item is deleted, remove all associated entries (ON DELETE CASCADE).
 -- If a daily tracker is deleted, dissociate its entries (ON DELETE SET NULL).
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `FoodEntries` (
+CREATE OR REPLACE TABLE `FoodEntries` (
   `foodEntryID` INT NOT NULL AUTO_INCREMENT,
   `mealCategory` ENUM('Breakfast', 'Lunch', 'Dinner', 'Snacks') NOT NULL,
   `foodItemID` INT,
