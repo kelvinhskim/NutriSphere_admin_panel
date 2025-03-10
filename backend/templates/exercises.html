@@ -49,7 +49,7 @@
                     <td>{{ rec.exerciseMinutes }}</td>
                     <td>{{ rec.caloriesBurned }}</td>
                     <td>
-                        <button onclick="editRecommended({{ rec.id }}, '{{ rec.name }}', {{ rec.exerciseMinutes }}, {{ rec.caloriesBurned }})">✏️ Edit</button>
+                        <button type="button" onclick="populateUpdateForm({{ rec.id }}, '{{ rec.name }}', {{ rec.exerciseMinutes }}, {{ rec.caloriesBurned }}, true)">✏️ Edit</button>
                         <button onclick="deleteRecommended({{ rec.id }})">❌ Delete</button>
                     </td>
                 </tr>
