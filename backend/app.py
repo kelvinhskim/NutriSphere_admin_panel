@@ -215,13 +215,13 @@ def food_items():
             {'id': 1, 'name': 'Oatmeal', 'brand': 'Quaker', 'servingSize': '1 cup', 'calories': 153, 'protein': 5, 'fat': 3, 'carbohydrates': 27},
             {'id': 2, 'name': 'Coffee', 'brand': 'Starbucks', 'servingSize': '1 cup (grande)', 'calories': 15, 'protein': 1, 'fat': 0, 'carbohydrates': 2},
             {'id': 3, 'name': 'Salad', 'brand': 'NULL', 'servingSize': '1 bowl', 'calories': 250, 'protein': 7, 'fat': 10, 'carbohydrates': 30},
-            {'id': 4, 'name': 'Chicken', 'brand': "Trader Joe's", 'servingSize': '113g', 'calories': 150, 'protein': 27, 'fat': 4, 'carbohydrates': 0},
+            {'id': 4, 'name': 'Chicken', 'brand': "Trader Joe\'s", 'servingSize': '113g', 'calories': 150, 'protein': 27, 'fat': 4, 'carbohydrates': 0},
             {'id': 5, 'name': 'Brown Rice', 'brand': 'Nishiki', 'servingSize': '210g', 'calories': 340, 'protein': 7, 'fat': 2, 'carbohydrates': 7},
-            {'id': 6, 'name': 'Big Mac', 'brand': "McDonald's", 'servingSize': '1 burger', 'calories': 580, 'protein': 25, 'fat': 34, 'carbohydrates': 45},
+            {'id': 6, 'name': 'Big Mac', 'brand': "McDonald\'s", 'servingSize': '1 burger', 'calories': 580, 'protein': 25, 'fat': 34, 'carbohydrates': 45},
         ]  
 
-        return render_template("food-items.html", food_items=food_items_data)
-    
+        return render_template("food-items.html", food_items=food_items_data, recommended_foods=recommended_foods)
+
     except Exception as e:
         print("❌ Error fetching food items:", e)
         return redirect(url_for('home'))
@@ -243,9 +243,13 @@ def add_food_item():
     carbohydrates = request.form.get('carbohydrates', '')
 
     # Validate numeric inputs
-    numeric_fields = [calories, protein, fat, carbohydrates]
-    if not name or not all(field.isdigit() for field in numeric_fields):
-        print("❌ Invalid input for adding food item.")
+    try:
+        calories = int(calories)
+        protein = int(protein)
+        fat = int(fat)
+        carbohydrates = int(carbohydrates)
+    except ValueError:
+        print("❌ Invalid input: Non-numeric value in numeric fields.")
         return redirect(url_for('food_items'))
 
     try:
@@ -254,7 +258,7 @@ def add_food_item():
             INSERT INTO FoodItems (name, brand, servingSize, calories, protein, fat, carbohydrates)
             VALUES (%s, %s, %s, %s, %s, %s, %s);
         """
-        cursor.execute(query, (name, brand, serving_size, int(calories), int(protein), int(fat), int(carbohydrates)))
+        cursor.execute(query, (name, brand, serving_size, calories, protein, fat, carbohydrates))
         mysql.connection.commit()
         print(f"✅ Food item '{name}' added successfully!")
     except Exception as e:
@@ -278,10 +282,14 @@ def update_food_item(food_item_id):
     fat = request.form.get('fat', '')
     carbohydrates = request.form.get('carbohydrates', '')
 
-    # Validate numeric inputs
-    numeric_fields = [calories, protein, fat, carbohydrates]
-    if not name or not all(field.isdigit() for field in numeric_fields):
-        print("❌ Invalid input for updating food item.")
+    # Validate numeric inputs using try-except
+    try:
+        calories = int(calories)
+        protein = int(protein)
+        fat = int(fat)
+        carbohydrates = int(carbohydrates)
+    except ValueError:
+        print("❌ Invalid input: Non-numeric value in numeric fields.")
         return redirect(url_for('food_items'))
 
     try:
@@ -291,16 +299,16 @@ def update_food_item(food_item_id):
             SET name = %s, brand = %s, servingSize = %s, calories = %s, protein = %s, fat = %s, carbohydrates = %s
             WHERE foodItemID = %s;
         """
-        cursor.execute(query, (name, brand, serving_size, int(calories), int(protein), int(fat), int(carbohydrates), food_item_id))
+        cursor.execute(query, (name, brand, serving_size, calories, protein, fat, carbohydrates, food_item_id))
         mysql.connection.commit()
-        print(f"✅ Food item '{name}' updated successfully!")
+        print(f"✅ Food item '{name}' (ID: {food_item_id}) updated successfully!")
     except Exception as e:
-        print("❌ Error updating food item:", e)
+        print(f"❌ Error updating food item (ID: {food_item_id}):", e)
 
     return redirect(url_for('food_items'))
 
 
-# --------------------------------------------------
+ --------------------------------------------------
 # DELETE - Remove a Food Item
 @app.route('/delete_food_item/<int:food_item_id>', methods=['POST'])
 def delete_food_item(food_item_id):
@@ -314,7 +322,7 @@ def delete_food_item(food_item_id):
         mysql.connection.commit()
         print(f"✅ Food item ID {food_item_id} deleted successfully!")
     except Exception as e:
-        print("❌ Error deleting food item:", e)
+        print(f"❌ Error deleting food item (ID: {food_item_id}):", e)
 
     return redirect(url_for('food_items'))
 
