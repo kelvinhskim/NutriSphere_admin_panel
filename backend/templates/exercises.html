@@ -1,16 +1,18 @@
-# Citation for the following function:
-# Date: 02/27/2025  (Update to the date you copied/used it)
-# Copied from /OR/ Adapted from /OR/ Based on:
-# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+<!-- Citation for the following function: -->
+<!-- Date: 03/07/2025  (Update to the date you copied/used it) -->
+<!-- Copied from /OR/ Adapted from /OR/ Based on: -->
+<!-- Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app -->
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriSphere: Exercises</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
+
 <body>
     <header>
         <h1>NutriSphere: Exercises</h1>
@@ -116,7 +118,6 @@
             <input type="number" name="exerciseMinutes" required>
             <label>Calories Burned</label>
             <input type="number" name="caloriesBurned" required>
-
             <button type="submit">➕ Add Exercise</button>
         </form>
     </section>
@@ -125,14 +126,12 @@
     <section>
         <h2>Update an Exercise</h2>
         <form action="{{ url_for('update_exercise', exercise_id=exercises[0].exerciseID if exercises else 0) }}" method="POST">
-
             <label>Name</label>
             <input type="text" id="updateName" name="name" required>
             <label>Duration (min)</label>
             <input type="number" id="updateDuration" name="exerciseMinutes" required>
             <label>Calories Burned</label>
             <input type="number" id="updateCalories" name="caloriesBurned" required>
-
             <button type="submit">Save</button>
         </form>
     </section>
@@ -142,33 +141,31 @@
         <h2>Delete an Exercise</h2>
         <form id="deleteExerciseForm" action="#" method="POST">
             <p>Are you sure you want to delete this?</p>
-
             <label>Select an Exercise:</label>
             <select id="deleteExerciseSelect" name="exercise_id" onchange="populateDeleteForm(this.value)">
                 {% for exercise in exercises %}
-                    <option value="{{ exercise.exerciseID }}">{{ exercise.exerciseID }}: {{ exercise.name }}</option>
+                <option value="{{ exercise.exerciseID }}">{{ exercise.exerciseID }}: {{ exercise.name }}</option>
                 {% endfor %}
             </select>
-
             <label>Exercise ID:</label>
             <input type="number" id="deleteExerciseID" disabled>
-
             <label>Name:</label>
             <input type="text" id="deleteExerciseName" disabled>
-
             <label>Duration (min):</label>
             <input type="number" id="deleteExerciseDuration" disabled>
-
             <label>Calories Burned:</label>
             <input type="number" id="deleteExerciseCalories" disabled>
-
             <button type="submit" onclick="return confirm('Are you sure you want to delete this exercise?')">Delete</button>
         </form>
     </section>
 
     <script>
-        // Ensure all exercises are loaded properly
-        let exercises = {
+        // Load database exercises properly using Flask's tojson filter
+        const dbExercises = {{ exercises | tojson }};
+        console.log(dbExercises);  // See if it renders as an array of objects
+        
+        // Hardcoded recommended exercises
+        const hardcodedExercises = {
             "1": { name: "Elliptical", duration: 30, calories: 250 },
             "2": { name: "Hiking", duration: 120, calories: 600 },
             "3": { name: "Swimming", duration: 30, calories: 300 },
@@ -176,48 +173,83 @@
             "5": { name: "Weight Lifting", duration: 60, calories: 150 }
         };
     
-        // Add database exercises from Flask
-        {% for exercise in exercises %}
-            exercises["{{ exercise.exerciseID }}"] = {
-                name: "{{ exercise.name }}",
-                duration: {{ exercise.exerciseMinutes }},
-                calories: {{ exercise.caloriesBurned }}
-            };
-        {% endfor %}
-    
-        function populateUpdateForm(exerciseID) {
-            console.log("Populating form for:", exerciseID);
-    
-            let selectedExercise = exercises[exerciseID];
-    
-            if (selectedExercise) {
-                document.getElementById("updateName").value = selectedExercise.name;
-                document.getElementById("updateDuration").value = selectedExercise.duration;
-                document.getElementById("updateCalories").value = selectedExercise.calories;
-    
-                // Update the form action for correct exercise update
-                document.getElementById("updateExerciseForm").action = `/update_exercise/${exerciseID}`;
-            }
-        }
-    
-        // Ensure dropdown updates properly on page load
-        function populateDropdown() {
-            let dropdown = document.getElementById("updateExerciseSelect");
-            dropdown.innerHTML = "";
-    
-            for (let id in exercises) {
-                let option = document.createElement("option");
-                option.value = id;
-                option.textContent = `${id}: ${exercises[id].name}`;
-                dropdown.appendChild(option);
-            }
-        }
-    
-        document.addEventListener("DOMContentLoaded", function () {
-            populateDropdown();
+        // Combine hardcoded and database exercises into one object (optional)
+        const allExercises = { ...hardcodedExercises };
+        dbExercises.forEach(ex => {
+            allExercises[ex.exerciseID] = ex;
         });
-    </script>
-    
 
+        // Populate Update Form
+        function populateUpdateForm(exerciseID) {
+            const exercise = allExercises[exerciseID];
+            if (exercise) {
+                document.getElementById('updateName').value = exercise.name;
+                document.getElementById('updateDuration').value = exercise.exerciseMinutes;
+                document.getElementById('updateCalories').value = exercise.caloriesBurned;
+                document.getElementById('updateExerciseForm').action = `/update_exercise/${exerciseID}`;
+            }
+        }
+
+        // Populate Delete Form when selected from dropdown
+        function populateDeleteForm(exerciseID) {
+            const exercise = exercises[exerciseID];
+            if (exercise) {
+                document.getElementById('deleteExerciseID').value = exerciseID;
+                document.getElementById('deleteExerciseName').value = exercise.name;
+                document.getElementById('deleteExerciseDuration').value = exercise.exerciseMinutes;
+                document.getElementById('deleteExerciseCalories').value = exercise.caloriesBurned;
+            } else {
+                // Clear if invalid selection
+                document.getElementById('deleteExerciseID').value = '';
+                document.getElementById('deleteExerciseName').value = '';
+                document.getElementById('deleteExerciseDuration').value = '';
+                document.getElementById('deleteExerciseCalories').value = '';
+            }
+        }
+
+        // Confirm Delete (Dropdown Form)
+        function confirmDelete() {
+            const selectedID = document.getElementById('deleteExerciseID').value;
+            if (!selectedID || selectedID < 0) {  // Prevent deleting hardcoded (negative ID) exercises
+                alert('Please select a valid user exercise to delete.');
+                return false;
+            }
+
+            if (confirm('Are you sure you want to delete this exercise?')) {
+                fetch(`/delete_exercise/${selectedID}`, { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById(`exerciseRow-${selectedID}`).remove();
+                            alert('Exercise deleted!');
+                            document.getElementById('deleteExerciseForm').reset();
+                        } else {
+                            alert('Failed to delete exercise.');
+                        }
+                    });
+            }
+            return false;  // Prevent default form submit
+        }
+
+        // Inline Delete (Button-based)
+        function deleteExercise(exerciseID) {
+            if (exerciseID < 0) {  // Prevent deleting hardcoded recommended exercises
+                alert('Cannot delete recommended exercises.');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete this exercise?')) {
+                fetch(`/delete_exercise/${exerciseID}`, { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById(`exerciseRow-${exerciseID}`).remove();
+                            alert('Exercise deleted!');
+                        } else {
+                            alert('Failed to delete exercise.');
+                        }
+                    });
+            }
+        }
+    </script>
 </body>
+
 </html>
