@@ -1,4 +1,10 @@
-from flask import Flask, render_template, request, json, redirect, url_for
+# Citation for the following function:
+# Date: 02/27/2025  (Update to the date you copied/used it)
+# Copied from /OR/ Adapted from /OR/ Based on:
+# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+
+
+from flask import Flask, render_template, request, json, redirect, url_for, jsonify
 from flask_mysqldb import MySQL
 import os
 
@@ -48,8 +54,15 @@ def users():
         # Fetch all results from the query
         users_data = cursor.fetchall()
         
+        recommended_users = [
+            {'id': 1, 'username': 'Tyler', 'email': 'tyler@oregonstate.edu', 'dailyCalorieGoal': 2400},
+            {'id': 2, 'username': 'Jane', 'email': 'jane@oregonstate.edu', 'dailyCalorieGoal': 2000},
+            {'id': 3, 'username': 'Alex', 'email': 'alex@oregonstate.edu', 'dailyCalorieGoal': 2200}
+        ]
+
         # Return the users data to the 'users.html' template
-        return render_template("users.html", users=users_data)
+        return render_template("users.html", users=users_data, recommended_users=recommended_users)
+    
     except Exception as e:
         print("❌ Error fetching users:", e)
         return redirect(url_for('home'))  # Redirect to home in case of error
@@ -99,52 +112,23 @@ def add_user():
 
 # --------------------------------------------------
 # Update - Modify a User (POST Request)
-@app.route("/update_user", methods=["POST"])
-def update_user():
-    """
-    Updates a user's email or calorie goal in the database.
-    """
-
-    # Get data from the form (use .get() to avoid KeyError)
-    user_id = request.form.get("user_id")
+@app.route("/update_user/<int:user_id>", methods=["POST"])
+def update_user(user_id):
     email = request.form.get("email", "").strip()
     dailyCalorieGoal = request.form.get("dailyCalorieGoal", "").strip()
 
-    print(f"Received Data -> user_id: {user_id}, email: {email}, dailyCalorieGoal: {dailyCalorieGoal}")
-    # Check if required fields are missing
-    if not user_id or not email or not dailyCalorieGoal:
-        return "Error: All fields are required", 400
+    if not email or not dailyCalorieGoal.isdigit():
+        return "Error: Invalid input", 400
 
-    # Check if dailyCalorieGoal is a valid number (if it's not None or empty)
-    if dailyCalorieGoal is None or not dailyCalorieGoal.isdigit():
-        return "Error: Daily Calorie Goal must be a number", 400
-
-    # Convert dailyCalorieGoal to an integer
     dailyCalorieGoal = int(dailyCalorieGoal)
 
-    try:
-        # Assuming you have a database cursor set up already
-        cursor = mysql.connection.cursor()
+    cursor = mysql.connection.cursor()
+    query = "UPDATE Users SET email=%s, dailyCalorieGoal=%s WHERE userID=%s"
+    cursor.execute(query, (email, dailyCalorieGoal, user_id))
+    mysql.connection.commit()
+    cursor.close()
 
-        # Execute the update query
-        query = """
-        UPDATE Users
-        SET email = %s, dailyCalorieGoal = %s
-        WHERE userID = %s
-        """
-        cursor.execute(query, (email, dailyCalorieGoal, user_id))
-
-        # Commit the transaction
-        mysql.connection.commit()
-
-        # Close the cursor
-        cursor.close()
-        print(f"✅ User {user_id} updated successfully!")
-        return redirect(url_for('users'))
-
-    except Exception as e:
-        print(f"❌ Error updating user: {e}")
-        return "Error updating user", 500
+    return redirect(url_for('users'))
 
     
 # --------------------------------------------------
@@ -161,22 +145,24 @@ def delete_user(user_id):
         query = "DELETE FROM Users WHERE userID = %s;"
         
         # Execute the query with the user ID to be deleted
-        cursor.execute("DELETE FROM Users WHERE userID = %s;", (user_id,))
+        cursor.execute(query, (user_id,))
         
         # Commit the transaction to the database
         mysql.connection.commit()
         cursor.close()
         
         print(f"✅ User {user_id} deleted successfully!")
-        
-        return redirect(url_for('users'))
+        return jsonify({"message": "User deleted", "user_id": user_id}), 200
     
     except Exception as e:
-        print("❌ Error deleting user:", e)
-        return redirect(url_for('users'))
+        print(f"❌ Error deleting user:", e)
+        return jsonify({"error": "Internal Server Error"}), 500
+
 
 
 # --------------------------------------------------
+# Read - Retrieves DailyTrackers data (GET Request)
+@app.route('/daily-trackers', methods=["GET"])
 # Read - Retrieves DailyTrackers data (GET Request)
 @app.route('/daily-trackers', methods=["GET"])
 def daily_trackers():
@@ -300,9 +286,136 @@ def food_entries():
 
 
 # --------------------------------------------------
-@app.route('/food-items')
+# READ - Display Food Items
+@app.route('/food-items', methods=['GET'])
 def food_items():
-    return render_template("food-items.html")
+    """
+    Fetches all food items from the database and displays them.
+    """
+    try:
+        cursor = mysql.connection.cursor()
+        query = """
+            SELECT foodItemID, name, brand, servingSize, calories, protein, fat, carbohydrates
+            FROM FoodItems
+            ORDER BY name;
+        """
+        cursor.execute(query)
+        food_items_data = cursor.fetchall()
+
+        recommended_foods = [
+            {'id': 1, 'name': 'Oatmeal', 'brand': 'Quaker', 'servingSize': '1 cup', 'calories': 153, 'protein': 5, 'fat': 3, 'carbohydrates': 27},
+            {'id': 2, 'name': 'Coffee', 'brand': 'Starbucks', 'servingSize': '1 cup (grande)', 'calories': 15, 'protein': 1, 'fat': 0, 'carbohydrates': 2},
+            {'id': 3, 'name': 'Salad', 'brand': 'NULL', 'servingSize': '1 bowl', 'calories': 250, 'protein': 7, 'fat': 10, 'carbohydrates': 30},
+            {'id': 4, 'name': 'Chicken', 'brand': "Trader Joe\'s", 'servingSize': '113g', 'calories': 150, 'protein': 27, 'fat': 4, 'carbohydrates': 0},
+            {'id': 5, 'name': 'Brown Rice', 'brand': 'Nishiki', 'servingSize': '210g', 'calories': 340, 'protein': 7, 'fat': 2, 'carbohydrates': 7},
+            {'id': 6, 'name': 'Big Mac', 'brand': "McDonald\'s", 'servingSize': '1 burger', 'calories': 580, 'protein': 25, 'fat': 34, 'carbohydrates': 45},
+        ]  
+
+        return render_template("food-items.html", food_items=food_items_data, recommended_foods=recommended_foods)
+
+    except Exception as e:
+        print("❌ Error fetching food items:", e)
+        return redirect(url_for('home'))
+
+
+# --------------------------------------------------
+# CREATE - Add a Food Item
+@app.route('/add_food_item', methods=['POST'])
+def add_food_item():
+    """
+    Adds a new food item to the database.
+    """
+    name = request.form.get('name', '').strip()
+    brand = request.form.get('brand', '').strip()
+    serving_size = request.form.get('servingSize', '').strip()
+    calories = request.form.get('calories', '')
+    protein = request.form.get('protein', '')
+    fat = request.form.get('fat', '')
+    carbohydrates = request.form.get('carbohydrates', '')
+
+    # Validate numeric inputs
+    try:
+        calories = int(calories)
+        protein = int(protein)
+        fat = int(fat)
+        carbohydrates = int(carbohydrates)
+    except ValueError:
+        print("❌ Invalid input: Non-numeric value in numeric fields.")
+        return redirect(url_for('food_items'))
+
+    try:
+        cursor = mysql.connection.cursor()
+        query = """
+            INSERT INTO FoodItems (name, brand, servingSize, calories, protein, fat, carbohydrates)
+            VALUES (%s, %s, %s, %s, %s, %s, %s);
+        """
+        cursor.execute(query, (name, brand, serving_size, calories, protein, fat, carbohydrates))
+        mysql.connection.commit()
+        print(f"✅ Food item '{name}' added successfully!")
+    except Exception as e:
+        print("❌ Error adding food item:", e)
+
+    return redirect(url_for('food_items'))
+
+
+# --------------------------------------------------
+# UPDATE - Modify a Food Item
+@app.route('/update_food_item/<int:food_item_id>', methods=['POST'])
+def update_food_item(food_item_id):
+    """
+    Updates an existing food item in the database.
+    """
+    name = request.form.get('name', '').strip()
+    brand = request.form.get('brand', '').strip()
+    serving_size = request.form.get('servingSize', '').strip()
+    calories = request.form.get('calories', '')
+    protein = request.form.get('protein', '')
+    fat = request.form.get('fat', '')
+    carbohydrates = request.form.get('carbohydrates', '')
+
+    # Validate numeric inputs using try-except
+    try:
+        calories = int(calories)
+        protein = int(protein)
+        fat = int(fat)
+        carbohydrates = int(carbohydrates)
+    except ValueError:
+        print("❌ Invalid input: Non-numeric value in numeric fields.")
+        return redirect(url_for('food_items'))
+
+    try:
+        cursor = mysql.connection.cursor()
+        query = """
+            UPDATE FoodItems
+            SET name = %s, brand = %s, servingSize = %s, calories = %s, protein = %s, fat = %s, carbohydrates = %s
+            WHERE foodItemID = %s;
+        """
+        cursor.execute(query, (name, brand, serving_size, calories, protein, fat, carbohydrates, food_item_id))
+        mysql.connection.commit()
+        print(f"✅ Food item '{name}' (ID: {food_item_id}) updated successfully!")
+    except Exception as e:
+        print(f"❌ Error updating food item (ID: {food_item_id}):", e)
+
+    return redirect(url_for('food_items'))
+
+
+#--------------------------------------------------
+# DELETE - Remove a Food Item
+@app.route('/delete_food_item/<int:food_item_id>', methods=['POST'])
+def delete_food_item(food_item_id):
+    """
+    Deletes a food item from the database.
+    """
+    try:
+        cursor = mysql.connection.cursor()
+        query = "DELETE FROM FoodItems WHERE foodItemID = %s;"
+        cursor.execute(query, (food_item_id,))
+        mysql.connection.commit()
+        print(f"✅ Food item ID {food_item_id} deleted successfully!")
+    except Exception as e:
+        print(f"❌ Error deleting food item (ID: {food_item_id}):", e)
+
+    return redirect(url_for('food_items'))
 
 
 # --------------------------------------------------
@@ -317,7 +430,17 @@ def exercises():
         query = "SELECT exerciseID, name, exerciseMinutes, caloriesBurned FROM Exercises ORDER BY name;"
         cursor.execute(query)
         exercises_data = cursor.fetchall()
-        return render_template("exercises.html", exercises=exercises_data)
+
+        # Recommended Exercises (Hardcoded)
+        recommended_exercises = [
+            {'id': 1, 'name': 'Elliptical', 'exerciseMinutes': 30, 'caloriesBurned': 250},
+            {'id': 2, 'name': 'Hiking', 'exerciseMinutes': 120, 'caloriesBurned': 600},
+            {'id': 3, 'name': 'Swimming', 'exerciseMinutes': 30, 'caloriesBurned': 300},
+            {'id': 4, 'name': 'Pickleball', 'exerciseMinutes': 60, 'caloriesBurned': 400},
+            {'id': 5, 'name': 'Weight Lifting', 'exerciseMinutes': 60, 'caloriesBurned': 150}
+        ]
+
+        return render_template("exercises.html", exercises=exercises_data, recommended_exercises=recommended_exercises)
     except Exception as e:
         print("❌ Error fetching exercises:", e)
         return redirect(url_for('home'))
@@ -349,7 +472,6 @@ def add_exercise():
 
     return redirect(url_for('exercises'))
 
-
 # --------------------------------------------------
 # UPDATE - Modify an Exercise
 @app.route('/update_exercise/<int:exercise_id>', methods=['POST'])
@@ -376,7 +498,6 @@ def update_exercise(exercise_id):
 
     return redirect(url_for('exercises'))
 
-
 # --------------------------------------------------
 # DELETE - Remove an Exercise
 @app.route('/delete_exercise/<int:exercise_id>', methods=['POST'])
@@ -394,7 +515,6 @@ def delete_exercise(exercise_id):
         print("❌ Error deleting exercise:", e)
 
     return redirect(url_for('exercises'))
-
 
 # --------------------------------------------------
 # Start Application

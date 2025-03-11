@@ -89,9 +89,34 @@
     </header>
 
     <!-- Daily Trackers Table Section -->
+    <!-- Daily Trackers Table Section -->
     <main id="daily-trackers-table">
         <h2>Daily Trackers</h2>
         <table border="1">
+            <thead>
+                <!-- Access queried table headers passed from daily-trackers route -->
+                <tr>
+                    {% for key in daily_trackers[0].keys() %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <!-- Access queried table data passed from daily-trackers route -->
+            <tbody>
+                {% for tracker in daily_trackers %}
+                <tr>
+                    {% for key in tracker.keys() %}
+                    <td> {{tracker[key]}} </td>
+                    {% endfor %} 
+                    <td>
+                        <button class="edit-btn" onclick="populateUpdateTracker({{ tracker["Daily Tracker ID"] }})">✏️ Edit</button>
+                        <button class="delete-btn" onclick=populateDeleteTracker({{ tracker["Daily Tracker ID"] }})>❌ Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
             <thead>
                 <!-- Access queried table headers passed from daily-trackers route -->
                 <tr>
@@ -122,11 +147,23 @@
     <!-- Add Daily Tracker Form -->
     <section id="add-tracker">
         <form action="{{ url_for("add_tracker") }}" method="post">
+    <section id="add-tracker">
+        <form action="{{ url_for("add_tracker") }}" method="post">
             <fieldset>
                 <h2>Add New Daily Tracker</h2>
                 <label>Select a User</label>
                 <select id="selectedUser" name="userID" onchange=getSelectedUser() required>
+                <select id="selectedUser" name="userID" onchange=getSelectedUser() required>
                     <option value="" selected disabled hidden></option>
+                    {% for user in users %}
+                    <option 
+                        value="{{ user.userID }}"
+                        data-username="{{ user.username }}"
+                        data-calorie-goal="{{ user.dailyCalorieGoal }}"
+                    >
+                        {{ user.username }}
+                    </option>
+                    {% endfor %}
                     {% for user in users %}
                     <option 
                         value="{{ user.userID }}"
@@ -140,8 +177,10 @@
 
                 <label>Date</label>
                 <input type="date" id="date" name="date" value="">
+                <input type="date" id="date" name="date" value="">
 
                 <label>Calorie Goal</label>
+                <input type="number" id="calorieGoal" name="calorieGoal" value="" required>
                 <input type="number" id="calorieGoal" name="calorieGoal" value="" required>
 
                 <label>Exercise</label>
@@ -150,8 +189,14 @@
                     {% for exercise in exercises %}
                     <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
                     {% endfor %}
+                <select id="exercise" name="exerciseID">
+                    <option value="NULL" selected></option>
+                    {% for exercise in exercises %}
+                    <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
+                    {% endfor %}
                 </select>
 
+                <button type="submit" name="Add_Daily_Tracker" value="submit">Add</button>
                 <button type="submit" name="Add_Daily_Tracker" value="submit">Add</button>
 
                 <p>Note: Calories consumed, calories burned, and calories remaining would be calculated and populated
@@ -163,9 +208,20 @@
     <!-- Update Daily Tracker Form -->
     <section id="update-tracker">
         <form action="/update-tracker", method="post">
+    <section id="update-tracker">
+        <form action="/update-tracker", method="post">
             <fieldset>
                 <h2>Update Daily Tracker</h2>
                 <label>Select a Daily Tracker:</label>
+                <select id="selectedTracker" name="trackerID" onchange=getSelectedTracker()>
+                    <option value="" selected disabled hidden></option>
+                    {% for tracker in daily_trackers_dropdown %}
+                    <option
+                        value="{{ tracker.dailyTrackerID }}"
+                    >
+                        {{ tracker.dailyTrackerID }}: {{ tracker.username }}, {{ tracker.date }}
+                    </option>
+                    {% endfor %}
                 <select id="selectedTracker" name="trackerID" onchange=getSelectedTracker()>
                     <option value="" selected disabled hidden></option>
                     {% for tracker in daily_trackers_dropdown %}
@@ -187,10 +243,22 @@
                         {{ user.username }}
                     </option>
                     {% endfor %}
+                <select id="update-user-id" name="userID">
+                    <option value="" selected disabled hidden></option>
+                    {% for user in users %}
+                    <option 
+                        value="{{ user.userID }}"
+                        data-username="{{ user.username }}"
+                    >
+                        {{ user.username }}
+                    </option>
+                    {% endfor %}
                 </select>
                 <label>Date:</label>
                 <input type="date" id="update-date" name="date" value="">
+                <input type="date" id="update-date" name="date" value="">
                 <label>Calorie Goal</label>
+                <input type="number" id="update-calorie-goal" name="calorie-goal" value="">
                 <input type="number" id="update-calorie-goal" name="calorie-goal" value="">
                 <label>Exercise</label>
                 <select id="update-exercise" name="exerciseID">
@@ -198,8 +266,14 @@
                     {% for exercise in exercises %}
                     <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
                     {% endfor %}
+                <select id="update-exercise" name="exerciseID">
+                    <option value="NULL" selected></option>
+                    {% for exercise in exercises %}
+                    <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
+                    {% endfor %}
                 </select>
 
+                <button type="submit" name="Update_Tracker" value="submit">Save</button>
                 <button type="submit" name="Update_Tracker" value="submit">Save</button>
 
                 <p>Note: Calories consumed, calories burned, and calories remaining would be auto-calculated through a query after updating a daily tracker.</p>
