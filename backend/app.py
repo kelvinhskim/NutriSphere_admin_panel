@@ -210,9 +210,11 @@ def daily_trackers():
         # print("Daily Trackers Dropdown Data:", dailytrackers_dropdown_data)
 
         return render_template("daily-trackers.html", daily_trackers=dailytrackers_data, users=users_data, exercises=exercises_data, daily_trackers_dropdown=dailytrackers_dropdown_data)
+    
     except Exception as e:
         print("❌ Error fetching daily trackers data:", e)
-
+        return "An error occurred while fetching data", 500
+# --------------------------------------------------
 # Create - Inserts a new daily tracker into the DailyTrackers table (POST Request)
 @app.route('/add-tracker', methods=["POST"])
 def add_tracker():
@@ -241,6 +243,7 @@ def add_tracker():
         return redirect("/daily-trackers")
     except Exception as e:
         print("❌ Error adding new daily tracker:", e)    
+        return "An error occurred while adding a tracker", 500
 
 
 # Update - Updates a selected daily tracker (POST Request)
@@ -272,12 +275,26 @@ def update_tracker():
         return redirect("/daily-trackers")
     except Exception as e: 
         print("❌ Error updating tracker:", e)   
+        return "An error occurred while adding a tracker", 500
 
 
 # Delete - Deletes a selected daily tracker ( Request)
-@app.route('/delete-tracker', methods=["DELETE"])
+@app.route('/delete-tracker', methods=["POST"])
 def delete_tracker():
-    print(f"✅  DailyTracker deleted successfully!")
+    tracker_id = request.form['trackerID']  # Daily Tracker ID to delete
+    try:
+        if tracker_id:
+            query = "DELETE FROM DailyTracker WHERE dailyTrackerID = ?"
+            cursor.execute(query, (tracker_id,))
+            db.commit()
+            flash("Daily Tracker deleted successfully!")
+        else:
+            flash("Error: Tracker ID not found!")
+
+    except Exception as e:
+        print("❌ Error deleting tracker:", e)
+        flash("An error occurred while deleting the tracker.")
+    return redirect(url_for('daily_trackers'))
 
 # --------------------------------------------------
 @app.route('/food-entries')
