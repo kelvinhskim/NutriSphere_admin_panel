@@ -96,10 +96,14 @@
             <thead>
                 <!-- Access queried table headers passed from daily-trackers route -->
                 <tr>
-                    {% for key in daily_trackers[0].keys() %}
-                    <th>{{ key }}</th>
-                    {% endfor %}
-                    <th>Actions</th>
+                    {% if daily_trackers %}
+                        {% for key in daily_trackers[0].keys() %}
+                            <th>{{ key }}</th>
+                        {% endfor %}
+                        <th>Actions</th>
+                        {% else %}
+                            <th>No data available</th>
+                        {% endif %}
                 </tr>
             </thead>
 
@@ -140,6 +144,36 @@
                     </td>
                 </tr>
                 {% endfor %}
+            </tbody>
+            <thead>
+                <!-- Access queried table headers passed from daily-trackers route -->
+                <tr>
+                    {% for key in daily_trackers[0].keys() %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <!-- Access queried table data passed from daily-trackers route -->
+            <tbody>
+                {% if daily_trackers %}
+                    {% for tracker in daily_trackers %}
+                    <tr>
+                        {% for key in tracker.keys() %}
+                            <td> {{tracker[key]}} </td>
+                        {% endfor %} 
+                        <td>
+                            <button class="edit-btn" onclick="populateUpdateTracker({{ tracker["Daily Tracker ID"] }})">✏️ Edit</button>
+                            <button class="delete-btn" onclick=populateDeleteTracker({{ tracker["Daily Tracker ID"] }})>❌ Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="100%">No trackers found.</td>
+                    </tr>
+                {% endif %}  
             </tbody>
         </table>
     </main>
@@ -207,9 +241,7 @@
 
     <!-- Update Daily Tracker Form -->
     <section id="update-tracker">
-        <form action="/update-tracker", method="post">
-    <section id="update-tracker">
-        <form action="/update-tracker", method="post">
+        <form action="/update-tracker" method="post">
             <fieldset>
                 <h2>Update Daily Tracker</h2>
                 <label>Select a Daily Tracker:</label>
