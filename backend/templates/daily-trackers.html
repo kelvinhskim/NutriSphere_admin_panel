@@ -39,6 +39,18 @@
         {% endfor %}
         // console.log("Trackers:", trackers)
 
+        // populates Update Tracker on selection of tracker from dropdown
+        function getSelectedTracker() {
+            let selectedTracker = document.getElementById("selectedTracker");
+            let trackerID = selectedTracker.value;
+            document.getElementById("update-user-id").value = trackers[trackerID].userID
+            document.getElementById("update-date").value = trackers[trackerID].date
+            document.getElementById("update-calorie-goal").value = trackers[trackerID].calorieGoal
+            document.getElementById("update-exercise").value = trackers[trackerID].exerciseID
+            console.log("selectedTracker:", trackerID);
+        }
+
+        // populates Update Tracker on click Edit button
         function populateUpdateTracker(id) {
             // populates selected tracker on Update Daily Tracker form when corresponding Edit button is clicked
             document.getElementById("selectedTracker").value = id
@@ -102,7 +114,7 @@
             <fieldset>
                 <h2>Add New Daily Tracker</h2>
                 <label>Select a User</label>
-                <select id="selectedUser" name="userID" onchange="getSelectedUser()" required>
+                <select id="selectedUser" name="userID" onchange=getSelectedUser() required>
                     <option value="" selected disabled hidden></option>
                     {% for user in users %}
                     <option 
@@ -143,7 +155,7 @@
             <fieldset>
                 <h2>Update Daily Tracker</h2>
                 <label>Select a Daily Tracker:</label>
-                <select id="selectedTracker" name="trackerID">
+                <select id="selectedTracker" name="trackerID" onchange=getSelectedTracker()>
                     <option value="" selected disabled hidden></option>
                     {% for tracker in daily_trackers_dropdown %}
                     <option
