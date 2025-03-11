@@ -23,26 +23,26 @@
         {% for tracker in daily_trackers_dropdown %}
             {% if not tracker.exerciseID %}
             trackers[{{ tracker.dailyTrackerID }}] = {
-                username: "{{ tracker.username }}",
-                date: {{ tracker.date }},
+                userID: {{ tracker.userID }},
+                date: "{{ tracker.date }}",
                 calorieGoal: {{ tracker.calorieGoal }},
                 exerciseID: "NULL"
             }
             {% else %}
                 trackers[{{ tracker.dailyTrackerID }}] = {
-                    username: "{{ tracker.username }}",
+                    userID: {{ tracker.userID }},
                     date: "{{ tracker.date }}",
                     calorieGoal: {{ tracker.calorieGoal }},
                     exerciseID: {{ tracker.exerciseID }}
                 }
             {% endif %}
         {% endfor %}
-        console.log("Trackers:", trackers)
+        // console.log("Trackers:", trackers)
 
         function populateUpdateTracker(id) {
             // populates selected tracker on Update Daily Tracker form when corresponding Edit button is clicked
             document.getElementById("selectedTracker").value = id
-            document.getElementById("update-username").value = trackers[id].username
+            document.getElementById("update-user-id").value = trackers[id].userID
             document.getElementById("update-date").value = trackers[id].date
             document.getElementById("update-calorie-goal").value = trackers[id].calorieGoal
             document.getElementById("update-exercise").value = trackers[id].exerciseID
@@ -98,7 +98,7 @@
 
     <!-- Add Daily Tracker Form -->
     <section id="add-daily-tracker">
-        <form action="#" method="post">
+        <form action="{{ url_for("add_daily_tracker") }}" method="post">
             <fieldset>
                 <h2>Add New Daily Tracker</h2>
                 <label>Select a User</label>
@@ -143,7 +143,7 @@
             <fieldset>
                 <h2>Update Daily Tracker</h2>
                 <label>Select a Daily Tracker:</label>
-                <select id="selectedTracker" name="dailyTrackerID">
+                <select id="selectedTracker" name="trackerID">
                     <option value="" selected disabled hidden></option>
                     {% for tracker in daily_trackers_dropdown %}
                     <option
@@ -154,10 +154,15 @@
                     {% endfor %}
                 </select>
                 <label>Username:</label>
-                <select id="update-username">
+                <select id="update-user-id" name="userID">
                     <option value="" selected disabled hidden></option>
                     {% for user in users %}
-                    <option value="{{ user.username }}">{{ user.username }}</option>
+                    <option 
+                        value="{{ user.userID }}"
+                        data-username="{{ user.username }}"
+                    >
+                        {{ user.username }}
+                    </option>
                     {% endfor %}
                 </select>
                 <label>Date:</label>
@@ -165,7 +170,7 @@
                 <label>Calorie Goal</label>
                 <input type="number" id="update-calorie-goal" name="calorie-goal" value="">
                 <label>Exercise</label>
-                <select id="update-exercise">
+                <select id="update-exercise" name="exerciseID">
                     <option value="NULL" selected></option>
                     {% for exercise in exercises %}
                     <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
