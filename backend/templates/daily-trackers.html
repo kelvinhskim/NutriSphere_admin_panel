@@ -5,74 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriSphere: Daily Trackers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Link to CSS file for styling -->
-    
-    <script language="Javascript">
-        // dynamically populates calorie goal on Add New Tracker form when a user is selected from the dropdown
-        function getSelectedUser() {
-            let selectedUser = document.getElementById("selectedUser");
-            let userID = selectedUser.value;
-            let username = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-username")
-            let calorieGoal = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-calorie-goal")
-            console.log("selectedUser:", userID, username, calorieGoal)
-            
-            // populates default field value for Calorie Goal in Add Daily Tracker form
-            document.getElementById("calorieGoal").value = calorieGoal
-        }
-
-        let trackers = {}
-        {% for tracker in daily_trackers_dropdown %}
-            {% if not tracker.exerciseID %}
-            trackers[{{ tracker.dailyTrackerID }}] = {
-                userID: {{ tracker.userID }},
-                username: "{{ tracker.username }}",
-                date: "{{ tracker.date }}",
-                calorieGoal: {{ tracker.calorieGoal }},
-                exerciseID: "NULL"
-            }
-            {% else %}
-                trackers[{{ tracker.dailyTrackerID }}] = {
-                    userID: {{ tracker.userID }},
-                    username: "{{ tracker.username }}",
-                    date: "{{ tracker.date }}",
-                    calorieGoal: {{ tracker.calorieGoal }},
-                    exerciseID: {{ tracker.exerciseID }}
-                }
-            {% endif %}
-        {% endfor %}
-        console.log("Trackers:", trackers)
-
-        // populates Update Tracker on selection of tracker from dropdown
-        function getSelectedTracker() {
-            let selectedTracker = document.getElementById("selectedTracker");
-            let trackerID = selectedTracker.value;
-            document.getElementById("update-user-id").value = trackers[trackerID].userID
-            document.getElementById("update-date").value = trackers[trackerID].date
-            document.getElementById("update-calorie-goal").value = trackers[trackerID].calorieGoal
-            document.getElementById("update-exercise").value = trackers[trackerID].exerciseID
-            console.log("selectedTracker:", trackerID);
-        }
-
-        // populates Update Tracker on click Edit button
-        function populateUpdateTracker(id) {
-            // populates selected tracker on Update Daily Tracker form when corresponding Edit button is clicked
-            document.getElementById("selectedTracker").value = id
-            document.getElementById("update-user-id").value = trackers[id].userID
-            document.getElementById("update-date").value = trackers[id].date
-            document.getElementById("update-calorie-goal").value = trackers[id].calorieGoal
-            document.getElementById("update-exercise").value = trackers[id].exerciseID
-            console.log("populating update tracker:", id, trackers[id].username, trackers[id].date, trackers[id].calorieGoal, trackers[id].exerciseID)
-        }
-
-        // populates Delete Tracker form on click Delete button
-        function populateDeleteTracker(id) {
-            document.getElementById("delete-tracker").value = id
-            document.getElementById("delete-username").value = trackers[id].username
-            document.getElementById("delete-date").value = trackers[id].date
-            document.getElementById("delete-exercise").value = trackers[id].exerciseID
-            console.log("populating delete tracker:", id, trackers[id].username, trackers[id].date, trackers[id].exerciseID)
-        }
-
-    </script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -251,6 +183,75 @@
             </fieldset>
         </form>
     </section>
+
+    
+    <script language="Javascript">
+        // dynamically populates calorie goal on Add New Tracker form when a user is selected from the dropdown
+        function getSelectedUser() {
+            let selectedUser = document.getElementById("selectedUser");
+            let userID = selectedUser.value;
+            let username = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-username")
+            let calorieGoal = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-calorie-goal")
+            console.log("selectedUser:", userID, username, calorieGoal)
+            
+            // populates default field value for Calorie Goal in Add Daily Tracker form
+            document.getElementById("calorieGoal").value = calorieGoal
+        }
+
+        let trackers = {}
+        {% for tracker in daily_trackers_dropdown %}
+            {% if not tracker.exerciseID %}
+            trackers[{{ tracker.dailyTrackerID }}] = {
+                userID: {{ tracker.userID }},
+                username: "{{ tracker.username }}",
+                date: "{{ tracker.date }}",
+                calorieGoal: {{ tracker.calorieGoal }},
+                exerciseID: "NULL"
+            }
+            {% else %}
+                trackers[{{ tracker.dailyTrackerID }}] = {
+                    userID: {{ tracker.userID }},
+                    username: "{{ tracker.username }}",
+                    date: "{{ tracker.date }}",
+                    calorieGoal: {{ tracker.calorieGoal }},
+                    exerciseID: {{ tracker.exerciseID }}
+                }
+            {% endif %}
+        {% endfor %}
+        console.log("Trackers:", trackers)
+
+        // populates Update Tracker on selection of tracker from dropdown
+        function getSelectedTracker() {
+            let selectedTracker = document.getElementById("selectedTracker");
+            let trackerID = selectedTracker.value;
+            document.getElementById("update-user-id").value = trackers[trackerID].userID
+            document.getElementById("update-date").value = trackers[trackerID].date
+            document.getElementById("update-calorie-goal").value = trackers[trackerID].calorieGoal
+            document.getElementById("update-exercise").value = trackers[trackerID].exerciseID
+            console.log("selectedTracker:", trackerID);
+        }
+
+        // populates Update Tracker on click Edit button
+        function populateUpdateTracker(id) {
+            // populates selected tracker on Update Daily Tracker form when corresponding Edit button is clicked
+            document.getElementById("selectedTracker").value = id
+            document.getElementById("update-user-id").value = trackers[id].userID
+            document.getElementById("update-date").value = trackers[id].date
+            document.getElementById("update-calorie-goal").value = trackers[id].calorieGoal
+            document.getElementById("update-exercise").value = trackers[id].exerciseID
+            console.log("populating update tracker:", id, trackers[id].username, trackers[id].date, trackers[id].calorieGoal, trackers[id].exerciseID)
+        }
+
+        // populates Delete Tracker form on click Delete button
+        function populateDeleteTracker(id) {
+            document.getElementById("delete-tracker").value = id
+            document.getElementById("delete-username").value = trackers[id].username
+            document.getElementById("delete-date").value = trackers[id].date
+            document.getElementById("delete-exercise").value = trackers[id].exerciseID
+            console.log("populating delete tracker:", id, trackers[id].username, trackers[id].date, trackers[id].exerciseID)
+        }
+
+    </script>
 
 
     <!-- <script>
