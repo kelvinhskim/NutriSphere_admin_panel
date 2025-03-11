@@ -36,6 +36,21 @@
             </tr>
         </thead>
         <tbody id="foodTable">
+
+            {% for rec in recommended_foods %}
+            <tr>
+                <td>{{ rec.id }}</td>
+                <td>{{ rec.name }}</td>
+                <td>{{ rec.brand }}</td>
+                <td>{{ rec.servingSize }}</td>
+                <td>{{ rec.calories }}</td>
+                <td>{{ rec.protein }}</td>
+                <td>{{ rec.fat }}</td>
+                <td>{{ rec.carbohydrates }}</td>
+                <td><button disabled>Recommended</button></td>
+            </tr>
+            {% endfor %}
+            
             {% for food in food_items %}
             <tr id="foodRow-{{ food.foodItemID }}">
                 <td>{{ food.foodItemID }}</td>
