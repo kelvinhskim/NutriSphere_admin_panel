@@ -38,9 +38,8 @@
         <tbody id="foodTable">
             
             <!-- Hardcoded Foods Items -->
-            {% set index = 1 %}
             {% for rec in recommended_foods %}
-            <tr>
+            <tr id="rec-{{ rec.id }}">
                 <td>{{ rec.id }}</td>
                 <td>{{ rec.name }}</td>
                 <td>{{ rec.brand }}</td>
@@ -50,15 +49,17 @@
                 <td>{{ rec.fat }}</td>
                 <td>{{ rec.carbohydrates }}</td>
                 <td>
-                    <button onclick="populateUpdateForm({{ rec.id }})">✏️ Edit</button>
-                    <button onclick="deleteFood({{ rec.id }})">❌ Delete</button>
+                    <button type="button" onclick="populateUpdateForm({{ rec.id }}, '{{ rec.name }}', '{{ rec.brand }}', '{{ rec.servingSize }}', {{ rec.calories }}, {{ rec.protein }}, {{ rec.fat }}, {{ rec.carbohydrates }}, true)">✏️ Edit</button>
+                    <button onclick="deleteRecommended({{ rec.id }})">❌ Delete</button>
                 </td>
             </tr>
             {% endfor %}
             
             <!-- Database Foods-->
+            {% set next_id = recommended_foods|length + 1 %}
             {% for food in food_items %}
             <tr id="foodRow-{{ food.foodItemID }}">
+                <td>{{ next_id + loop.index0 }}</td>
                 <td>{{ food.foodItemID }}</td>
                 <td>{{ food.name }}</td>
                 <td>{{ food.brand }}</td>
@@ -68,8 +69,10 @@
                 <td>{{ food.fat }}</td>
                 <td>{{ food.carbohydrates }}</td>
                 <td>
-                    <button onclick="populateUpdateForm({{ food.foodItemID }})">✏️ Edit</button>
-                    <button onclick="deleteFood({{ food.foodItemID }})">❌ Delete</button>
+                    <button type="button" onclick="populateUpdateForm({{ food.foodItemID }}, '{{ food.name }}', '{{ food.brand }}', '{{ food.servingSize }}', {{ food.calories }}, {{ food.protein }}, {{ food.fat }}, {{ food.carbohydrates }})">✏️ Edit</button>
+                    <form action="{{ url_for('delete_food_item', id=food.foodItemID) }}" method="POST" style="display:inline;">
+                        <button type="submit">❌ Delete</button>
+                    </form>
                 </td>
             </tr>
             {% set index = index + 1 %}
