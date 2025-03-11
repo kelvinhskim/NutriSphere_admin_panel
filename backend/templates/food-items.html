@@ -50,7 +50,7 @@
                 <td>{{ rec.carbohydrates }}</td>
                 <td>
                     <button onclick="populateUpdateForm({{ rec.id }}, true)">✏️ Edit</button>
-                    <button onclick="deleteFood({{ rec.id }}, true)">❌ Delete</button>
+                    <button onclick="deleteRecommended({{ rec.id }})">❌ Delete</button>
                 </td>
             </tr>
             {% endfor %}
@@ -70,7 +70,9 @@
                 <td>{{ food.carbohydrates }}</td>
                 <td>
                     <button onclick="populateUpdateForm({{ food.foodItemID }}, false)">✏️ Edit</button>
-                    <button onclick="deleteFood({{ food.foodItemID }}, false)">❌ Delete</button>
+                    <form action="{{ url_for('delete_food_item', food_item_id=food.foodItemID) }}" method="POST" style="display:inline;">
+                        <button type="submit">❌ Delete</button>
+                    </form>
                 </td>
             </tr>
             {% set index = index + 1 %}
@@ -111,85 +113,54 @@
     </section>
 
     <script>
-        // Load all food items from Flask using tojson
         const foodItems = {{ food_items | tojson }};
         const recommendedFoods = {{ recommended_foods | tojson }};
-        
-        // Function to populate the Update Food Item Form (when Edit button is clicked)
-    function populateUpdateForm(id, isRecommended = false) {
-        let item;
 
-        if (isRecommended) {
-            item = recommendedFoods.find(e => e.id === id); // For recommended foods
-        } else {
-            item = foodItems.find(e => e.foodItemID === id); // For database foods
+        // Edit Food
+        function populateUpdateForm(id, isRecommended = false) {
+            let item = isRecommended ? recommendedFoods.find(e => e.id === id) : foodItems.find(e => e.foodItemID === id);
+            if (item) {
+                document.getElementById('updateID').value = isRecommended ? item.id : item.foodItemID;
+                document.getElementById('updateName').value = item.name;
+                document.getElementById('updateBrand').value = item.brand;
+                document.getElementById('updateServingSize').value = item.servingSize;
+                document.getElementById('updateCalories').value = item.calories;
+                document.getElementById('updateProtein').value = item.protein;
+                document.getElementById('updateFat').value = item.fat;
+                document.getElementById('updateCarbohydrates').value = item.carbohydrates;
+                document.getElementById('isRecommended').value = isRecommended ? 'true' : 'false';
+            }
         }
 
-        if (item) {
-            // Fill form fields with item data
-            document.getElementById('updateID').value = isRecommended ? item.id : item.foodItemID;
-            document.getElementById('updateName').value = item.name;
-            document.getElementById('updateBrand').value = item.brand;
-            document.getElementById('updateServingSize').value = item.servingSize;
-            document.getElementById('updateCalories').value = item.calories;
-            document.getElementById('updateProtein').value = item.protein;
-            document.getElementById('updateFat').value = item.fat;
-            document.getElementById('updateCarbohydrates').value = item.carbohydrates;
-            document.getElementById('isRecommended').value = isRecommended ? 'true' : 'false';
-
-            // Set form action only for database foods
+        // Submit handler for update
+        function handleFoodUpdate() {
+            const id = document.getElementById('updateID').value;
+            const isRecommended = document.getElementById('isRecommended').value === 'true';
             if (!isRecommended) {
                 document.getElementById('updateFoodForm').action = `/update_food_item/${id}`;
-            }
-        }
-    }
-
-    // Function to handle delete (for both recommended and database foods)
-    function deleteFood(id, isRecommended = false) {
-        if (confirm('Are you sure you want to delete this food item?')) {
-            if (isRecommended) {
-                // Frontend-only deletion for recommended foods
-                document.getElementById(`rec-${id}`).remove();
-                alert('✅ Recommended food deleted!');
+                document.getElementById('updateFoodForm').submit(); // 🚨 반드시 form 제출
             } else {
-                // Backend deletion for database foods
-                fetch(`/delete_food_item/${id}`, { method: 'POST' })
-                    .then(response => {
-                        if (response.ok) {
-                            document.getElementById(`foodRow-${id}`).remove();
-                            alert('✅ Food item deleted!');
-                        } else {
-                            alert('❌ Failed to delete food item.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('❌ Error deleting food item:', error);
-                        alert('❌ Error deleting food item.');
-                    });
+                // In-place update for recommended food
+                const row = document.getElementById('rec-' + id);
+                row.children[1].innerText = document.getElementById('updateName').value;
+                row.children[2].innerText = document.getElementById('updateBrand').value;
+                row.children[3].innerText = document.getElementById('updateServingSize').value;
+                row.children[4].innerText = document.getElementById('updateCalories').value;
+                row.children[5].innerText = document.getElementById('updateProtein').value;
+                row.children[6].innerText = document.getElementById('updateFat').value;
+                row.children[7].innerText = document.getElementById('updateCarbohydrates').value;
+                alert('Recommended food updated!');
+            }
+            return false; // prevent default
+        }
+
+        // Delete Recommended (only frontend)
+        function deleteRecommended(id) {
+            if (confirm('Are you sure you want to delete this recommended food?')) {
+                document.getElementById('rec-' + id).remove();
+                alert('Recommended food deleted!');
             }
         }
-    }
-
-    // Function to handle form submission for updating food items
-    function handleFoodUpdate() {
-        const isRecommended = document.getElementById('isRecommended').value === 'true';
-        const id = document.getElementById('updateID').value;
-
-        if (isRecommended) {
-            // Frontend-only update for recommended foods
-            const row = document.getElementById(`rec-${id}`);
-            row.children[1].innerText = document.getElementById('updateName').value;
-            row.children[2].innerText = document.getElementById('updateBrand').value;
-            row.children[3].innerText = document.getElementById('updateServingSize').value;
-            row.children[4].innerText = document.getElementById('updateCalories').value;
-            row.children[5].innerText = document.getElementById('updateProtein').value;
-            row.children[6].innerText = document.getElementById('updateFat').value;
-            row.children[7].innerText = document.getElementById('updateCarbohydrates').value;
-            alert('✅ Recommended food updated!');
-            return false; // Prevent form submission for recommended foods
-        }
-        return true; // Allow form submission for database foods
-    }
     </script>
     
 </body>
