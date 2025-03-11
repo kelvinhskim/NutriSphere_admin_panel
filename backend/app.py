@@ -167,35 +167,37 @@ def delete_user(user_id):
 @app.route('/daily-trackers', methods=["GET"])
 def daily_trackers():
     try:
-        # query to retrieve all daily trackers along with associated users and exercises
+        # Main query with JOIN to fetch Username and Exercise Name
         query = (
             "SELECT "
-            "dt.dailyTrackerID AS `Daily Tracker ID`, u.username AS `Username`, dt.date AS `Date`, dt.calorieGoal AS `Calorie Goal`, dt.caloriesConsumed AS `Calories Consumed`, e.caloriesBurned AS `Calories Burned`, dt.caloriesRemaining AS `Calories Remaining`, "
-            "COALESCE(e.name, 'No Exercise Logged') AS `Exercise Logged` "
-            "FROM DailyTrackers AS dt "
-            "LEFT JOIN Users AS u ON dt.userID = u.userID "
-            "LEFT JOIN Exercises AS e ON dt.exerciseID = e.exerciseID "
+            "dt.dailyTrackerID AS `Daily Tracker ID`, "
+            "u.username AS `Username`, "
+            "dt.date AS `Date`, "
+            "dt.calorieGoal AS `Calorie Goal`, "
+            "dt.caloriesConsumed AS `Calories Consumed`, "
+            "COALESCE(e.caloriesBurned, 0) AS `Calories Burned`, "
+            "dt.caloriesRemaining AS `Calories Remaining`, "
+            "COALESCE(e.name, 'Null') AS `Exercise Logged` "
+            "FROM DailyTrackers dt "
+            "LEFT JOIN Users u ON dt.userID = u.userID "
+            "LEFT JOIN Exercises e ON dt.exerciseID = e.exerciseID "
             "ORDER BY dt.date DESC;"
         )
         cur = mysql.connection.cursor()
         cur.execute(query)
         dailytrackers_data = cur.fetchall()
-        # print("DailyTrackers Data:", dailytrackers_data)
 
-        # query to retrieve userID and username for dropdown in Add Daily Tracker form
+        # Query for Users dropdown
         query2 = "SELECT userID, username, dailyCalorieGoal FROM Users;"
-        cur = mysql.connection.cursor()
         cur.execute(query2)
         users_data = cur.fetchall()
 
-        # query to retrieve exerciseID and exercise name for dropdown in Add Daily Tracker form
+        # Query for Exercises dropdown
         query3 = "SELECT exerciseID, name, caloriesBurned FROM Exercises;"
-        cur = mysql.connection.cursor()
         cur.execute(query3)
         exercises_data = cur.fetchall()
-        # print(exercises_data)
 
-        # query to retrieve all daily trackers along with associated userID, username, and date for Update Daily Tracker form
+        # Query for DailyTrackers dropdown (for updating)
         query4 = (
             "SELECT "
             "dt.dailyTrackerID, u.userID, u.username, dt.date, dt.calorieGoal, e.exerciseID, e.name AS `exerciseName` "
@@ -203,13 +205,19 @@ def daily_trackers():
             "LEFT JOIN Users AS u ON dt.userID = u.userID "
             "LEFT JOIN Exercises as e ON dt.exerciseID = e.exerciseID;"
         )
-        cur = mysql.connection.cursor()
         cur.execute(query4)
         dailytrackers_dropdown_data = cur.fetchall()
-        cur.close()
-        # print("Daily Trackers Dropdown Data:", dailytrackers_dropdown_data)
 
-        return render_template("daily-trackers.html", daily_trackers=dailytrackers_data, users=users_data, exercises=exercises_data, daily_trackers_dropdown=dailytrackers_dropdown_data)
+        cur.close()
+        
+        # Return page with data
+        return render_template(
+            "daily-trackers.html",
+            daily_trackers=dailytrackers_data,
+            users=users_data,
+            exercises=exercises_data,
+            daily_trackers_dropdown=dailytrackers_dropdown_data
+        )
     
     except Exception as e:
         print("❌ Error fetching daily trackers data:", e)
