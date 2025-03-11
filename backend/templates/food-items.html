@@ -58,7 +58,6 @@
             <!-- Database Foods-->
             {% for food in food_items %}
             <tr id="foodRow-{{ food.foodItemID }}">
-                <td>{{ next_id + loop.index0 }}</td>
                 <td>{{ food.foodItemID }}</td>
                 <td>{{ food.name }}</td>
                 <td>{{ food.brand }}</td>
