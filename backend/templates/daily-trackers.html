@@ -97,8 +97,8 @@
     </main>
 
     <!-- Add Daily Tracker Form -->
-    <section id="add-daily-tracker">
-        <form action="{{ url_for("add_daily_tracker") }}" method="post">
+    <section id="add-tracker">
+        <form action="{{ url_for("add_tracker") }}" method="post">
             <fieldset>
                 <h2>Add New Daily Tracker</h2>
                 <label>Select a User</label>
@@ -138,8 +138,8 @@
     </section>
 
     <!-- Update Daily Tracker Form -->
-    <section id="update-daily-tracker">
-        <form action="/update-daily-tracker", method="post">
+    <section id="update-tracker">
+        <form action="/update-tracker", method="post">
             <fieldset>
                 <h2>Update Daily Tracker</h2>
                 <label>Select a Daily Tracker:</label>
@@ -177,7 +177,7 @@
                     {% endfor %}
                 </select>
 
-                <button type="submit" name="Update_Daily_Tracker" value="submit">Save</button>
+                <button type="submit" name="Update_Tracker" value="submit">Save</button>
 
                 <p>Note: Calories consumed, calories burned, and calories remaining would be auto-calculated through a query after updating a daily tracker.</p>
             </fieldset>

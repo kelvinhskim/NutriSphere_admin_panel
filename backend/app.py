@@ -228,8 +228,8 @@ def daily_trackers():
         print("❌ Error fetching daily trackers data:", e)
 
 # Create - Inserts a new daily tracker into the DailyTrackers table (POST Request)
-@app.route('/add-daily-tracker', methods=["POST"])
-def add_daily_tracker():
+@app.route('/add-tracker', methods=["POST"])
+def add_tracker():
     date = request.form["date"]
     userID = request.form["userID"]
     # username = request.form["username"]
@@ -251,15 +251,15 @@ def add_daily_tracker():
             mysql.connection.commit()
             cur.close()   
         
-        print(f"✅  DailyTracker for added successfully!")
+        print(f"✅  DailyTracker added successfully!")
         return redirect("/daily-trackers")
     except Exception as e:
         print("❌ Error adding new daily tracker:", e)    
 
 
 # Update - Updates a selected daily tracker (POST Request)
-@app.route('/update-daily-tracker', methods=["POST"])
-def update_daily_tracker():
+@app.route('/update-tracker', methods=["POST"])
+def update_tracker():
     # print("REQUEST FORM:", request.form.get("Update_Daily_Tracker"), request.form)
     trackerID = request.form["trackerID"]
     date = request.form["date"]
@@ -282,11 +282,16 @@ def update_daily_tracker():
             cur.execute(query, (date, calorieGoal, userID, exerciseID, trackerID))
             mysql.connection.commit()
             cur.close()   
-        print(f"✅  DailyTracker for updated successfully!")
+        print(f"✅  DailyTracker {trackerID} updated successfully!")
         return redirect("/daily-trackers")
     except Exception as e: 
         print("❌ Error updating tracker:", e)   
 
+
+# Delete - Deletes a selected daily tracker ( Request)
+@app.route('/delete-tracker', methods=["DELETE"])
+def delete_tracker():
+    print(f"✅  DailyTracker deleted successfully!")
 
 # --------------------------------------------------
 @app.route('/food-entries')
