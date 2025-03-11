@@ -13,11 +13,11 @@ app = Flask(__name__)
 # app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 # database connection info
-# app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-# app.config['MYSQL_USER'] = 'cs340_kimh22'
-# app.config['MYSQL_PASSWORD'] = '0612' #last 4 of onid
-# app.config['MYSQL_DB'] = 'cs340_kimh22'
-# app.config['MYSQL_CURSORCLASS'] = "DictCursor"
+app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
+app.config['MYSQL_USER'] = 'cs340_kimh22'
+app.config['MYSQL_PASSWORD'] = '0612' #last 4 of onid
+app.config['MYSQL_DB'] = 'cs340_kimh22'
+app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 mysql = MySQL(app) # Initialize MySQL with Flask app
 
