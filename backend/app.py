@@ -184,7 +184,7 @@ def daily_trackers():
         # query to retrieve all daily trackers along with associated users and exercises
         query = (
             "SELECT "
-            "dt.dailyTrackerID AS `Daily Tracker ID`, u.username AS `Username`, dt.date AS `Date`, calorieGoal AS `Calorie Goal`, dt.caloriesConsumed AS `Calories Consumed`, e.caloriesBurned AS `Calories Burned`, dt.caloriesRemaining AS `Calories Remaining`, "
+            "dt.dailyTrackerID AS `Daily Tracker ID`, u.username AS `Username`, dt.date AS `Date`, dt.calorieGoal AS `Calorie Goal`, dt.caloriesConsumed AS `Calories Consumed`, e.caloriesBurned AS `Calories Burned`, dt.caloriesRemaining AS `Calories Remaining`, "
             "COALESCE(e.name, 'No Exercise Logged') AS `Exercise Logged` "
             "FROM DailyTrackers AS dt "
             "LEFT JOIN Users AS u ON dt.userID = u.userID "
@@ -194,6 +194,7 @@ def daily_trackers():
         cur = mysql.connection.cursor()
         cur.execute(query)
         dailytrackers_data = cur.fetchall()
+        # print("DailyTrackers Data:", dailytrackers_data)
 
         # query to retrieve userID and username for dropdown in Add Daily Tracker form
         query2 = "SELECT userID, username, dailyCalorieGoal FROM Users;"
@@ -208,40 +209,84 @@ def daily_trackers():
         exercises_data = cur.fetchall()
         # print(exercises_data)
 
-        return render_template("daily-trackers.j2", daily_trackers=dailytrackers_data, users=users_data, exercises=exercises_data)
+        # query to retrieve all daily trackers along with associated userID, username, and date for Update Daily Tracker form
+        query4 = (
+            "SELECT "
+            "dt.dailyTrackerID, u.userID, u.username, dt.date, dt.calorieGoal, e.exerciseID, e.name AS `exerciseName` "
+            "FROM DailyTrackers AS dt "
+            "LEFT JOIN Users AS u ON dt.userID = u.userID "
+            "LEFT JOIN Exercises as e ON dt.exerciseID = e.exerciseID;"
+        )
+        cur = mysql.connection.cursor()
+        cur.execute(query4)
+        dailytrackers_dropdown_data = cur.fetchall()
+        cur.close()
+        # print("Daily Trackers Dropdown Data:", dailytrackers_dropdown_data)
+
+        return render_template("daily-trackers.html", daily_trackers=dailytrackers_data, users=users_data, exercises=exercises_data, daily_trackers_dropdown=dailytrackers_dropdown_data)
     except Exception as e:
         print("❌ Error fetching daily trackers data:", e)
 
 # Create - Inserts a new daily tracker into the DailyTrackers table (POST Request)
 @app.route('/add-daily-tracker', methods=["POST"])
 def add_daily_tracker():
+    date = request.form["date"]
+    userID = request.form["userID"]
+    # username = request.form["username"]
+    calorieGoal = request.form["calorieGoal"]
+    exerciseID = request.form["exerciseID"]
     try:
-        if request.form.get("Add_Daily_Tracker"):
-            date = request.form["date"]
-            userID = request.form["userID"]
-            # username = request.form["username"]
-            calorieGoal = request.form["calorieGoal"]
-            exerciseID = request.form["exerciseID"]
-
-            # query if no exercise is input in the exercise field
-            if exerciseID == "NULL":
-                query = "INSERT INTO DailyTrackers (date, calorieGoal, userID) VALUES (%s, %s, %s)"
-                cur = mysql.connection.cursor() 
-                cur.execute(query, (date, calorieGoal, userID))
-                mysql.connection.commit()
-                cur.close()   
-            else:
-                # query to insert a new daily tracker into DailyTrackers
-                query = "INSERT INTO DailyTrackers (date, calorieGoal, userID, exerciseID) VALUES (%s, %s, %s, %s)"
-                cur = mysql.connection.cursor() 
-                cur.execute(query, (date, calorieGoal, userID, exerciseID))
-                mysql.connection.commit()
-                cur.close()   
+        # query if no exercise is input in the exercise field
+        if exerciseID == "NULL":
+            query = "INSERT INTO DailyTrackers (date, calorieGoal, userID) VALUES (%s, %s, %s)"
+            cur = mysql.connection.cursor() 
+            cur.execute(query, (date, calorieGoal, userID))
+            mysql.connection.commit()
+            cur.close()   
+        else:
+            # query to insert a new daily tracker into DailyTrackers
+            query = "INSERT INTO DailyTrackers (date, calorieGoal, userID, exerciseID) VALUES (%s, %s, %s, %s)"
+            cur = mysql.connection.cursor() 
+            cur.execute(query, (date, calorieGoal, userID, exerciseID))
+            mysql.connection.commit()
+            cur.close()   
         
         print(f"✅  DailyTracker for added successfully!")
         return redirect("/daily-trackers")
     except Exception as e:
         print("❌ Error adding new daily tracker:", e)    
+
+
+# Update - Updates a selected daily tracker (POST Request)
+@app.route('/update-daily-tracker', methods=["POST"])
+def update_daily_tracker():
+    # print("REQUEST FORM:", request.form.get("Update_Daily_Tracker"), request.form)
+    trackerID = request.form["trackerID"]
+    date = request.form["date"]
+    calorieGoal = request.form["calorie-goal"]
+    userID = request.form["userID"]
+    exerciseID = request.form["exerciseID"]
+    # print("UPDATE DATA", trackerID, date, calorieGoal, userID, exerciseID)
+    try:
+        # query if no exercise is input in the exercise field
+        if exerciseID == "NULL":
+            query = "UPDATE DailyTrackers SET date = %s, calorieGoal = %s, userID = %s, exerciseID = %s WHERE dailyTrackerID = %s;"
+            cur = mysql.connection.cursor() 
+            cur.execute(query, (date, calorieGoal, userID, "NUll", trackerID))
+            mysql.connection.commit()
+            cur.close()   
+        else:
+            # query to update daily tracker
+            query = "UPDATE DailyTrackers SET date = %s, calorieGoal = %s, userID = %s, exerciseID = %s WHERE dailyTrackerID = %s;"
+            cur = mysql.connection.cursor() 
+            cur.execute(query, (date, calorieGoal, userID, exerciseID, trackerID))
+            mysql.connection.commit()
+            cur.close()   
+        print(f"✅  DailyTracker for updated successfully!")
+        return redirect("/daily-trackers")
+    except Exception as e: 
+        print("❌ Error updating tracker:", e)   
+
 
 # --------------------------------------------------
 @app.route('/food-entries')
