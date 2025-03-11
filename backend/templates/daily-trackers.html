@@ -6,7 +6,7 @@
     <title>NutriSphere: Daily Trackers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Link to CSS file for styling -->
     
-    <script language="JavaScript">
+    <script language="Javascript">
         // dynamically populates calorie goal on Add New Tracker form when a user is selected from the dropdown
         function getSelectedUser() {
             let selectedUser = document.getElementById("selectedUser");
@@ -19,8 +19,34 @@
             document.getElementById("calorieGoal").value = calorieGoal
         }
 
-        function populateUpdateTracker() {
-            
+        let trackers = {}
+        {% for tracker in daily_trackers_dropdown %}
+            {% if not tracker.exerciseID %}
+            trackers[{{ tracker.dailyTrackerID }}] = {
+                username: "{{ tracker.username }}",
+                date: {{ tracker.date }},
+                calorieGoal: {{ tracker.calorieGoal }},
+                exerciseID: "NULL"
+            }
+            {% else %}
+                trackers[{{ tracker.dailyTrackerID }}] = {
+                    username: "{{ tracker.username }}",
+                    date: "{{ tracker.date }}",
+                    calorieGoal: {{ tracker.calorieGoal }},
+                    exerciseID: {{ tracker.exerciseID }}
+                }
+            {% endif %}
+        {% endfor %}
+        console.log("Trackers:", trackers)
+
+        function populateUpdateTracker(id) {
+            // populates selected tracker on Update Daily Tracker form when corresponding Edit button is clicked
+            document.getElementById("selectedTracker").value = id
+            document.getElementById("update-username").value = trackers[id].username
+            document.getElementById("update-date").value = trackers[id].date
+            document.getElementById("update-calorie-goal").value = trackers[id].calorieGoal
+            document.getElementById("update-exercise").value = trackers[id].exerciseID
+            console.log("populating update tracker:", id, trackers[id].username, trackers[id].date, trackers[id].calorieGoal, trackers[id].exerciseID)
         }
 
     </script>
@@ -61,7 +87,7 @@
                     <td> {{tracker[key]}} </td>
                     {% endfor %} 
                     <td>
-                        <button class="edit-btn">✏️ Edit</button>
+                        <button class="edit-btn" onclick="populateUpdateTracker({{ tracker["Daily Tracker ID"] }})">✏️ Edit</button>
                         <button class="delete-btn">❌ Delete</button>
                     </td>
                 </tr>
@@ -117,25 +143,29 @@
             <fieldset>
                 <h2>Update Daily Tracker</h2>
                 <label>Select a Daily Tracker:</label>
-                <select id="selectedDailyTracker" name="dailyTrackerID">
+                <select id="selectedTracker" name="dailyTrackerID">
                     <option value="" selected disabled hidden></option>
                     {% for tracker in daily_trackers_dropdown %}
-                    <option>{{ tracker.userID }}: {{ tracker.username }}, {{ tracker.date }}</option>
+                    <option
+                        value="{{ tracker.dailyTrackerID }}"
+                    >
+                        {{ tracker.dailyTrackerID }}: {{ tracker.username }}, {{ tracker.date }}
+                    </option>
                     {% endfor %}
                 </select>
                 <label>Username:</label>
-                <select>
+                <select id="update-username">
                     <option value="" selected disabled hidden></option>
                     {% for user in users %}
-                    <option>{{ user.username }}</option>
+                    <option value="{{ user.username }}">{{ user.username }}</option>
                     {% endfor %}
                 </select>
                 <label>Date:</label>
-                <input type="date" id="date" name="date" value="">
+                <input type="date" id="update-date" name="date" value="">
                 <label>Calorie Goal</label>
-                <input type="number" id="calorieGoal" name="calorieGoal" value="">
+                <input type="number" id="update-calorie-goal" name="calorie-goal" value="">
                 <label>Exercise</label>
-                <select >
+                <select id="update-exercise">
                     <option value="NULL" selected></option>
                     {% for exercise in exercises %}
                     <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
