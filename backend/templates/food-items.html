@@ -50,8 +50,8 @@
                 <td>{{ rec.fat }}</td>
                 <td>{{ rec.carbohydrates }}</td>
                 <td>
-                    <a href="{{ url_for('edit_food_item', id=rec.id) }}" class="btn btn-primary btn-sm">Edit</a>
-                    <a href="{{ url_for('delete_food_item', id=rec.id) }}" class="btn btn-danger btn-sm">Delete</a>
+                    <button onclick="populateUpdateForm({{ rec.id }})">✏️ Edit</button>
+                    <button onclick="deleteFood({{ rec.id }})">❌ Delete</button>
                 </td>
             </tr>
             {% endfor %}
