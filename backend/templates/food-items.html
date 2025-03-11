@@ -56,7 +56,6 @@
             {% endfor %}
             
             <!-- Database Foods-->
-            {% set next_id = recommended_foods|length + 1 %}
             {% for food in food_items %}
             <tr id="foodRow-{{ food.foodItemID }}">
                 <td>{{ next_id + loop.index0 }}</td>
@@ -75,7 +74,6 @@
                     </form>
                 </td>
             </tr>
-            {% set index = index + 1 %}
             {% endfor %}
         </tbody>
         </table>
