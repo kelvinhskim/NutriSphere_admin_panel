@@ -1,3 +1,10 @@
+<!-- Citation for Fetch API -->
+<!-- Date: 03/11/2025 -->
+<!-- Copied from -->
+<!-- Source URL: https://www.geeksforgeeks.org/javascript-fetch-method/ -->
+<!-- Source URL: https://flask.palletsprojects.com/en/stable/patterns/javascript/#making-a-request-with-fetch -->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,28 +34,33 @@
             <thead>
                 <!-- Access queried table headers passed from daily-trackers route -->
                 <tr>
-                    {% if daily_trackers %}
-                        {% for key in daily_trackers[0].keys() %}
-                        <th>{{ key }}</th>
-                        {% endfor %}
-                        <th>Actions</th>
-                        {% else %}
-                            <th>No data available</th>
-                        {% endif %}
+                {% if daily_trackers %}
+                    {% for key in daily_trackers[0].keys() %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+                    <th>Actions</th>
+                    {% else %}
+                    <th>No data available</th>
+                {% endif %}
                 </tr>
             </thead>
 
             <!-- Access queried table data passed from daily-trackers route -->
             <tbody>
-                {% if daily_trackers %}
+            {% if daily_trackers %}
                 {% for tracker in daily_trackers %}
                 <tr>
                     {% for key in tracker.keys() %}
-                    <td> {{tracker[key]}} </td>
+                    <td> {{ tracker[key] }} </td>
                     {% endfor %} 
                     <td>
                         <button class="edit-btn" onclick="populateUpdateTracker({{ tracker["Daily Tracker ID"] }})">✏️ Edit</button>
-                        <button class="delete-btn" onclick=populateDeleteTracker({{ tracker["Daily Tracker ID"] }})>❌ Delete</button>
+                        <button 
+                            class="delete-btn" 
+                            onclick='deleteTracker({{ tracker["Daily Tracker ID"] }}, "{{ tracker["Username"] }}", "{{ tracker["Date"] }}")'
+                        >
+                            ❌ Delete
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -56,14 +68,12 @@
                 <tr>
                     <td colspan="100%">No trackers found.</td>
                 </tr>
-                {% endif %}  
+            {% endif %}  
             </tbody>
         </table>
     </main>
 
     <!-- Add Daily Tracker Form -->
-    <section id="add-tracker">
-        <form action="{{ url_for("add_tracker") }}" method="post">
     <section id="add-tracker">
         <form action="{{ url_for("add_tracker") }}" method="post">
             <fieldset>
@@ -162,14 +172,14 @@
         </form>
     </section>
 
-    <!-- Delete Daily Tracker Form -->
-    <section id="delete-tracker">
-        <form action="/delete-tracker">
+    <!-- Delete Daily Tracker Form
+    <section id="delete-tracker-section">
+        <form>
             <fieldset>
                 <h2>Delete Daily Tracker</h2>
                 <p>Are you sure you want to delete this?</p>
                 <label>Daily Tracker ID:</label>
-                <input type="number" id="delete-tracker" name="trackerID" value="" disabled>
+                <input type="number" id="delete-tracker-id" name="trackerID" value="" disabled>
                 <label>Username:</label>
                 <input type="text" id="delete-username" value="" disabled>
                 <label>Date:</label>
@@ -179,12 +189,12 @@
                     <option value="" selected></option>
                     <option></option>
                 </select>
-                <button type="submit" name="Delete_Tracker" value="submit">Delete</button>
+                <button onclick=deleteTracker(document.getElementById("delete-tracker-id").value)>Confirm Delete</button>
             </fieldset>
-        </form>
+        </form> -->
     </section>
 
-    
+
     <script language="Javascript">
         // dynamically populates calorie goal on Add New Tracker form when a user is selected from the dropdown
         function getSelectedUser() {
@@ -218,7 +228,7 @@
                 }
             {% endif %}
         {% endfor %}
-        console.log("Trackers:", trackers)
+        // console.log("Trackers:", trackers)
 
         // populates Update Tracker on selection of tracker from dropdown
         function getSelectedTracker() {
@@ -242,15 +252,39 @@
             console.log("populating update tracker:", id, trackers[id].username, trackers[id].date, trackers[id].calorieGoal, trackers[id].exerciseID)
         }
 
-        // populates Delete Tracker form on click Delete button
-        function populateDeleteTracker(id) {
-            document.getElementById("delete-tracker").value = id
-            document.getElementById("delete-username").value = trackers[id].username
-            document.getElementById("delete-date").value = trackers[id].date
-            document.getElementById("delete-exercise").value = trackers[id].exerciseID
-            console.log("populating delete tracker:", id, trackers[id].username, trackers[id].date, trackers[id].exerciseID)
-        }
+        // // populates Delete Tracker form on click Delete button
+        // function populateDeleteTracker(id) {
+        //     document.getElementById("delete-tracker-id").value = id
+        //     document.getElementById("delete-username").value = trackers[id].username
+        //     document.getElementById("delete-date").value = trackers[id].date
+        //     document.getElementById("delete-exercise").value = trackers[id].exerciseID
+        //     console.log("populating delete tracker:", id, trackers[id].username, trackers[id].date, trackers[id].exerciseID)
+        // }
 
+        // use fetch to handle delete request to remove a selected tracker
+        function deleteTracker(trackerID, username, date) {
+            const URL = `/daily-trackers/${trackerID}`
+            if (confirm(
+                `Are you sure you want to delete this tracker?
+                Daily Tracker ID: ${trackerID}
+                Username: ${username}
+                Date: ${date}
+                `
+            )) {
+                fetch(URL, {
+                    method: "DELETE"
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json()
+                    } else {
+                        throw Error(`${response.status}`)
+                    }
+                })
+                .then(data => window.location = data.redirect_url)
+                .catch(error => console.error(error));
+            }
+        }
     </script>
 
 
