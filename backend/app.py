@@ -4,7 +4,7 @@
 # Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 
 
-from flask import Flask, render_template, request, json, redirect, url_for, jsonify
+from flask import Flask, render_template, request, json, redirect, url_for, jsonify, flash
 from flask_mysqldb import MySQL
 import os
 
@@ -163,8 +163,6 @@ def delete_user(user_id):
 # --------------------------------------------------
 # Read - Retrieves DailyTrackers data (GET Request)
 @app.route('/daily-trackers', methods=["GET"])
-# Read - Retrieves DailyTrackers data (GET Request)
-@app.route('/daily-trackers', methods=["GET"])
 def daily_trackers():
     try:
         # Main query with JOIN to fetch Username and Exercise Name
@@ -245,8 +243,7 @@ def add_tracker():
             cur = mysql.connection.cursor() 
             cur.execute(query, (date, calorieGoal, userID, exerciseID))
             mysql.connection.commit()
-            cur.close()   
-        
+            cur.close()     
         print(f"✅  DailyTracker added successfully!")
         return redirect("/daily-trackers")
     except Exception as e:
@@ -280,29 +277,29 @@ def update_tracker():
             mysql.connection.commit()
             cur.close()   
         print(f"✅  DailyTracker {trackerID} updated successfully!")
-        return redirect("/daily-trackers")
+        # return redirect("/daily-trackers")
     except Exception as e: 
         print("❌ Error updating tracker:", e)   
         return "An error occurred while adding a tracker", 500
 
 
-# Delete - Deletes a selected daily tracker ( Request)
-@app.route('/delete-tracker', methods=["POST"])
-def delete_tracker():
-    tracker_id = request.form['trackerID']  # Daily Tracker ID to delete
+# Delete - Deletes a selected daily tracker (DELETE Request)
+@app.route('/daily-trackers/<int:tracker_id>', methods=["DELETE"])
+def delete_tracker(tracker_id):
     try:
-        if tracker_id:
-            query = "DELETE FROM DailyTracker WHERE dailyTrackerID = ?"
-            cursor.execute(query, (tracker_id,))
-            db.commit()
-            flash("Daily Tracker deleted successfully!")
-        else:
-            flash("Error: Tracker ID not found!")
-
+        query = "DELETE FROM DailyTrackers WHERE dailyTrackerID = %s"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (tracker_id,))
+        mysql.connection.commit()
+        print(f"✅  DailyTracker {tracker_id} deleted successfully!")
+        return jsonify({
+            "message": f"DailyTracker {tracker_id} deleted successfully.",
+            "redirect_url": "/daily-trackers"
+            }), 200
     except Exception as e:
-        print("❌ Error deleting tracker:", e)
-        flash("An error occurred while deleting the tracker.")
-    return redirect(url_for('daily_trackers'))
+        print("❌ Error deleting DailyTracker {tracker_id}:", e)
+        return "An error occurred while deleting a tracker", 500
+    
 
 # --------------------------------------------------
 @app.route('/food-entries')
