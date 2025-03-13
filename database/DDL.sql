@@ -57,6 +57,7 @@ CREATE OR REPLACE TABLE `DailyTrackers` (
   PRIMARY KEY (`dailyTrackerID`),
   INDEX `fk_DailyTrackers_userID_idx` (`userID` ASC),
   INDEX `fk_DailyTrackers_exerciseID_idx` (`exerciseID` ASC),
+  CONSTRAINT `tracker` UNIQUE (`userID`, `date`),
   CONSTRAINT `fk_DailyTrackers_userID`
     FOREIGN KEY (`userID`)
     REFERENCES `Users` (`userID`)
