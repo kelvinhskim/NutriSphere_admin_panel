@@ -94,8 +94,8 @@ CREATE OR REPLACE TABLE `FoodItems` (
 CREATE OR REPLACE TABLE `FoodEntries` (
   `foodEntryID` INT NOT NULL AUTO_INCREMENT,
   `mealCategory` ENUM('Breakfast', 'Lunch', 'Dinner', 'Snacks') NOT NULL,
-  `foodItemID` INT,
-  `dailyTrackerID` INT,
+  `foodItemID` INT NOT NULL,
+  `dailyTrackerID` INT NOT NULL,
   PRIMARY KEY (`foodEntryID`),
   INDEX `fk_FoodEntries_foodItemID_idx` (`foodItemID` ASC),
   INDEX `fk_FoodEntries_dailyTrackerID_idx` (`dailyTrackerID` ASC),
@@ -107,7 +107,7 @@ CREATE OR REPLACE TABLE `FoodEntries` (
   CONSTRAINT `fk_FoodEntries_dailyTrackerID`
     FOREIGN KEY (`dailyTrackerID`)
     REFERENCES `DailyTrackers` (`dailyTrackerID`)
-    ON DELETE SET NULL   -- If a tracker is deleted, keep FoodEntries but set dailyTrackerID to NULL
+    ON DELETE CASCADE   -- If a tracker is deleted, remove all food entries
     ON UPDATE CASCADE   -- If a tracker's ID is updated, update the entries
 );
 

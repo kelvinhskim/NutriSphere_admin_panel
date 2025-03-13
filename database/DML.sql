@@ -174,18 +174,23 @@ END
 DELIMITER ;
 
 -- READ: Retrieves all food entries associated with users' daily trackers
-SELECT fe.foodEntryID, dt.date, u.username, fe.mealCategory, fi.name AS food, fi.calories, dt.dailyTrackerID
-FROM FoodEntries AS fe
-JOIN DailyTrackers AS dt ON fe.dailyTrackerID = dt.dailyTrackerID
-JOIN Users AS u ON dt.userID = u.userID
-JOIN FoodItems AS fi ON fe.foodItemID = fi.foodItemID
-ORDER BY dt.date DESC, u.username ASC,
-       CASE
-       WHEN fe.mealCategory = 'Breakfast' then 1,
-       WHEN fe.mealCategory = 'Lunch' then 2,
-       WHEN fe.mealCategory = 'Dinner' then 3,
-       WHEN fe.mealCategory = 'Snacks' then 4
-       END ASC;
+SELECT 
+       fe.foodEntryID AS `Food Entry ID`, 
+       CONCAT(dt.dailyTrackerID, ': ', u.username, ', ', dt.date) AS `Daily Tracker`, 
+       fe.mealCategory AS `Meal Category`, 
+       fi.name AS `Food`, 
+       fi.calories AS `Calories` 
+FROM FoodEntries AS fe 
+JOIN DailyTrackers AS dt ON fe.dailyTrackerID = dt.dailyTrackerID 
+JOIN Users AS u ON dt.userID = u.userID 
+JOIN FoodItems AS fi ON fe.foodItemID = fi.foodItemID 
+ORDER BY dt.date DESC, u.username ASC, 
+CASE 
+       WHEN fe.mealCategory = 'Breakfast' then 1, 
+       WHEN fe.mealCategory = 'Lunch' then 2, 
+       WHEN fe.mealCategory = 'Dinner' then 3, 
+       WHEN fe.mealCategory = 'Snacks' then 4 
+END ASC;
 
 -- CREATE: Adds a new food entry in a specific user's daily tracker for a specific date
 START TRANSACTION;
