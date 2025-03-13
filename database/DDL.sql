@@ -117,23 +117,23 @@ CREATE OR REPLACE TABLE `FoodEntries` (
 -- whenever a new food entry is added.
 -- Ensures that food consumption tracking remains accurate.
 -- -----------------------------------------------------
-DELIMITER $$
+-- DELIMITER $$
 
-CREATE TRIGGER update_calories_consumed
-AFTER INSERT ON FoodEntries
-FOR EACH ROW
-BEGIN
-    UPDATE DailyTrackers
-    SET caloriesConsumed = (
-        SELECT COALESCE(SUM(FI.calories), 0)
-        FROM FoodEntries FE
-        JOIN FoodItems FI ON FE.foodItemID = FI.foodItemID
-        WHERE FE.dailyTrackerID = NEW.dailyTrackerID
-    )
-    WHERE dailyTrackerID = NEW.dailyTrackerID;
-END$$
+-- CREATE TRIGGER update_calories_consumed
+-- AFTER INSERT ON FoodEntries
+-- FOR EACH ROW
+-- BEGIN
+--     UPDATE DailyTrackers
+--     SET caloriesConsumed = (
+--         SELECT COALESCE(SUM(FI.calories), 0)
+--         FROM FoodEntries FE
+--         JOIN FoodItems FI ON FE.foodItemID = FI.foodItemID
+--         WHERE FE.dailyTrackerID = NEW.dailyTrackerID
+--     )
+--     WHERE dailyTrackerID = NEW.dailyTrackerID;
+-- END$$
 
-DELIMITER ;
+-- DELIMITER ;
 
 -- -----------------------------------------------------
 -- TRIGGER: Auto-update 'caloriesRemaining' when 'caloriesConsumed' or 'exerciseID' changes.
@@ -141,26 +141,26 @@ DELIMITER ;
 -- whenever `caloriesConsumed` or `exerciseID` changes.
 -- Ensures that calorie goals remain accurate.
 -- -----------------------------------------------------
-DELIMITER $$
+-- DELIMITER $$
 
-CREATE TRIGGER update_calories_remaining
-BEFORE UPDATE ON DailyTrackers
-FOR EACH ROW
-BEGIN
-    DECLARE goal INT;
-    DECLARE burned INT;
+-- CREATE TRIGGER update_calories_remaining
+-- BEFORE UPDATE ON DailyTrackers
+-- FOR EACH ROW
+-- BEGIN
+--     DECLARE goal INT;
+--     DECLARE burned INT;
 
-     -- Get the user's daily calorie goal
-    SELECT dailyCalorieGoal INTO goal FROM Users WHERE userID = NEW.userID;
+--      -- Get the user's daily calorie goal
+--     SELECT dailyCalorieGoal INTO goal FROM Users WHERE userID = NEW.userID;
 
-    -- Get the total calories burned (if an exercise is logged)
-    SELECT COALESCE((SELECT caloriesBurned FROM Exercises WHERE exerciseID = NEW.exerciseID), 0) INTO burned;
+--     -- Get the total calories burned (if an exercise is logged)
+--     SELECT COALESCE((SELECT caloriesBurned FROM Exercises WHERE exerciseID = NEW.exerciseID), 0) INTO burned;
 
-    -- Calculate new caloriesRemaining
-    SET NEW.caloriesRemaining = goal - NEW.caloriesConsumed + burned;
-END$$
+--     -- Calculate new caloriesRemaining
+--     SET NEW.caloriesRemaining = goal - NEW.caloriesConsumed + burned;
+-- END$$
 
-DELIMITER ;
+-- DELIMITER ;
 
 -- -----------------------------------------------------
 -- Insert sample data for Users
@@ -179,7 +179,7 @@ VALUES
 ('Oatmeal', "Bob\'s Red Mill", '1 cup', 153, 5, 3, 27),
 ('Coffee', 'Starbucks', '1 cup (grande)', 15, 1, 0, 2),
 ('Salad', NULL, '1 bowl', 250, 8, 10, 30),
-('Chicken ', "Trader Joe\'s", '113g', 150, 27, 5, 0),
+('Chicken', "Trader Joe\'s", '113g', 150, 27, 5, 0),
 ('Brown Rice', 'Nishiki', '210g', 340, 7, 3, 7),
 ('Big Mac', "McDonald\'s", '1 burger', 580, 25, 34, NULL);
 
