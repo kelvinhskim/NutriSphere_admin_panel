@@ -251,33 +251,34 @@ def add_tracker():
         return "An error occurred while adding a tracker", 500
 
 
-# Update - Updates a selected daily tracker (POST Request)
-@app.route('/update-tracker', methods=["POST"])
-def update_tracker():
-    # print("REQUEST FORM:", request.form.get("Update_Daily_Tracker"), request.form)
-    trackerID = request.form["trackerID"]
-    date = request.form["date"]
-    calorieGoal = request.form["calorie-goal"]
-    userID = request.form["userID"]
-    exerciseID = request.form["exerciseID"]
-    # print("UPDATE DATA", trackerID, date, calorieGoal, userID, exerciseID)
+# Update - Updates a selected daily tracker (PUT Request)
+@app.route('/daily-trackers/<int:tracker_id>', methods=["PUT"])
+def update_tracker(tracker_id):
+    data = request.get_json()
+    date = data["date"]
+    calorie_goal = data["calorieGoal"]
+    user_id = data["userID"]
+    exercise_id = data["exerciseID"]
     try:
         # query if no exercise is input in the exercise field
-        if exerciseID == "NULL":
+        if exercise_id == "NULL":
             query = "UPDATE DailyTrackers SET date = %s, calorieGoal = %s, userID = %s, exerciseID = %s WHERE dailyTrackerID = %s;"
             cur = mysql.connection.cursor() 
-            cur.execute(query, (date, calorieGoal, userID, "NUll", trackerID))
+            cur.execute(query, (date, calorie_goal, user_id, "NUll", tracker_id))
             mysql.connection.commit()
             cur.close()   
         else:
             # query to update daily tracker
             query = "UPDATE DailyTrackers SET date = %s, calorieGoal = %s, userID = %s, exerciseID = %s WHERE dailyTrackerID = %s;"
             cur = mysql.connection.cursor() 
-            cur.execute(query, (date, calorieGoal, userID, exerciseID, trackerID))
+            cur.execute(query, (date, calorie_goal, user_id, exercise_id, tracker_id))
             mysql.connection.commit()
             cur.close()   
-        print(f"✅  DailyTracker {trackerID} updated successfully!")
-        # return redirect("/daily-trackers")
+        print(f"✅  DailyTracker {tracker_id} updated successfully!")
+        return jsonify({
+            "message": f"DailyTracker {tracker_id} updated successfully.",
+            "redirect_url": "/daily-trackers"
+            }), 200
     except Exception as e: 
         print("❌ Error updating tracker:", e)   
         return "An error occurred while adding a tracker", 500
