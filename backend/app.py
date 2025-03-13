@@ -307,7 +307,7 @@ def delete_tracker(tracker_id):
 @app.route('/food-entries', methods=["GET"])
 def food_entries():
     try:
-        # query to retrieve all food entries which are associated with users' daily trackers
+        # Query to retrieve all food entries which are associated with users' daily trackers
         query = (
             "SELECT " 
                 "fe.foodEntryID AS `Food Entry ID`, "
@@ -330,13 +330,49 @@ def food_entries():
         cur = mysql.connection.cursor()
         cur.execute(query)
         food_entries_data = cur.fetchall()
-        return render_template("food-entries.html", food_entries=food_entries_data)
+
+        # Query for Users dropdown
+        query2 = "SELECT userID, username, dailyCalorieGoal FROM Users;"
+        cur.execute(query2)
+        users_data = cur.fetchall()
+
+        # Query for Food Item dropdown
+        query3 = "SELECT foodItemID, name, brand FROM FoodItems;"
+        cur.execute(query3)
+        food_item_dropdown_data = cur.fetchall()
+
+        return render_template(
+            "food-entries.html", 
+            food_entries=food_entries_data,
+            users=users_data,
+            food_item_dropdown=food_item_dropdown_data
+        )
     except Exception as e:
         print("❌ Error fetching food entries data:", e)
         return "An error occurred while fetching food entries data", 500
 
 
-
+# CREATE - Inserts an entry into the Food Entries table
+@app.route('/food-entries', methods=['POST'])
+def add_food_entry():
+    print(request.form)
+    user_id = request.form["userID"]
+    date = request.form["date"]
+    meal_category = request.form["mealCategory"]
+    food_item_id = request.form["foodItemID"]
+    try:
+        query = "INSERT INTO FoodEntries (mealCategory, foodItemID, dailyTrackerID) VALUES (" \
+            "%s, %s, (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = %s AND date = %s));"
+        print(query)
+        cur = mysql.connection.cursor()
+        cur.execute(query, (meal_category, food_item_id, user_id, date))
+        mysql.connection.commit()
+        cur.close()  
+        print(f"✅  FoodEntry added successfully!")
+        return redirect("/food-entries")
+    except Exception as e:
+        print("❌ Error fetching food entries data:", e)
+        return f"An error occurred while fetching food entries data: {e}", 500
 
 # --------------------------------------------------
 # READ - Display Food Items

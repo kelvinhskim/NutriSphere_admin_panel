@@ -59,39 +59,43 @@
     </main>
 
     <!-- Add Food Entry form -->
-    <section>
-        <h2>Add a Food Entry</h2>
-        <form>
-            <label>Select a User:</label>
-            <select>
-                <option>Tyler</option>
-                <option>Jane</option>
-                <option>Alex</option>
-            </select>
+    <section id="add-food-entry-section">
+        <form id="add-food-entry-form" action="/food-entries" method="post">
+            <fieldset>
+                <h2>Add a Food Entry</h2>
+                <label>Select a User:</label>
+                <select id="selectedUser" name="userID">
+                    <option value="" selected disabled hidden></option>
+                    {% for user in users %}
+                    <option value="{{ user.userID }}">
+                        {{ user.username }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <label>Select a Date</label>
+                <input type="date" id="date" name="date" value="">
+    
+                <label for="mealCategory">Meal:</label>
+                <select id="mealCategory" name="mealCategory" value="">
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                    <option value="Snack">Snack</option>
+                </select>
+                
+                <label for="foodItem">Food:</label>
+                <select id="foodItem" name="foodItemID">
+                    {% for food in food_item_dropdown %}
+                    <option value="{{ food.foodItemID }}">{{ food.foodItemID }}: {{ food.name }}, {{ food.brand }}</option>
+                    {% endfor %}
+                </select>
+    
+                <!-- <label for="calories">Calories:</label>
+                <input type="number" id="calories" name="calories" value="" required> -->
+    
+                <button type="submit" value="submit">➕ Add</button>
 
-            <label>Select a Date</label>
-            <input type="date">
-
-            <label for="mealType">Meal:</label>
-            <select name="mealType" id="mealType" required>
-                <option value="Breakfast">Breakfast</option>
-                <option value="Lunch">Lunch</option>
-                <option value="Dinner">Dinner</option>
-                <option value="Snack">Snack</option>
-            </select>
-            
-            <label for="foodItem">Food Item:</label>
-            <select name="foodItem" id="foodItem" required>
-                <option>1: Oatmeal, Quaker</option>
-                <option>2: Coffee, Starbucks</option>
-                <option>3: Salad</option>
-                <!-- Dynamic options will be loaded from the database -->
-            </select>
-
-            <label for="calories">Calories:</label>
-            <input type="number" name="calories" id="calories" required>
-
-            <button type="submit">➕ Add Food Entry</button>
+            </fieldset>
         </form>
     </section>
 
