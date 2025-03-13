@@ -19,138 +19,42 @@
         </nav> 
     </header>
 
+    <!-- Food Entries Table -->
     <main>
         <h2>Food Entries</h2>
         <table border="1">
-            <tr>
-                <th>Food Entry ID</th>
-                <th>Meal Category</th>
-                <th>Food</th>
-                <th>Calories</th>
-                <th>Daily Tracker</th>
-                <th>Actions</th>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Breakfast</td>
-                <td>Oatmeal</td>
-                <td>150</td>
-                <td>1: Tyler, 2025-01-02</td>
-                <td>
-                    <button class="edit-btn">✏️ Edit</button>
-                    <button class="delete-btn">❌ Delete</button>
-                </td>
+            <thead>
+                <!-- Access queried table headers passed from food-entries route -->
+                 <tr>
+                    {% if food_entries %}
+                        {% for key in food_entries[0].keys() %}
+                        <th>{{ key }}</th>
+                        {% endfor %}
+                        <th>Actions</th>
+                    {% else %}
+                        <th>No data available</th>
+                    {% endif %}
+                 </tr>
+            </thead>
+            <tbody>
+            {% if food_entries %}
+                {% for entry in food_entries %}
                 <tr>
-                    <td>2</td>
-                    <td>Lunch</td>
-                    <td>Coffee</td>
-                    <td>15</td>
-                    <td>1: Tyler, 2025-01-02</td>
+                    {% for key in entry %}
+                    <td>{{ entry[key] }}</td>
+                    {% endfor %}
                     <td>
                         <button class="edit-btn">✏️ Edit</button>
                         <button class="delete-btn">❌ Delete</button>
                     </td>
                 </tr>
+                {% endfor %}
+            {% else %}
                 <tr>
-                    <td>3</td>
-                    <td>Lunch</td>
-                    <td>Salad</td>
-                    <td>250</td>
-                    <td>1: Tyler, 2025-01-02</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
+                    <td colspan="100%">No food entries data found.</td>
                 </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Dinner</td>
-                    <td>Chicken</td>
-                    <td>150</td>
-                    <td>1: Tyler, 2025-01-02</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>Lunch</td>
-                    <td>Big Mac</td>
-                    <td>580</td>
-                    <td>2: Jane, 2025-01-03</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>6</td>
-                    <td>Dinner</td>
-                    <td>Salad</td>
-                    <td>250</td>
-                    <td>2: Jane, 2025-01-03</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td>Dinner</td>
-                    <td>Chicken</td>
-                    <td>150</td>
-                    <td>2: Jane, 2025-01-03</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>8</td>
-                    <td>Breakfast</td>
-                    <td>Coffee</td>
-                    <td>15</td>
-                    <td>3: Alex, 2025-01-20</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td>Lunch</td>
-                    <td>Chicken</td>
-                    <td>150</td>
-                    <td>4: Alex, 2025-02-01</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>10</td>
-                    <td>Dinner</td>
-                    <td>Big Mac</td>
-                    <td>580</td>
-                    <td>5: Alex, 2025-02-04</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>11</td>
-                    <td>Breakfast</td>
-                    <td>Oatmeal</td>
-                    <td>153</td>
-                    <td>3: Alex, 2025-01-20</td>
-                    <td>
-                        <button class="edit-btn">✏️ Edit</button>
-                        <button class="delete-btn">❌ Delete</button>
-                    </td>
-                </tr>
-            </tr>
+            {% endif %}
+            </tbody>
         </table>
     </main>
 

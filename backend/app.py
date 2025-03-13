@@ -303,9 +303,39 @@ def delete_tracker(tracker_id):
     
 
 # --------------------------------------------------
-@app.route('/food-entries')
+# Read - Retrieves FoodEntries data (GET Request)
+@app.route('/food-entries', methods=["GET"])
 def food_entries():
-    return render_template("food-entries.html")
+    try:
+        # query to retrieve all food entries which are associated with users' daily trackers
+        query = (
+            "SELECT " 
+                "fe.foodEntryID AS `Food Entry ID`, "
+                "CONCAT(dt.dailyTrackerID, ': ', u.username, ', ', dt.date) AS `Daily Tracker`, "
+                "fe.mealCategory AS `Meal Category`, " 
+                "fi.name AS `Food`, "
+                "fi.calories AS `Calories` "
+            "FROM FoodEntries AS fe "
+            "JOIN DailyTrackers AS dt ON fe.dailyTrackerID = dt.dailyTrackerID "
+            "JOIN Users AS u ON dt.userID = u.userID "
+            "JOIN FoodItems AS fi ON fe.foodItemID = fi.foodItemID "
+            "ORDER BY dt.date DESC, u.username ASC, "
+                "CASE "
+                    "WHEN fe.mealCategory = 'Breakfast' then 1 "
+                    "WHEN fe.mealCategory = 'Lunch' then 2 "
+                    "WHEN fe.mealCategory = 'Dinner' then 3 "
+                    "WHEN fe.mealCategory = 'Snacks' then 4 "
+                "END ASC;"
+        )
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        food_entries_data = cur.fetchall()
+        return render_template("food-entries.html", food_entries=food_entries_data)
+    except Exception as e:
+        print("❌ Error fetching food entries data:", e)
+        return "An error occurred while fetching food entries data", 500
+
+
 
 
 # --------------------------------------------------
