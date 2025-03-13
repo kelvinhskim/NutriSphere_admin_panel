@@ -90,15 +90,6 @@
                         {{ user.username }}
                     </option>
                     {% endfor %}
-                    {% for user in users %}
-                    <option 
-                        value="{{ user.userID }}"
-                        data-username="{{ user.username }}"
-                        data-calorie-goal="{{ user.dailyCalorieGoal }}"
-                    >
-                        {{ user.username }}
-                    </option>
-                    {% endfor %}
                 </select>
 
                 <label>Date</label>
