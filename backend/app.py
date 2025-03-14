@@ -367,7 +367,7 @@ def food_entries():
         return "An error occurred while fetching food entries data", 500
 
 
-# CREATE - Inserts an entry into the Food Entries table
+# CREATE - Inserts an entry into the Food Entries table (POST Request)
 @app.route('/food-entries', methods=['POST'])
 def add_food_entry():
     print(request.form)
@@ -390,7 +390,7 @@ def add_food_entry():
         return f"An error occurred while adding food entries data: {e}", 500
     
 
-# UPDATE - Updates a selected food entry in the Food Entries table
+# UPDATE - Updates a selected food entry in the Food Entries table (PUT Request)
 @app.route('/food-entries/<int:food_entry_id>', methods=["PUT"])
 def update_food_entry(food_entry_id):
     data = request.get_json()
@@ -411,6 +411,23 @@ def update_food_entry(food_entry_id):
     except Exception as e:
         print("❌ Error updating food entries data:", e)
         return "An error occurred while updating a food entry", 500
+    
+@app.route("/food-entries/<int:entry_id>", methods=["DELETE"])
+def delete_food_entry(entry_id):
+    try:
+        query = "DELETE FROM FoodEntries WHERE foodEntryID = %s"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (entry_id,))
+        mysql.connection.commit()
+        print(f"✅  FoodEntry {entry_id} deleted successfully!")
+        return jsonify({
+            "message": f"FoodEntry {entry_id} deleted successfully.",
+            "redirect_url": "/food-entries"
+            }), 200
+    except Exception as e:
+        print("❌ Error deleting FoodEntry {entry_id}:", e)
+        return "An error occurred while deleting an entry", 500
+
 
 # --------------------------------------------------
 # READ - Display Food Items
