@@ -166,21 +166,21 @@ def delete_user(user_id):
 def daily_trackers():
     try:
         # Main query with JOIN to fetch Username and Exercise Name
-        query = (
-            "SELECT "
-            "dt.dailyTrackerID AS `Daily Tracker ID`, "
-            "u.username AS `Username`, "
-            "dt.date AS `Date`, "
-            "dt.calorieGoal AS `Calorie Goal`, "
-            "dt.caloriesConsumed AS `Calories Consumed`, "
-            "COALESCE(e.caloriesBurned, 0) AS `Calories Burned`, "
-            "dt.caloriesRemaining AS `Calories Remaining`, "
-            "COALESCE(e.name, 'Null') AS `Exercise Logged` "
-            "FROM DailyTrackers dt "
-            "LEFT JOIN Users u ON dt.userID = u.userID "
-            "LEFT JOIN Exercises e ON dt.exerciseID = e.exerciseID "
-            "ORDER BY dt.date DESC;"
-        )
+        query = """
+            SELECT 
+            dt.dailyTrackerID AS `Daily Tracker ID`, 
+            u.username AS `Username`, 
+            dt.date AS `Date`, 
+            dt.calorieGoal AS `Calorie Goal`, 
+            dt.caloriesConsumed AS `Calories Consumed`, 
+            COALESCE(e.caloriesBurned, 0) AS `Calories Burned`, 
+            dt.caloriesRemaining AS `Calories Remaining`, 
+            COALESCE(e.name, 'Null') AS `Exercise Logged` 
+            FROM DailyTrackers dt 
+            LEFT JOIN Users u ON dt.userID = u.userID 
+            LEFT JOIN Exercises e ON dt.exerciseID = e.exerciseID 
+            ORDER BY dt.date DESC;
+        """
         cur = mysql.connection.cursor()
         cur.execute(query)
         dailytrackers_data = cur.fetchall()
@@ -223,7 +223,7 @@ def daily_trackers():
         return "An error occurred while fetching data", 500
 # --------------------------------------------------
 # Create - Inserts a new daily tracker into the DailyTrackers table (POST Request)
-@app.route('/add-tracker', methods=["POST"])
+@app.route('/daily-trackers', methods=["POST"])
 def add_tracker():
     date = request.form["date"]
     userID = request.form["userID"]
@@ -281,8 +281,8 @@ def update_tracker(tracker_id):
             "redirect_url": "/daily-trackers"
             }), 200
     except Exception as e: 
-        print("❌ Error updating tracker:", e)   
-        return "An error occurred while adding a tracker", 500
+        print("❌ Error updating tracker {tracker_id}:", e)   
+        return "An error occurred while updating tracker {tracker_id}", 500
 
 
 # Delete - Deletes a selected daily tracker (DELETE Request)
@@ -300,7 +300,7 @@ def delete_tracker(tracker_id):
             }), 200
     except Exception as e:
         print("❌ Error deleting DailyTracker {tracker_id}:", e)
-        return "An error occurred while deleting a tracker", 500
+        return "An error occurred while deleting tracker {tracker_id}", 500
     
 
 # --------------------------------------------------
@@ -309,28 +309,30 @@ def delete_tracker(tracker_id):
 def food_entries():
     try:
         # Query to retrieve all food entries which are associated with users' daily trackers
-        query = (
-            "SELECT " 
-                "fe.foodEntryID AS `Food Entry ID`, "
-                "fe.mealCategory AS `Meal Category`, " 
-                "fi.name AS `Food`, "
-                "fi.calories AS `Calories`, "
-                "CONCAT(dt.dailyTrackerID, ': ', u.username, ', ', dt.date) AS `Daily Tracker` "
-            "FROM FoodEntries AS fe "
-            "JOIN DailyTrackers AS dt ON fe.dailyTrackerID = dt.dailyTrackerID "
-            "JOIN Users AS u ON dt.userID = u.userID "
-            "JOIN FoodItems AS fi ON fe.foodItemID = fi.foodItemID "
-            "ORDER BY dt.date DESC, u.username ASC, "
-                "CASE "
-                    "WHEN fe.mealCategory = 'Breakfast' then 1 "
-                    "WHEN fe.mealCategory = 'Lunch' then 2 "
-                    "WHEN fe.mealCategory = 'Dinner' then 3 "
-                    "WHEN fe.mealCategory = 'Snacks' then 4 "
-                "END ASC;"
-        )
+        query = """
+            SELECT 
+                fe.foodEntryID AS `Food Entry ID`, 
+                fe.mealCategory AS `Meal Category`, 
+                fi.name AS `Food`, 
+                fi.calories AS `Calories`, 
+                CONCAT(dt.dailyTrackerID, ': ', u.username, ', ', dt.date) AS `Daily Tracker` 
+            FROM FoodEntries AS fe 
+            JOIN DailyTrackers AS dt ON fe.dailyTrackerID = dt.dailyTrackerID 
+            JOIN Users AS u ON dt.userID = u.userID 
+            JOIN FoodItems AS fi ON fe.foodItemID = fi.foodItemID 
+            ORDER BY dt.date DESC, u.username ASC, 
+                CASE 
+                    WHEN fe.mealCategory = 'Breakfast' then 1 
+                    WHEN fe.mealCategory = 'Lunch' then 2 
+                    WHEN fe.mealCategory = 'Dinner' then 3 
+                    WHEN fe.mealCategory = 'Snacks' then 4 
+                END ASC;
+        """
         cur = mysql.connection.cursor()
         cur.execute(query)
+        print(query)
         food_entries_data = cur.fetchall()
+        # print(food_entries_data)
 
         # Query for Users dropdown
         query2 = "SELECT userID, username, dailyCalorieGoal FROM Users;"
@@ -353,7 +355,6 @@ def food_entries():
     
         cur.execute(query4)
         food_entry_update_data = cur.fetchall()
-        # print(food_entry_update_data)
 
         return render_template(
             "food-entries.html", 
