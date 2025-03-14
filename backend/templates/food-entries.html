@@ -101,37 +101,51 @@
 
     <!-- Update a Food Entry -->
     <section>
-        <h2>Update a Food Entry</h2>
-        <form action="insert_food_entry.php" method="POST">
-            <label for="foodEntry">Select a Food Entry Row</label>
-            <select name="foodEntry" id="foodEntry" required>
-                <option value="">1: Breakfast, Oatmeal</option>
-                <!-- Populate dynamically with available DailyTrackers -->
-            </select>
+        <form id="update-food-entry-form">
+            <fieldset>
+                <h2>Edit Selected Food Entry</h2>
+                <label for="food-entry">Select a Food Entry Row</label>
+                <select id="selected-food-entry-id" name="food-entry-id" onchange="getSelectedFoodEntry()" required>
+                    <option value="" selected disabled hidden>-- Select a Food Entry --</option>
+                    {% for entry in food_entries %}
+                    <option value="{{ entry["Food Entry ID"] }}">
+                        {{ entry["Food Entry ID"] }}: {{ entry["Meal Category"] }}, {{ entry["Food"] }}
+                    </option>
+                    {% endfor %}
+                </select>
+    
+                <label for="meal-category">Meal:</label>
+                <select id="update-meal-category" name="meal-category" required>
+                    <option value="" selected disabled hidden></option>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                    <option value="Snack">Snack</option>
+                </select>
+    
+                <label for="food-item">Food:</label>
+                <select id="update-food-item-id" name="food-item" required>
+                    {% for food in food_item_dropdown %}
+                    <option value="" selected disabled hidden></option>
+                    <option value="{{ food.foodItemID }}">{{ food.name }}</option>
+                    {% endfor %}
+                </select>
+    
+                <!-- <label for="calories">Calories:</label>
+                <input type="number" name="calories" id="calories" value="50" required> -->
+    
+                <label>Daily Tracker</label>
+                <select id="update-daily-tracker-id" name="daily-tracker">
+                    <option value="" selected disabled hidden></option>
+                    {% for entry in food_entry_update %}
+                    <option value="{{ entry.foodItemID }}">{{ entry.foodItemID }}: {{ entry.username }}, {{ entry.date }}</option>
+                    {% endfor %}
+                    <option>1: Tyler, 2025-01-02</option>
+                </select>
+    
+                <button type="submit">Save</button>
 
-            <label for="mealType">Meal:</label>
-            <select name="mealType" id="mealType" required>
-                <option value="Breakfast">Breakfast</option>
-                <option value="Lunch">Lunch</option>
-                <option value="Dinner">Dinner</option>
-                <option value="Snack">Snack</option>
-            </select>
-
-            <label for="foodItem">Food:</label>
-            <select name="foodItem" id="foodItem" required>
-                <option value="">-- Select Food --</option>
-                <!-- Dynamic options will be loaded from the database -->
-            </select>
-
-            <label for="calories">Calories:</label>
-            <input type="number" name="calories" id="calories" value="50" required>
-
-            <label>Daily Tracker</label>
-            <select>
-                <option>1: Tyler, 2025-01-02</option>
-            </select>
-
-            <button type="submit">Save</button>
+            </fieldset>
         </form>
     </section>
 
@@ -143,7 +157,6 @@
             <label for="foodEntry">Food Entry ID</label>
             <select name="foodEntry" id="foodEntry" disabled>
                 <option value="1">1</option>
-                <!-- Populate dynamically with available DailyTrackers -->
             </select>
 
             <label for="mealType">Meal:</label>
@@ -166,6 +179,29 @@
             <button>Delete</button>
         </form>
     </section>
+
+    <script language="Javascript">
+
+        let foodEntries = {}
+        {% for entry in food_entry_update %}
+            foodEntries[{{ entry.foodEntryID }}] = {
+                mealCategory: "{{ entry.mealCategory }}",
+                foodItemID: "{{ entry.foodItemID }}",
+                dailyTrackerID: {{ entry.dailyTrackerID }}
+            }
+        {% endfor %}
+        console.log("Entries:", foodEntries)
+
+    function getSelectedFoodEntry() {
+        entryID = document.getElementById("selected-food-entry-id").value
+        selectedEntry = foodEntries[entryID]
+        document.getElementById("update-meal-category").value = selectedEntry.mealCategory
+        document.getElementById("update-food-item-id").value = selectedEntry.foodItemID
+        document.getElementById("update-daily-tracker-id").value = selectedEntry.dailyTrackerID
+        console.log(entryID, selectedEntry, selectedEntry.foodItemID, selectedEntry.dailyTrackerID)
+    }
+
+    </script>
 
 </body>
 </html>
