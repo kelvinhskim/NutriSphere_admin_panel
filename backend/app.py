@@ -205,6 +205,7 @@ def daily_trackers():
         )
         cur.execute(query4)
         dailytrackers_dropdown_data = cur.fetchall()
+        # print(dailytrackers_dropdown_data)
 
         cur.close()
         
@@ -311,10 +312,10 @@ def food_entries():
         query = (
             "SELECT " 
                 "fe.foodEntryID AS `Food Entry ID`, "
-                "CONCAT(dt.dailyTrackerID, ': ', u.username, ', ', dt.date) AS `Daily Tracker`, "
                 "fe.mealCategory AS `Meal Category`, " 
                 "fi.name AS `Food`, "
-                "fi.calories AS `Calories` "
+                "fi.calories AS `Calories`, "
+                "CONCAT(dt.dailyTrackerID, ': ', u.username, ', ', dt.date) AS `Daily Tracker` "
             "FROM FoodEntries AS fe "
             "JOIN DailyTrackers AS dt ON fe.dailyTrackerID = dt.dailyTrackerID "
             "JOIN Users AS u ON dt.userID = u.userID "
@@ -341,11 +342,25 @@ def food_entries():
         cur.execute(query3)
         food_item_dropdown_data = cur.fetchall()
 
+        # Query for Food Entry Update 
+        query4 = """
+            SELECT fe.foodEntryID, fe.mealCategory, fi.foodItemID, fi.name, dt.dailyTrackerID, dt.date, u.username
+                FROM FoodEntries AS fe
+                JOIN DailyTrackers AS dt ON fe.dailyTrackerID = dt.dailyTrackerID
+                JOIN FoodItems AS fi ON fe.foodItemID = fi.foodItemID
+                JOIN Users AS u ON dt.userID = u.userID;
+        """
+    
+        cur.execute(query4)
+        food_entry_update_data = cur.fetchall()
+        # print(food_entry_update_data)
+
         return render_template(
             "food-entries.html", 
             food_entries=food_entries_data,
             users=users_data,
-            food_item_dropdown=food_item_dropdown_data
+            food_item_dropdown=food_item_dropdown_data,
+            food_entry_update=food_entry_update_data
         )
     except Exception as e:
         print("❌ Error fetching food entries data:", e)
@@ -371,8 +386,31 @@ def add_food_entry():
         print(f"✅  FoodEntry added successfully!")
         return redirect("/food-entries")
     except Exception as e:
-        print("❌ Error fetching food entries data:", e)
-        return f"An error occurred while fetching food entries data: {e}", 500
+        print("❌ Error adding food entries data:", e)
+        return f"An error occurred while adding food entries data: {e}", 500
+    
+
+# UPDATE - Updates a selected food entry in the Food Entries table
+@app.route('/food-entries/<int:food_entry_id>', methods=["PUT"])
+def update_food_entry(food_entry_id):
+    data = request.get_json()
+    meal_category = data["mealCategory"]
+    food_item_id = data["foodItemID"]
+    daily_tracker_id = data["dailyTrackerID"]
+    try:
+        query = "UPDATE FoodEntries SET mealCategory = %s, foodItemID = %s, dailyTrackerID = %s WHERE foodEntryID = %s;"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (meal_category, food_item_id, daily_tracker_id, food_entry_id))
+        mysql.connection.commit()
+        cur.close()
+        print(f"✅  FoodEntry updated successfully!")
+        return jsonify({
+            "message": f"FoodEntry {food_entry_id} updated successfully.",
+            "redirect_url": "/food-entries"
+        }), 200
+    except Exception as e:
+        print("❌ Error updating food entries data:", e)
+        return "An error occurred while updating a food entry", 500
 
 # --------------------------------------------------
 # READ - Display Food Items
