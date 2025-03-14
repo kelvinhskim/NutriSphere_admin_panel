@@ -44,7 +44,7 @@
                     <td>{{ entry[key] }}</td>
                     {% endfor %}
                     <td>
-                        <button class="edit-btn">✏️ Edit</button>
+                        <button class="edit-btn" onclick="populateUpdateFoodEntry({{ entry["Food Entry ID"] }})">✏️ Edit</button>
                         <button class="delete-btn">❌ Delete</button>
                     </td>
                 </tr>
@@ -190,6 +190,13 @@
             }
         {% endfor %}
         // console.log("Entries:", foodEntries)
+
+    function populateUpdateFoodEntry(id) {
+        const selectedEntry = foodEntries[id]
+        document.getElementById("update-meal-category").value = selectedEntry.mealCategory
+        document.getElementById("update-food-item-id").value = selectedEntry.foodItemID
+        document.getElementById("update-daily-tracker-id").value = selectedEntry.dailyTrackerID
+    }
 
     function getSelectedFoodEntry() {
         entryID = document.getElementById("selected-food-entry-id").value
