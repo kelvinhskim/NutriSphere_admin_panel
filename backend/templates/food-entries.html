@@ -140,10 +140,9 @@
                     {% for entry in food_entry_update %}
                     <option value="{{ entry.foodItemID }}">{{ entry.foodItemID }}: {{ entry.username }}, {{ entry.date }}</option>
                     {% endfor %}
-                    <option>1: Tyler, 2025-01-02</option>
                 </select>
     
-                <button type="submit">Save</button>
+                <button type="button" onclick="submitUpdateFoodEntry()">Save</button>
 
             </fieldset>
         </form>
@@ -190,7 +189,7 @@
                 dailyTrackerID: {{ entry.dailyTrackerID }}
             }
         {% endfor %}
-        console.log("Entries:", foodEntries)
+        // console.log("Entries:", foodEntries)
 
     function getSelectedFoodEntry() {
         entryID = document.getElementById("selected-food-entry-id").value
@@ -201,6 +200,30 @@
         console.log(entryID, selectedEntry, selectedEntry.foodItemID, selectedEntry.dailyTrackerID)
     }
 
+    function submitUpdateFoodEntry() {
+        id = document.getElementById("selected-food-entry-id").value
+        mealCategory = document.getElementById("update-meal-category").value
+        foodItemID = document.getElementById("update-food-item-id").value
+        dailyTrackerID = document.getElementById("update-daily-tracker-id").value
+
+        const URL = `/food-entries/${id}`;
+        const data = { mealCategory, foodItemID, dailyTrackerID }
+        // use fetch to handle update request to edit a selected food entry row
+        fetch(URL, {
+                method: "PUT",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw Error(`${response.status}`)
+                }
+            })
+            .then(response => window.location = response.redirect_url)
+            .catch(error => console.error(error))
+    }
     </script>
 
 </body>
