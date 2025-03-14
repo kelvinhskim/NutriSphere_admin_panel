@@ -65,7 +65,7 @@
                 <h2>Add a Food Entry</h2>
                 <label>Select a User:</label>
                 <select id="selectedUser" name="userID">
-                    <option value="" selected disabled hidden></option>
+                    <option value="" selected disabled hidden>-- Select a User --</option>
                     {% for user in users %}
                     <option value="{{ user.userID }}">
                         {{ user.username }}
@@ -77,6 +77,7 @@
     
                 <label for="mealCategory">Meal:</label>
                 <select id="mealCategory" name="mealCategory" value="">
+                    <option value="" selected disabled hidden></option>
                     <option value="Breakfast">Breakfast</option>
                     <option value="Lunch">Lunch</option>
                     <option value="Dinner">Dinner</option>
@@ -85,6 +86,7 @@
                 
                 <label for="foodItem">Food:</label>
                 <select id="foodItem" name="foodItemID">
+                    <option value="" selected disabled hidden></option>
                     {% for food in food_item_dropdown %}
                     <option value="{{ food.foodItemID }}">{{ food.foodItemID }}: {{ food.name }}, {{ food.brand }}</option>
                     {% endfor %}
