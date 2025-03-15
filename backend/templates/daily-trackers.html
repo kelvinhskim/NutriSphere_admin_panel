@@ -93,17 +93,16 @@
         <h2>Daily Trackers</h2>
         <table border="1">
             <thead>
+ 
                 <!-- Access queried table headers passed from daily-trackers route -->
-                <tr>
-                    {% if daily_trackers %}
-                        {% for key in daily_trackers[0].keys() %}
-                            <th>{{ key }}</th>
-                        {% endfor %}
-                        <th>Actions</th>
-                        {% else %}
-                            <th>No data available</th>
-                        {% endif %}
-                </tr>
+                {% if daily_trackers %}
+                    {% for key in daily_trackers[0].keys() %}
+                        <th>{{ key }}</th>
+                    {% endfor %}
+                    <th>Actions</th>
+                {% else %}
+                    <th>No data available</th>
+                {% endif %}
             </thead>
 
             <!-- Access queried table data passed from daily-trackers route -->
@@ -115,8 +114,8 @@
                             <td> {{tracker[key]}} </td>
                         {% endfor %} 
                         <td>
-                            <button class="edit-btn" onclick="populateUpdateTracker({{ tracker["Daily Tracker ID"] }})">✏️ Edit</button>
-                            <button class="delete-btn" onclick=populateDeleteTracker({{ tracker["Daily Tracker ID"] }})>❌ Delete</button>
+                            <button class="edit-btn" onclick="populateUpdateTracker({{ tracker['Daily Tracker ID'] }})">✏️ Edit</button>
+                            <button class="delete-btn" onclick="populateDeleteTracker({{ tracker['Daily Tracker ID'] }})">❌ Delete</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -131,7 +130,7 @@
 
     <!-- Add Daily Tracker Form -->
     <section id="add-tracker">
-        <form action="{{ url_for("add_tracker") }}" method="post">
+        <form action="{{ url_for('add_tracker') }}" method="post">
             <fieldset>
                 <h2>Add New Daily Tracker</h2>
                 <label>Select a User</label>
@@ -158,7 +157,7 @@
                 <select id="exercise" name="exerciseID">
                     <option value="NULL" selected></option>
                     {% for exercise in exercises %}
-                    <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
+                        <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
                     {% endfor %}
                 </select>
 

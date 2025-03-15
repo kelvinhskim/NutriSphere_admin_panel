@@ -50,14 +50,14 @@ nav a:hover {
 }
 
 /* Main Content */
-.container {
+.users-container {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 75vh; /* Keeps content centered */
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
     padding: 20px;
 }
+
 
 /* Content Section */
 main {
@@ -65,6 +65,36 @@ main {
     max-width: 1200px;
     margin: 0 auto;
     text-align: center;
+}
+
+/* User List Section */
+.user-list {
+    margin-bottom: 40px;
+}
+
+table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    background: white;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #007bff;
+    color: white;
+}
+
+td {
+    background: #fff;
 }
 
 /* Welcome Section */
@@ -147,6 +177,76 @@ button:hover {
     background-color: #0056b3;
 }
 
+/* Add and Update User Forms Section */
+.user-forms {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.form-container {
+    width: 48%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+}
+
+form input, form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+form button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* Reset Database Button */
+.reset-btn {
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.reset-btn:hover {
+    background-color: #d32f2f;
+}
 
 /* #update-daily-tracker,
 #delete-daily-tracker {
@@ -157,7 +257,6 @@ button:hover {
 #delete-daily-tracker {
     display: block; /* Ensure the forms are visible */
 }
-
 
 
 /* Footer */

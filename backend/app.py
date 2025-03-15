@@ -1,22 +1,16 @@
-# Citation for the following function:
-# Date: 02/27/2025  (Update to the date you copied/used it)
-# Copied from /OR/ Adapted from /OR/ Based on:
-# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
-
-
-from flask import Flask, render_template, request, json, redirect, url_for, jsonify
+from flask import Flask, render_template, request, json, redirect, url_for, jsonify, flash
 from flask_mysqldb import MySQL
 import os
 
-app = Flask(__name__)
+# Citation for the following function:
+# Date: 02/27/2025  (Update to the date you copied/used it)
+# Originality: Adapted
+# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+# Description: Adapted from the OSU CS340 Flask Starter App for database connections and routing.
 
-# database connection
-# Template:
-# app.config["MYSQL_HOST"] = "classmysql.engr.oregonstate.edu"
-# app.config["MYSQL_USER"] = "cs340_OSUusername"
-# app.config["MYSQL_PASSWORD"] = "XXXX" | last 4 digits of OSU id
-# app.config["MYSQL_DB"] = "cs340_OSUusername"
-# app.config["MYSQL_CURSORCLASS"] = "DictCursor"
+
+app = Flask(__name__)
+app.secret_key = "secret key"
 
 # database connection info
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
@@ -26,6 +20,7 @@ app.config['MYSQL_DB'] = 'cs340_kimh22'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 mysql = MySQL(app) # Initialize MySQL with Flask app
+
 
 # --------------------------------------------------
 # Home Route
@@ -37,125 +32,101 @@ def home():
     return render_template("index.html")
 
 
-# --------------------------------------------------
-# Read - Display Users (GET Request)
-@app.route('/users', methods=['GET'])
+# --------------USERS CRUD-----------------------------
+
+# --------------Read (Display Users)--------------------
+@app.route("/users", methods=["GET"])
 def users():
     """
-    Fetches all users from the database and displays them.
+    Display all users in a table format.
     """
     try:
         cursor = mysql.connection.cursor()
-        
-        # Execute the SQL query to retrieve all users
-        query = "SELECT userID, username, email, dailyCalorieGoal FROM Users ORDER BY username;"
+        query = "SELECT * FROM Users"
         cursor.execute(query)
-        
-        # Fetch all results from the query
-        users_data = cursor.fetchall()
-        
-        recommended_users = [
-            {'id': 1, 'username': 'Tyler', 'email': 'tyler@oregonstate.edu', 'dailyCalorieGoal': 2400},
-            {'id': 2, 'username': 'Jane', 'email': 'jane@oregonstate.edu', 'dailyCalorieGoal': 2000},
-            {'id': 3, 'username': 'Alex', 'email': 'alex@oregonstate.edu', 'dailyCalorieGoal': 2200}
-        ]
-
-        # Return the users data to the 'users.html' template
-        return render_template("users.html", users=users_data, recommended_users=recommended_users)
-    
-    except Exception as e:
-        print("❌ Error fetching users:", e)
-        return redirect(url_for('home'))  # Redirect to home in case of error
-
-
-# --------------------------------------------------
-# Create - Add a User (POST Request)
-@app.route("/add_user", methods=["POST"])
-def add_user():
-    username = request.form.get("username")
-    email = request.form.get("email")
-    dailyCalorieGoal = request.form.get("dailyCalorieGoal")
-    
-    # Check if inputs are valid
-    if not username or not email or not dailyCalorieGoal:
-        return "Error: All fields are required", 400
-    
-    # Ensure dailyCalorieGoal is a valid number (isdigit check after type conversion)
-    if not dailyCalorieGoal.isdigit():
-        return "Error: Daily Calorie Goal must be a number", 400
-    
-    # Now, you can safely cast dailyCalorieGoal to an integer
-    dailyCalorieGoal = int(dailyCalorieGoal)
-
-    try:
-        # Get a cursor from the database connection
-        cursor = mysql.connection.cursor()
-
-        # Execute the SQL query to insert the new user
-        query = "INSERT INTO Users (username, email, dailyCalorieGoal) VALUES (%s, %s, %s)"
-        cursor.execute(query, (username, email, dailyCalorieGoal))
-
-        # Commit the transaction to the database
-        mysql.connection.commit()
-        # Close the cursor after the operation
+        users = cursor.fetchall()
         cursor.close()
 
-        # Optionally, print confirmation for debugging
-        print(f"✅ User {username} added successfully!")
+        return render_template("users.html", users=users)
+    except Exception as e:
+        print(f"Error fetching users: {e}")
+        return "Internal Server Error", 500
+
+
+# --------------Create Users---------------------------
+@app.route("/create_user", methods=["POST"])
+def create_user():
+    """
+    Create a new user in the database.
+    """
+    username = request.form.get("username", "").strip()
+    email = request.form.get("email", "").strip()
+    dailyCalorieGoal = request.form.get("dailyCalorieGoal", "").strip()
+
+    if not username or not email or not dailyCalorieGoal.isdigit():
+        flash("All fields are required and dailyCalorieGoal must be a number.")
+        return redirect(url_for('users'))
+
+    try:
+        cursor = mysql.connection.cursor()
+        query = "INSERT INTO Users (username, email, dailyCalorieGoal) VALUES (%s, %s, %s);"
+        cursor.execute(query, (username, email, int(dailyCalorieGoal)))
+        mysql.connection.commit()
+        cursor.close()
+
+        flash(f"User '{username}' added successfully!")
         return redirect(url_for('users'))
 
     except Exception as e:
-        # If there's an error, print it and return an error message
-        print(f"❌ Error adding user: {e}")
+        print(f"Error creating user: {e}")
+        flash("Failed to add user.")
         return redirect(url_for('users'))
 
 
-# --------------------------------------------------
-# Update - Modify a User (POST Request)
+# --------------Update Users---------------------------
 @app.route("/update_user/<int:user_id>", methods=["POST"])
 def update_user(user_id):
+    """
+    Update an existing user in the database.
+    """
     email = request.form.get("email", "").strip()
     dailyCalorieGoal = request.form.get("dailyCalorieGoal", "").strip()
 
     if not email or not dailyCalorieGoal.isdigit():
-        return "Error: Invalid input", 400
+        flash("Invalid input. Ensure fields are not empty and dailyCalorieGoal is a number.")
+        return redirect(url_for('users'))
 
-    dailyCalorieGoal = int(dailyCalorieGoal)
+    try:
+        cursor = mysql.connection.cursor()
+        query = "UPDATE Users SET email=%s, dailyCalorieGoal=%s WHERE userID=%s;"
+        cursor.execute(query, (email, int(dailyCalorieGoal), user_id))
+        mysql.connection.commit()
+        cursor.close()
 
-    cursor = mysql.connection.cursor()
-    query = "UPDATE Users SET email=%s, dailyCalorieGoal=%s WHERE userID=%s"
-    cursor.execute(query, (email, dailyCalorieGoal, user_id))
-    mysql.connection.commit()
-    cursor.close()
+        flash(f"User ID {user_id} updated successfully!")
+        return redirect(url_for('users'))
 
-    return redirect(url_for('users'))
+    except Exception as e:
+        print(f"Error updating user: {e}")
+        flash("Failed to update user.")
+        return redirect(url_for('users'))
 
-    
-# --------------------------------------------------
-# Delete - Remove a User (POST Request)
+
+# ---------- Delete (Remove User) ----------
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
     """
-    Deletes a user from the database.
+    Delete a user from the database.
     """
     try:
         cursor = mysql.connection.cursor()
-        
-        # Construct the SQL DELETE query
         query = "DELETE FROM Users WHERE userID = %s;"
-        
-        # Execute the query with the user ID to be deleted
         cursor.execute(query, (user_id,))
-        
-        # Commit the transaction to the database
         mysql.connection.commit()
         cursor.close()
-        
-        print(f"✅ User {user_id} deleted successfully!")
         return jsonify({"message": "User deleted", "user_id": user_id}), 200
-    
     except Exception as e:
-        print(f"❌ Error deleting user:", e)
+        print(f"❌ Error deleting user: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
 
@@ -294,9 +265,12 @@ def delete_tracker():
     tracker_id = request.form['trackerID']  # Daily Tracker ID to delete
     try:
         if tracker_id:
-            query = "DELETE FROM DailyTracker WHERE dailyTrackerID = ?"
-            cursor.execute(query, (tracker_id,))
-            db.commit()
+            query = "DELETE FROM DailyTracker WHERE dailyTrackerID = %s"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (tracker_id,))
+            mysql.connection.commit()
+            cur.close()
+
             flash("Daily Tracker deleted successfully!")
         else:
             flash("Error: Tracker ID not found!")
@@ -304,6 +278,7 @@ def delete_tracker():
     except Exception as e:
         print("❌ Error deleting tracker:", e)
         flash("An error occurred while deleting the tracker.")
+    
     return redirect(url_for('daily_trackers'))
 
 
@@ -543,6 +518,35 @@ def delete_exercise(exercise_id):
         print("❌ Error deleting exercise:", e)
 
     return redirect(url_for('exercises'))
+
+
+
+# ------------------ Reset Database ------------------
+@app.route('/reset-database', methods=['POST'])
+def reset_database():
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM Users;")
+        cursor.execute("ALTER TABLE Users AUTO_INCREMENT = 1;")
+        cursor.execute("""
+            INSERT INTO Users (username, email, dailyCalorieGoal) VALUES
+            ('Tyler', 'tyler@gmail.com', 2400),
+            ('Jane', 'jane@yahoo.com', 2000),
+            ('Alex', 'alex@hotmail.com', 2200);
+        """)
+
+    
+        mysql.connection.commit()
+        cursor.close()
+
+        flash("Users table reset and default users added.")
+        return redirect(url_for('users'))
+
+    except Exception as e:
+        print("Error resetting Users table:", e)
+        flash("Failed to reset Users table.")
+        return redirect(url_for('users'))
+
 
 # --------------------------------------------------
 # Start Application
