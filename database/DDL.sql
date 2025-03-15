@@ -50,8 +50,6 @@ CREATE OR REPLACE TABLE `DailyTrackers` (
   `dailyTrackerID` INT NOT NULL AUTO_INCREMENT,
   `date` DATE NOT NULL,
   `calorieGoal` INT,
-  `caloriesConsumed` INT NOT NULL DEFAULT 0 CHECK (caloriesConsumed >= 0),
-  `caloriesRemaining` INT NULL CHECK (caloriesRemaining >= 0),
   `userID` INT NOT NULL,
   `exerciseID` INT DEFAULT NULL,
   PRIMARY KEY (`dailyTrackerID`),
