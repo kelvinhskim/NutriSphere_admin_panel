@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriSphere: Users</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/users.js') }}" defer></script>
 </head>
 <body>
     
@@ -98,11 +98,16 @@
 
     <!-- Reset Database Section -->
     <section class="reset-database">
-        <form action="{{ url_for('reset_database') }}" method="post">
+        <form action="{{ url_for('reset_users') }}" method="post">
             <button class="reset-btn" type="submit" onclick="return confirm('Reset all data?')">🔄 Reset Database</button>
         </form>
     </section>
 </main>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 NutriSphere. All Rights Reserved.</p>
+</footer>
 
 </body>
 </html>

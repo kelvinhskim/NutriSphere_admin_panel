@@ -421,109 +421,109 @@ def delete_food_item(food_item_id):
     return redirect(url_for('food_items'))
 
 
-# --------------------------------------------------
-# READ - Display Exercises
-@app.route('/exercises', methods=['GET'])
+# --------------EXERCISES CRUD-----------------------------
+
+# --------------Read (Display Exercises)--------------------
+@app.route("/exercises", methods=["GET"])
 def exercises():
     """
-    Fetches all exercises from the database and displays them.
+    Display all exercises in a table format.
     """
     try:
         cursor = mysql.connection.cursor()
-        query = "SELECT exerciseID, name, exerciseMinutes, caloriesBurned FROM Exercises ORDER BY name;"
+        query = "SELECT * FROM Exercises"
         cursor.execute(query)
-        exercises_data = cursor.fetchall()
+        exercises = cursor.fetchall()
+        cursor.close()
 
-        # Recommended Exercises (Hardcoded)
-        recommended_exercises = [
-            {'id': 1, 'name': 'Elliptical', 'exerciseMinutes': 30, 'caloriesBurned': 250},
-            {'id': 2, 'name': 'Hiking', 'exerciseMinutes': 120, 'caloriesBurned': 600},
-            {'id': 3, 'name': 'Swimming', 'exerciseMinutes': 30, 'caloriesBurned': 300},
-            {'id': 4, 'name': 'Pickleball', 'exerciseMinutes': 60, 'caloriesBurned': 400},
-            {'id': 5, 'name': 'Weight Lifting', 'exerciseMinutes': 60, 'caloriesBurned': 150}
-        ]
-
-        return render_template("exercises.html", exercises=exercises_data, recommended_exercises=recommended_exercises)
+        return render_template("exercises.html", exercises=exercises)
     except Exception as e:
-        print("❌ Error fetching exercises:", e)
-        return redirect(url_for('home'))
+        print(f"Error fetching exercises: {e}")
+        return "Internal Server Error", 500
 
 
-# --------------------------------------------------
-# CREATE - Add an Exercise
-@app.route('/add_exercise', methods=['POST'])
-def add_exercise():
+# --------------Create Exercises---------------------------
+@app.route("/create_exercise", methods=["POST"])
+def create_exercise():
     """
-    Adds a new exercise to the database.
+    Create a new exercise in the database.
     """
-    name = request.form.get('name', '').strip()
-    exercise_minutes = request.form.get('exerciseMinutes', '')
-    calories_burned = request.form.get('caloriesBurned', '')
+    name = request.form.get("name", "").strip()
+    exerciseMinutes = request.form.get("exerciseMinutes", "").strip()
+    caloriesBurned = request.form.get("caloriesBurned", "").strip()
 
-    if not name or not exercise_minutes.isdigit() or not calories_burned.isdigit():
-        print("Invalid input for adding exercise.")
+    if not name or not exerciseMinutes.isdigit() or not caloriesBurned.isdigit():
+        flash("All fields are required and exerciseMinutes, caloriesBurned must be numbers.")
         return redirect(url_for('exercises'))
 
     try:
         cursor = mysql.connection.cursor()
         query = "INSERT INTO Exercises (name, exerciseMinutes, caloriesBurned) VALUES (%s, %s, %s);"
-        cursor.execute(query, (name, int(exercise_minutes), int(calories_burned)))
+        cursor.execute(query, (name, int(exerciseMinutes), int(caloriesBurned)))
         mysql.connection.commit()
-        print(f"✅ Exercise '{name}' added successfully!")
+        cursor.close()
+
+        flash(f"Exercise '{name}' added successfully!")
+        return redirect(url_for('exercises'))
+
     except Exception as e:
-        print("❌ Error adding exercise:", e)
+        print(f"Error creating exercise: {e}")
+        flash("Failed to add exercise.")
+        return redirect(url_for('exercises'))
 
-    return redirect(url_for('exercises'))
 
-# --------------------------------------------------
-# UPDATE - Modify an Exercise
-@app.route('/update_exercise/<int:exercise_id>', methods=['POST'])
+# --------------Update Exercises---------------------------
+@app.route("/update_exercise/<int:exercise_id>", methods=["POST"])
 def update_exercise(exercise_id):
     """
-    Updates an exercise in the database.
+    Update an existing exercise in the database.
     """
-    name = request.form.get('name', '').strip()
-    exerciseMinutes = request.form.get('exerciseMinutes', '')
-    caloriesBurned = request.form.get('caloriesBurned', '')
+    name = request.form.get("name", "").strip()
+    exerciseMinutes = request.form.get("exerciseMinutes", "").strip()
+    caloriesBurned = request.form.get("caloriesBurned", "").strip()
 
     if not name or not exerciseMinutes.isdigit() or not caloriesBurned.isdigit():
-        print("Invalid input for updating exercise.")
+        flash("Invalid input. Ensure fields are not empty and exerciseMinutes, caloriesBurned are numbers.")
         return redirect(url_for('exercises'))
 
     try:
         cursor = mysql.connection.cursor()
-        query = "UPDATE Exercises SET name = %s, exerciseMinutes = %s, caloriesBurned = %s WHERE exerciseID = %s;"
+        query = "UPDATE Exercises SET name=%s, exerciseMinutes=%s, caloriesBurned=%s WHERE exerciseID=%s;"
         cursor.execute(query, (name, int(exerciseMinutes), int(caloriesBurned), exercise_id))
         mysql.connection.commit()
-        print(f"✅ Exercise '{name}' updated successfully!")
+        cursor.close()
+
+        flash(f"Exercise ID {exercise_id} updated successfully!")
+        return redirect(url_for('exercises'))
+
     except Exception as e:
-        print("❌ Error updating exercise:", e)
+        print(f"Error updating exercise: {e}")
+        flash("Failed to update exercise.")
+        return redirect(url_for('exercises'))
 
-    return redirect(url_for('exercises'))
 
-# --------------------------------------------------
-# DELETE - Remove an Exercise
+# --------------Delete Exercises---------------------------
 @app.route('/delete_exercise/<int:exercise_id>', methods=['POST'])
 def delete_exercise(exercise_id):
     """
-    Deletes an exercise from the database.
+    Delete an exercise from the database.
     """
     try:
         cursor = mysql.connection.cursor()
         query = "DELETE FROM Exercises WHERE exerciseID = %s;"
         cursor.execute(query, (exercise_id,))
         mysql.connection.commit()
-        print(f"✅ Exercise ID {exercise_id} deleted successfully!")
+        cursor.close()
+        return jsonify({"message": "Exercise deleted", "exercise_id": exercise_id}), 200
     except Exception as e:
-        print("❌ Error deleting exercise:", e)
-
-    return redirect(url_for('exercises'))
-
+        print(f"❌ Error deleting exercise: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
 
 
-# ------------------ Reset Database ------------------
-@app.route('/reset-database', methods=['POST'])
-def reset_database():
+
+# ------------------ Reset Users Table ------------------
+@app.route('/reset-users', methods=['POST'])
+def reset_users():
     try:
         cursor = mysql.connection.cursor()
         cursor.execute("DELETE FROM Users;")
@@ -534,19 +534,44 @@ def reset_database():
             ('Jane', 'jane@yahoo.com', 2000),
             ('Alex', 'alex@hotmail.com', 2200);
         """)
-
     
         mysql.connection.commit()
         cursor.close()
 
         flash("Users table reset and default users added.")
-        return redirect(url_for('users'))
+        return redirect(url_for('users'))  # Redirect back to the Users page
 
     except Exception as e:
         print("Error resetting Users table:", e)
         flash("Failed to reset Users table.")
         return redirect(url_for('users'))
 
+
+# ------------------ Reset Exercises Table ------------------
+@app.route('/reset-exercises', methods=['POST'])
+def reset_exercises():
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM Exercises;")
+        cursor.execute("ALTER TABLE Exercises AUTO_INCREMENT = 1;")
+        cursor.execute("""
+            INSERT INTO Exercises (name, exerciseMinutes, caloriesBurned) VALUES
+            ('Elliptical', 30, 250),
+            ('Hiking', 120, 600),
+            ('Swimming', 30, 300),
+            ('Pickleball', 60, 400),
+            ('Weight Lifting', 60, 150);
+        """)
+        mysql.connection.commit()
+        cursor.close()
+
+        flash("Exercises table reset and default exercises added.")
+        return redirect(url_for('exercises'))  # Redirect back to the Exercises page
+
+    except Exception as e:
+        print("Error resetting Exercises table:", e)
+        flash("Failed to reset Exercises table.")
+        return redirect(url_for('exercises'))
 
 # --------------------------------------------------
 # Start Application

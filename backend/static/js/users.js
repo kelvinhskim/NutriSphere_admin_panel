@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 userDropdown.appendChild(option);
             }
+        // Closing the DOMContentLoaded event listener
         });
     }
 
@@ -100,47 +101,5 @@ document.addEventListener("DOMContentLoaded", function () {
             // Scroll into view for better UX
             updateForm.scrollIntoView({ behavior: 'smooth' });
         };
-    }
-
-    // Daily Trackers CRUD (Daily Trackers Page)
-    if (document.getElementById("dailyTrackersTable")) {
-        console.log("Daily Trackers page detected.");
-
-        window.deleteTracker = function (trackerID) {
-            if (confirm("Are you sure you want to delete this tracker?")) {
-                fetch(`/delete_tracker/${trackerID}`, { method: "POST" })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            alert(`Tracker ${trackerID} deleted successfully!`);
-                            document.getElementById(`trackerRow-${trackerID}`).remove();
-                        } else {
-                            alert("Failed to delete tracker.");
-                        }
-                    })
-                    .catch(error => console.error("Error deleting tracker:", error));
-            }
-        };
-    }
-
-    // Food Items CRUD (Food Items Page)
-    if (document.getElementById("foodItemsTable")) {
-        console.log("Food Items page detected.");
-
-        window.deleteFoodItem = function (foodItemID) {
-            if (confirm("Are you sure you want to delete this food item?")) {
-                fetch(`/delete_food_item/${foodItemID}`, { method: "POST" })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            alert(`Food Item ${foodItemID} deleted successfully!`);
-                            document.getElementById(`foodRow-${foodItemID}`).remove();
-                        } else {
-                            alert("Failed to delete food item.");
-                        }
-                    })
-                    .catch(error => console.error("Error deleting food item:", error));
-            }
-        };
-    }
+    };
 });
