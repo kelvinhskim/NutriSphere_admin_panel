@@ -71,7 +71,7 @@ CREATE OR REPLACE TABLE `DailyTrackers` (
 
 -- -----------------------------------------------------
 -- Table `FoodItems`
--- Stores food items with nutriiton information.
+-- Stores food items with nutrition information.
 -- Includes calories, protein, fat, carbohydrates, and serving sizes.
 -- -----------------------------------------------------
 CREATE OR REPLACE TABLE `FoodItems` (
