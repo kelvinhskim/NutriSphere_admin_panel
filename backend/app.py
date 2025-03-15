@@ -19,10 +19,16 @@ app = Flask(__name__)
 # app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 # database connection info
+# app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
+# app.config['MYSQL_USER'] = 'cs340_kimh22'
+# app.config['MYSQL_PASSWORD'] = '0612' #last 4 of onid
+# app.config['MYSQL_DB'] = 'cs340_kimh22'
+# app.config['MYSQL_CURSORCLASS'] = "DictCursor"
+
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_kimh22'
-app.config['MYSQL_PASSWORD'] = '0612' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_kimh22'
+app.config['MYSQL_USER'] = 'cs340_hoemi'
+app.config['MYSQL_PASSWORD'] = '8565' #last 4 of onid
+app.config['MYSQL_DB'] = 'cs340_hoemi'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 mysql = MySQL(app) # Initialize MySQL with Flask app
@@ -165,17 +171,24 @@ def delete_user(user_id):
 @app.route('/daily-trackers', methods=["GET"])
 def daily_trackers():
     try:
-        # Main query with JOIN to fetch Username and Exercise Name
+        # Main query with JOIN to fetch Username and Exercise Name and calculate calories
         query = """
             SELECT 
-            dt.dailyTrackerID AS `Daily Tracker ID`, 
-            u.username AS `Username`, 
-            dt.date AS `Date`, 
-            dt.calorieGoal AS `Calorie Goal`, 
-            dt.caloriesConsumed AS `Calories Consumed`, 
-            COALESCE(e.caloriesBurned, 0) AS `Calories Burned`, 
-            dt.caloriesRemaining AS `Calories Remaining`, 
-            COALESCE(e.name, 'Null') AS `Exercise Logged` 
+                dt.dailyTrackerID AS `Daily Tracker ID`, 
+                u.username AS `Username`, 
+                dt.date AS `Date`, 
+                dt.calorieGoal AS `Calorie Goal`, 
+                (SELECT COALESCE(SUM(fi.calories), 0)
+                    FROM FoodEntries fe
+                    LEFT JOIN FoodItems fi ON fe.foodItemID = fi.foodItemID
+                    WHERE fe.dailyTrackerID = dt.dailyTrackerID) AS `Calories Consumed`,
+                e.caloriesBurned AS `Calories Burned`, 
+                (dt.calorieGoal - (SELECT COALESCE(SUM(fi.calories), 0)
+                    FROM FoodEntries fe
+                    LEFT JOIN FoodItems fi ON fe.foodItemID = fi.foodItemID
+                    WHERE fe.dailyTrackerID = dt.dailyTrackerID) 
+                    + COALESCE(e.caloriesBurned, 0)) AS `Calories Remaining`, 
+                COALESCE(e.name, 'Null') AS `Exercise Logged` 
             FROM DailyTrackers dt 
             LEFT JOIN Users u ON dt.userID = u.userID 
             LEFT JOIN Exercises e ON dt.exerciseID = e.exerciseID 
@@ -196,13 +209,13 @@ def daily_trackers():
         exercises_data = cur.fetchall()
 
         # Query for DailyTrackers dropdown (for updating)
-        query4 = (
-            "SELECT "
-            "dt.dailyTrackerID, u.userID, u.username, dt.date, dt.calorieGoal, e.exerciseID, e.name AS `exerciseName` "
-            "FROM DailyTrackers AS dt "
-            "LEFT JOIN Users AS u ON dt.userID = u.userID "
-            "LEFT JOIN Exercises as e ON dt.exerciseID = e.exerciseID;"
-        )
+        query4 = """
+            SELECT
+            dt.dailyTrackerID, u.userID, u.username, dt.date, dt.calorieGoal, e.exerciseID, e.name AS `exerciseName`
+            FROM DailyTrackers AS dt
+            LEFT JOIN Users AS u ON dt.userID = u.userID
+            LEFT JOIN Exercises as e ON dt.exerciseID = e.exerciseID;
+        """
         cur.execute(query4)
         dailytrackers_dropdown_data = cur.fetchall()
         # print(dailytrackers_dropdown_data)
@@ -230,6 +243,7 @@ def add_tracker():
     # username = request.form["username"]
     calorieGoal = request.form["calorieGoal"]
     exerciseID = request.form["exerciseID"]
+
     try:
         # query if no exercise is input in the exercise field
         if exerciseID == "NULL":
@@ -260,12 +274,13 @@ def update_tracker(tracker_id):
     calorie_goal = data["calorieGoal"]
     user_id = data["userID"]
     exercise_id = data["exerciseID"]
+    print("exercise", exercise_id, type(exercise_id))
     try:
         # query if no exercise is input in the exercise field
         if exercise_id == "NULL":
             query = "UPDATE DailyTrackers SET date = %s, calorieGoal = %s, userID = %s, exerciseID = %s WHERE dailyTrackerID = %s;"
             cur = mysql.connection.cursor() 
-            cur.execute(query, (date, calorie_goal, user_id, "NUll", tracker_id))
+            cur.execute(query, (date, calorie_goal, user_id, None, tracker_id))
             mysql.connection.commit()
             cur.close()   
         else:
