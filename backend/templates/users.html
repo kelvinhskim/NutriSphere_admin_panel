@@ -97,11 +97,19 @@
     </section>
 
     <!-- Reset Database Section -->
-    <section class="reset-database">
-        <form action="{{ url_for('reset_users') }}" method="post">
-            <button class="reset-btn" type="submit" onclick="return confirm('Reset all data?')">🔄 Reset Database</button>
-        </form>
-    </section>
+<section class="reset-database">
+    <h2>Reset Users Database</h2>
+    <p>
+            This will <strong>restore default example data</strong> only if the Users table is empty. 
+        <br>Use this button <strong>after you have deleted all user data</strong> and want to restore initial example data.
+        <br><strong>※ Use this when you want to bring back default users to an empty table.</strong>
+    </p>
+    <form action="{{ url_for('reset_users') }}" method="post">
+        <button class="reset-btn" type="submit" onclick="return confirm('Restore default example users? (Only if the Users table is empty)')">
+            🔄 Restore Default Users
+        </button>
+    </form>
+</section>
 </main>
 
 <!-- Footer -->

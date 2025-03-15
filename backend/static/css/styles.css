@@ -258,6 +258,18 @@ form button:hover {
     display: block; /* Ensure the forms are visible */
 }
 
+/* Reset Database Section */
+.reset-database {
+    margin-top: 40px;
+    margin-bottom: 60px; /* Footer와 여유 공간 */
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 /* Footer */
 footer {
@@ -286,4 +298,24 @@ footer {
         width: 100%;
         padding: 10px;
     }
+}
+
+/* Home Page Center Alignment */
+.home-main {
+    min-height: 80vh; /* Take up 80% of the viewport height */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+/* Welcome Section Styling */
+.welcome-section {
+    background: white;
+    padding: 40px;
+    max-width: 600px;
+    width: 100%; /* Make responsive */
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    margin: 0 auto; /* Center the box horizontally */
 }
