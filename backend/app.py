@@ -19,16 +19,10 @@ app = Flask(__name__)
 # app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 # database connection info
-# app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-# app.config['MYSQL_USER'] = 'cs340_kimh22'
-# app.config['MYSQL_PASSWORD'] = '0612' #last 4 of onid
-# app.config['MYSQL_DB'] = 'cs340_kimh22'
-# app.config['MYSQL_CURSORCLASS'] = "DictCursor"
-
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_hoemi'
-app.config['MYSQL_PASSWORD'] = '8565' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_hoemi'
+app.config['MYSQL_USER'] = 'cs340_kimh22'
+app.config['MYSQL_PASSWORD'] = '0612' #last 4 of onid
+app.config['MYSQL_DB'] = 'cs340_kimh22'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 mysql = MySQL(app) # Initialize MySQL with Flask app
@@ -178,21 +172,21 @@ def daily_trackers():
                 u.username AS `Username`, 
                 dt.date AS `Date`, 
                 dt.calorieGoal AS `Calorie Goal`, 
-                (SELECT COALESCE(SUM(fi.calories), 0)
+                (SELECT IFNULL(SUM(fi.calories), 0)
                     FROM FoodEntries fe
                     LEFT JOIN FoodItems fi ON fe.foodItemID = fi.foodItemID
                     WHERE fe.dailyTrackerID = dt.dailyTrackerID) AS `Calories Consumed`,
-                e.caloriesBurned AS `Calories Burned`, 
-                (dt.calorieGoal - (SELECT COALESCE(SUM(fi.calories), 0)
+                IFNULL(e.caloriesBurned, 0) AS `Calories Burned`, 
+                (dt.calorieGoal - (SELECT IFNULL(SUM(fi.calories), 0)
                     FROM FoodEntries fe
                     LEFT JOIN FoodItems fi ON fe.foodItemID = fi.foodItemID
                     WHERE fe.dailyTrackerID = dt.dailyTrackerID) 
-                    + COALESCE(e.caloriesBurned, 0)) AS `Calories Remaining`, 
-                COALESCE(e.name, 'Null') AS `Exercise Logged` 
+                    + IFNULL(e.caloriesBurned, 0)) AS `Calories Remaining`, 
+                IFNULL(e.name, 'No Exercise Logged') AS `Exercise Logged` 
             FROM DailyTrackers dt 
             LEFT JOIN Users u ON dt.userID = u.userID 
             LEFT JOIN Exercises e ON dt.exerciseID = e.exerciseID 
-            ORDER BY dt.date DESC;
+            ORDER BY dt.date DESC, u.username ASC;
         """
         cur = mysql.connection.cursor()
         cur.execute(query)
@@ -427,7 +421,9 @@ def update_food_entry(food_entry_id):
     except Exception as e:
         print("❌ Error updating food entries data:", e)
         return "An error occurred while updating a food entry", 500
-    
+
+
+# DELETE - Deletes a selected food entry in the Food Entries table (DELETE Request)
 @app.route("/food-entries/<int:entry_id>", methods=["DELETE"])
 def delete_food_entry(entry_id):
     try:
