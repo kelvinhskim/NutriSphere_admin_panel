@@ -336,10 +336,10 @@ def food_entries():
                     WHEN fe.mealCategory = 'Dinner' then 3 
                     WHEN fe.mealCategory = 'Snacks' then 4 
                 END ASC;
-        """
+            """
         cur = mysql.connection.cursor()
         cur.execute(query)
-        print(query)
+        # print(query)
         food_entries_data = cur.fetchall()
         # print(food_entries_data)
 
@@ -357,20 +357,31 @@ def food_entries():
         query4 = """
             SELECT fe.foodEntryID, fe.mealCategory, fi.foodItemID, fi.name, dt.dailyTrackerID, dt.date, u.username
                 FROM FoodEntries AS fe
-                JOIN DailyTrackers AS dt ON fe.dailyTrackerID = dt.dailyTrackerID
+                LEFT JOIN DailyTrackers AS dt ON fe.dailyTrackerID = dt.dailyTrackerID
                 JOIN FoodItems AS fi ON fe.foodItemID = fi.foodItemID
                 JOIN Users AS u ON dt.userID = u.userID;
-        """
-    
+            """
         cur.execute(query4)
         food_entry_update_data = cur.fetchall()
+        # print("food entry update data", food_entry_update_data)
 
+        # Query for Daily Trackers dropdown 
+        query5 = """
+            SELECT dt.dailyTrackerID, u.username, dt.date 
+                FROM DailyTrackers dt
+                JOIN Users u ON dt.userID = u.userID;
+            """
+        cur.execute(query5)
+        daily_tracker_dropdown_data = cur.fetchall()
+
+        cur.close()
         return render_template(
             "food-entries.html", 
             food_entries=food_entries_data,
             users=users_data,
             food_item_dropdown=food_item_dropdown_data,
-            food_entry_update=food_entry_update_data
+            food_entry_update=food_entry_update_data,
+            daily_tracker_dropdown=daily_tracker_dropdown_data
         )
     except Exception as e:
         print("❌ Error fetching food entries data:", e)
@@ -386,11 +397,13 @@ def add_food_entry():
     meal_category = request.form["mealCategory"]
     food_item_id = request.form["foodItemID"]
     try:
-        query = "INSERT INTO FoodEntries (mealCategory, foodItemID, dailyTrackerID) VALUES (" \
-            "%s, %s, (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = %s AND date = %s));"
+        query = """
+            INSERT INTO FoodEntries (mealCategory, foodItemID, dailyTrackerID) 
+                VALUES (%s, %s, (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = %s AND date = %s));
+            """
         print(query)
         cur = mysql.connection.cursor()
-        cur.execute(query, (meal_category, food_item_id, user_id, date))
+        print(cur.execute(query, (meal_category, food_item_id, user_id, date)))
         mysql.connection.commit()
         cur.close()  
         print(f"✅  FoodEntry added successfully!")

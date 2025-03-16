@@ -144,8 +144,8 @@
                 <label>Daily Tracker</label>
                 <select id="update-daily-tracker-id" name="daily-tracker">
                     <option value="" selected disabled hidden></option>
-                    {% for entry in food_entry_update %}
-                    <option value="{{ entry.foodItemID }}">{{ entry.foodItemID }}: {{ entry.username }}, {{ entry.date }}</option>
+                    {% for tracker in daily_tracker_dropdown %}
+                    <option value="{{ tracker.dailyTrackerID }}">{{ tracker.dailyTrackerID }}: {{ tracker.username }}, {{ tracker.date }}</option>
                     {% endfor %}
                 </select>
     
