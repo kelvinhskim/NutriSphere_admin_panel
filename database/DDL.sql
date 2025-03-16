@@ -21,7 +21,7 @@ CREATE OR REPLACE TABLE `Users` (
   `userID` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(50) NOT NULL,
   `email` VARCHAR(50) NOT NULL,
-  `dailyCalorieGoal` INT NOT NULL CHECK (dailyCalorieGoal > 0),
+  `dailyCalorieGoal` INT NOT NULL CHECK (dailyCalorieGoal >= 0),
   PRIMARY KEY (`userID`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC)
@@ -49,7 +49,7 @@ CREATE OR REPLACE TABLE `Exercises` (
 CREATE OR REPLACE TABLE `DailyTrackers` (
   `dailyTrackerID` INT NOT NULL AUTO_INCREMENT,
   `date` DATE NOT NULL,
-  `calorieGoal` INT,
+  `calorieGoal` INT CHECK (calorieGoal >= 0),
   `userID` INT NOT NULL,
   `exerciseID` INT DEFAULT NULL,
   PRIMARY KEY (`dailyTrackerID`),
