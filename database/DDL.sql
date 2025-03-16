@@ -112,6 +112,8 @@ CREATE OR REPLACE TABLE `FoodEntries` (
 
 -- -----------------------------------------------------
 -- STORED PROCEDURE: `add_food_entry`
+-- The stored procedure handles the case if a food entry is attempting to be added for 
+-- a specific user and date where the daily tracker for that user and date that has not been created yet.  
 -- -----------------------------------------------------
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `add_food_entry`;
@@ -127,64 +129,13 @@ DELIMITER ;
 
 
 -- -----------------------------------------------------
--- TRIGGER: Auto-update 'caloriesConsumed when a new FoodEntry is inserted.
--- Automatically updates `caloriesConsumed` in `DailyTrackers`
--- whenever a new food entry is added.
--- Ensures that food consumption tracking remains accurate.
--- -----------------------------------------------------
--- DELIMITER $$
-
--- CREATE TRIGGER update_calories_consumed
--- AFTER INSERT ON FoodEntries
--- FOR EACH ROW
--- BEGIN
---     UPDATE DailyTrackers
---     SET caloriesConsumed = (
---         SELECT COALESCE(SUM(FI.calories), 0)
---         FROM FoodEntries FE
---         JOIN FoodItems FI ON FE.foodItemID = FI.foodItemID
---         WHERE FE.dailyTrackerID = NEW.dailyTrackerID
---     )
---     WHERE dailyTrackerID = NEW.dailyTrackerID;
--- END$$
-
--- DELIMITER ;
-
--- -----------------------------------------------------
--- TRIGGER: Auto-update 'caloriesRemaining' when 'caloriesConsumed' or 'exerciseID' changes.
--- Automatically updates `caloriesRemaining` in `DailyTrackers`
--- whenever `caloriesConsumed` or `exerciseID` changes.
--- Ensures that calorie goals remain accurate.
--- -----------------------------------------------------
--- DELIMITER $$
-
--- CREATE TRIGGER update_calories_remaining
--- BEFORE UPDATE ON DailyTrackers
--- FOR EACH ROW
--- BEGIN
---     DECLARE goal INT;
---     DECLARE burned INT;
-
---      -- Get the user's daily calorie goal
---     SELECT dailyCalorieGoal INTO goal FROM Users WHERE userID = NEW.userID;
-
---     -- Get the total calories burned (if an exercise is logged)
---     SELECT COALESCE((SELECT caloriesBurned FROM Exercises WHERE exerciseID = NEW.exerciseID), 0) INTO burned;
-
---     -- Calculate new caloriesRemaining
---     SET NEW.caloriesRemaining = goal - NEW.caloriesConsumed + burned;
--- END$$
-
--- DELIMITER ;
-
--- -----------------------------------------------------
 -- Insert sample data for Users
 -- -----------------------------------------------------
 INSERT INTO `Users` (`username`, `email`, `dailyCalorieGoal`)
 VALUES
-('tyler', 'tyler@gmail.com', 2400),
-('jane', 'jane@yahoo.com', 2000),
-('alex', 'alex@hotmail.com', 2200);
+('tyler', 'tyler@gmail.com', 1800),
+('jane', 'jane@yahoo.com', 2100),
+('alex', 'alex@hotmail.com', 3000);
 
 -- -----------------------------------------------------
 -- Insert sample data for FoodItems
