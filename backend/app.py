@@ -362,19 +362,15 @@ def food_entries():
 # CREATE - Inserts an entry into the Food Entries table (POST Request)
 @app.route('/food-entries', methods=['POST'])
 def add_food_entry():
-    print(request.form)
+    # print(request.form)
     user_id = request.form["userID"]
     date = request.form["date"]
     meal_category = request.form["mealCategory"]
     food_item_id = request.form["foodItemID"]
     try:
-        query = """
-            INSERT INTO FoodEntries (mealCategory, foodItemID, dailyTrackerID) 
-                VALUES (%s, %s, (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = %s AND date = %s));
-            """
-        print(query)
+        query = "CALL add_food_entry(%s, %s, %s, %s);"
         cur = mysql.connection.cursor()
-        print(cur.execute(query, (meal_category, food_item_id, user_id, date)))
+        cur.execute(query, (user_id, date, meal_category, food_item_id))
         mysql.connection.commit()
         cur.close()  
         print(f"✅  FoodEntry added successfully!")

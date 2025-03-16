@@ -111,6 +111,22 @@ CREATE OR REPLACE TABLE `FoodEntries` (
 );
 
 -- -----------------------------------------------------
+-- STORED PROCEDURE: `add_food_entry`
+-- -----------------------------------------------------
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `add_food_entry`;
+CREATE PROCEDURE `add_food_entry`(IN pUserID INT, IN pDate DATE, IN pMealCategory VARCHAR(255), IN pFoodItemID INT)
+BEGIN
+    IF NOT EXISTS (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = pUserID AND date = pDate) THEN
+        INSERT INTO DailyTrackers (date, calorieGoal, userID) VALUES (pDate, (SELECT dailyCalorieGoal FROM Users WHERE userID = pUserID), pUserID);
+    END IF;
+    INSERT INTO FoodEntries (mealCategory, foodItemID, dailyTrackerID) VALUES (pMealCategory, pFoodItemID, (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = pUserID AND date = pDate));
+    END$$
+
+DELIMITER ;
+
+
+-- -----------------------------------------------------
 -- TRIGGER: Auto-update 'caloriesConsumed when a new FoodEntry is inserted.
 -- Automatically updates `caloriesConsumed` in `DailyTrackers`
 -- whenever a new food entry is added.
