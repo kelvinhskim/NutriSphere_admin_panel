@@ -134,7 +134,11 @@
                 <select id="update-food-item-id" name="food-item" required>
                     {% for food in food_item_dropdown %}
                     <option value="" selected disabled hidden></option>
+                    {% if food.brand is not none %}
+                    <option value="{{ food.foodItemID }}">{{ food.name }}, {{ food.brand }}</option>
+                    {% else %}
                     <option value="{{ food.foodItemID }}">{{ food.name }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
     

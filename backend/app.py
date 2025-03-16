@@ -292,8 +292,11 @@ def food_entries():
         query = """
             SELECT 
                 fe.foodEntryID AS `Food Entry ID`, 
-                fe.mealCategory AS `Meal Category`, 
-                fi.name AS `Food`, 
+                fe.mealCategory AS `Meal Category`,
+                CASE
+                    WHEN fi.brand IS NULL THEN fi.name
+                    ELSE CONCAT(fi.name, ', ', IFNULL(fi.brand, '')) 
+                    END AS `Food`, 
                 fi.calories AS `Calories`, 
                 CONCAT(dt.dailyTrackerID, ': ', u.username, ', ', dt.date) AS `Daily Tracker` 
             FROM FoodEntries AS fe 
@@ -323,6 +326,7 @@ def food_entries():
         query3 = "SELECT foodItemID, name, brand FROM FoodItems;"
         cur.execute(query3)
         food_item_dropdown_data = cur.fetchall()
+        print(food_item_dropdown_data)
 
         # Query for Food Entry Update 
         query4 = """
