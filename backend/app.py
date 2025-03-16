@@ -1,22 +1,16 @@
-# Citation for the following function:
-# Date: 02/27/2025  (Update to the date you copied/used it)
-# Copied from /OR/ Adapted from /OR/ Based on:
-# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
-
-
 from flask import Flask, render_template, request, json, redirect, url_for, jsonify, flash
 from flask_mysqldb import MySQL
 import os
 
-app = Flask(__name__)
+# Citation for the following function:
+# Date: 02/27/2025  (Update to the date you copied/used it)
+# Originality: Adapted
+# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+# Description: Adapted from the OSU CS340 Flask Starter App for database connections and routing.
 
-# database connection
-# Template:
-# app.config["MYSQL_HOST"] = "classmysql.engr.oregonstate.edu"
-# app.config["MYSQL_USER"] = "cs340_OSUusername"
-# app.config["MYSQL_PASSWORD"] = "XXXX" | last 4 digits of OSU id
-# app.config["MYSQL_DB"] = "cs340_OSUusername"
-# app.config["MYSQL_CURSORCLASS"] = "DictCursor"
+
+app = Flask(__name__)
+app.secret_key = "secret key"
 
 # database connection info
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
@@ -26,6 +20,7 @@ app.config['MYSQL_DB'] = 'cs340_kimh22'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 mysql = MySQL(app) # Initialize MySQL with Flask app
+
 
 # --------------------------------------------------
 # Home Route
@@ -37,125 +32,101 @@ def home():
     return render_template("index.html")
 
 
-# --------------------------------------------------
-# Read - Display Users (GET Request)
-@app.route('/users', methods=['GET'])
+# --------------USERS CRUD-----------------------------
+
+# --------------Read (Display Users)--------------------
+@app.route("/users", methods=["GET"])
 def users():
     """
-    Fetches all users from the database and displays them.
+    Display all users in a table format.
     """
     try:
         cursor = mysql.connection.cursor()
-        
-        # Execute the SQL query to retrieve all users
-        query = "SELECT userID, username, email, dailyCalorieGoal FROM Users ORDER BY username;"
+        query = "SELECT * FROM Users"
         cursor.execute(query)
-        
-        # Fetch all results from the query
-        users_data = cursor.fetchall()
-        
-        recommended_users = [
-            {'id': 1, 'username': 'Tyler', 'email': 'tyler@oregonstate.edu', 'dailyCalorieGoal': 2400},
-            {'id': 2, 'username': 'Jane', 'email': 'jane@oregonstate.edu', 'dailyCalorieGoal': 2000},
-            {'id': 3, 'username': 'Alex', 'email': 'alex@oregonstate.edu', 'dailyCalorieGoal': 2200}
-        ]
-
-        # Return the users data to the 'users.html' template
-        return render_template("users.html", users=users_data, recommended_users=recommended_users)
-    
-    except Exception as e:
-        print("❌ Error fetching users:", e)
-        return redirect(url_for('home'))  # Redirect to home in case of error
-
-
-# --------------------------------------------------
-# Create - Add a User (POST Request)
-@app.route("/add_user", methods=["POST"])
-def add_user():
-    username = request.form.get("username")
-    email = request.form.get("email")
-    dailyCalorieGoal = request.form.get("dailyCalorieGoal")
-    
-    # Check if inputs are valid
-    if not username or not email or not dailyCalorieGoal:
-        return "Error: All fields are required", 400
-    
-    # Ensure dailyCalorieGoal is a valid number (isdigit check after type conversion)
-    if not dailyCalorieGoal.isdigit():
-        return "Error: Daily Calorie Goal must be a number", 400
-    
-    # Now, you can safely cast dailyCalorieGoal to an integer
-    dailyCalorieGoal = int(dailyCalorieGoal)
-
-    try:
-        # Get a cursor from the database connection
-        cursor = mysql.connection.cursor()
-
-        # Execute the SQL query to insert the new user
-        query = "INSERT INTO Users (username, email, dailyCalorieGoal) VALUES (%s, %s, %s)"
-        cursor.execute(query, (username, email, dailyCalorieGoal))
-
-        # Commit the transaction to the database
-        mysql.connection.commit()
-        # Close the cursor after the operation
+        users = cursor.fetchall()
         cursor.close()
 
-        # Optionally, print confirmation for debugging
-        print(f"✅ User {username} added successfully!")
+        return render_template("users.html", users=users)
+    except Exception as e:
+        print(f"Error fetching users: {e}")
+        return "Internal Server Error", 500
+
+
+# --------------Create Users---------------------------
+@app.route("/create_user", methods=["POST"])
+def create_user():
+    """
+    Create a new user in the database.
+    """
+    username = request.form.get("username", "").strip()
+    email = request.form.get("email", "").strip()
+    dailyCalorieGoal = request.form.get("dailyCalorieGoal", "").strip()
+
+    if not username or not email or not dailyCalorieGoal.isdigit():
+        flash("All fields are required and dailyCalorieGoal must be a number.")
+        return redirect(url_for('users'))
+
+    try:
+        cursor = mysql.connection.cursor()
+        query = "INSERT INTO Users (username, email, dailyCalorieGoal) VALUES (%s, %s, %s);"
+        cursor.execute(query, (username, email, int(dailyCalorieGoal)))
+        mysql.connection.commit()
+        cursor.close()
+
+        flash(f"User '{username}' added successfully!")
         return redirect(url_for('users'))
 
     except Exception as e:
-        # If there's an error, print it and return an error message
-        print(f"❌ Error adding user: {e}")
+        print(f"Error creating user: {e}")
+        flash("Failed to add user.")
         return redirect(url_for('users'))
 
 
-# --------------------------------------------------
-# Update - Modify a User (POST Request)
+# --------------Update Users---------------------------
 @app.route("/update_user/<int:user_id>", methods=["POST"])
 def update_user(user_id):
+    """
+    Update an existing user in the database.
+    """
     email = request.form.get("email", "").strip()
     dailyCalorieGoal = request.form.get("dailyCalorieGoal", "").strip()
 
     if not email or not dailyCalorieGoal.isdigit():
-        return "Error: Invalid input", 400
+        flash("Invalid input. Ensure fields are not empty and dailyCalorieGoal is a number.")
+        return redirect(url_for('users'))
 
-    dailyCalorieGoal = int(dailyCalorieGoal)
+    try:
+        cursor = mysql.connection.cursor()
+        query = "UPDATE Users SET email=%s, dailyCalorieGoal=%s WHERE userID=%s;"
+        cursor.execute(query, (email, int(dailyCalorieGoal), user_id))
+        mysql.connection.commit()
+        cursor.close()
 
-    cursor = mysql.connection.cursor()
-    query = "UPDATE Users SET email=%s, dailyCalorieGoal=%s WHERE userID=%s"
-    cursor.execute(query, (email, dailyCalorieGoal, user_id))
-    mysql.connection.commit()
-    cursor.close()
+        flash(f"User ID {user_id} updated successfully!")
+        return redirect(url_for('users'))
 
-    return redirect(url_for('users'))
+    except Exception as e:
+        print(f"Error updating user: {e}")
+        flash("Failed to update user.")
+        return redirect(url_for('users'))
 
-    
-# --------------------------------------------------
-# Delete - Remove a User (POST Request)
+
+# ---------- Delete (Remove User) ----------
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
     """
-    Deletes a user from the database.
+    Delete a user from the database.
     """
     try:
         cursor = mysql.connection.cursor()
-        
-        # Construct the SQL DELETE query
         query = "DELETE FROM Users WHERE userID = %s;"
-        
-        # Execute the query with the user ID to be deleted
         cursor.execute(query, (user_id,))
-        
-        # Commit the transaction to the database
         mysql.connection.commit()
         cursor.close()
-        
-        print(f"✅ User {user_id} deleted successfully!")
         return jsonify({"message": "User deleted", "user_id": user_id}), 200
-    
     except Exception as e:
-        print(f"❌ Error deleting user:", e)
+        print(f"❌ Error deleting user: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
 
@@ -454,62 +425,43 @@ def delete_food_entry(entry_id):
         return "An error occurred while deleting an entry", 500
 
 
-# --------------------------------------------------
-# READ - Display Food Items
-@app.route('/food-items', methods=['GET'])
+# --------------Foor Items CRUD-----------------------------
+
+# ---------------------- Read (Display Food Items) ----------------------
+@app.route("/food_items", methods=["GET"])
 def food_items():
     """
-    Fetches all food items from the database and displays them.
+    Display all food items.
     """
     try:
         cursor = mysql.connection.cursor()
-        query = """
-            SELECT foodItemID, name, brand, servingSize, calories, protein, fat, carbohydrates
-            FROM FoodItems
-            ORDER BY name;
-        """
+        query = "SELECT * FROM FoodItems"
         cursor.execute(query)
-        food_items_data = cursor.fetchall()
+        food_items = cursor.fetchall()
+        cursor.close()
 
-        recommended_foods = [
-            {'id': 1, 'name': 'Oatmeal', 'brand': 'Quaker', 'servingSize': '1 cup', 'calories': 153, 'protein': 5, 'fat': 3, 'carbohydrates': 27},
-            {'id': 2, 'name': 'Coffee', 'brand': 'Starbucks', 'servingSize': '1 cup (grande)', 'calories': 15, 'protein': 1, 'fat': 0, 'carbohydrates': 2},
-            {'id': 3, 'name': 'Salad', 'brand': 'NULL', 'servingSize': '1 bowl', 'calories': 250, 'protein': 7, 'fat': 10, 'carbohydrates': 30},
-            {'id': 4, 'name': 'Chicken', 'brand': "Trader Joe\'s", 'servingSize': '113g', 'calories': 150, 'protein': 27, 'fat': 4, 'carbohydrates': 0},
-            {'id': 5, 'name': 'Brown Rice', 'brand': 'Nishiki', 'servingSize': '210g', 'calories': 340, 'protein': 7, 'fat': 2, 'carbohydrates': 7},
-            {'id': 6, 'name': 'Big Mac', 'brand': "McDonald\'s", 'servingSize': '1 burger', 'calories': 580, 'protein': 25, 'fat': 34, 'carbohydrates': 45},
-        ]  
-
-        return render_template("food-items.html", food_items=food_items_data, recommended_foods=recommended_foods)
-
+        return render_template("food_items.html", food_items=food_items)
     except Exception as e:
-        print("❌ Error fetching food items:", e)
-        return redirect(url_for('home'))
+        print(f"Error fetching food items: {e}")
+        return "Internal Server Error", 500
 
 
-# --------------------------------------------------
-# CREATE - Add a Food Item
-@app.route('/add_food_item', methods=['POST'])
+# ---------------------- Create (Add New Food Item) ----------------------
+@app.route("/add_food_item", methods=["POST"])
 def add_food_item():
     """
-    Adds a new food item to the database.
+    Add a new food item to the database.
     """
-    name = request.form.get('name', '').strip()
-    brand = request.form.get('brand', '').strip()
-    serving_size = request.form.get('servingSize', '').strip()
-    calories = request.form.get('calories', '')
-    protein = request.form.get('protein', '')
-    fat = request.form.get('fat', '')
-    carbohydrates = request.form.get('carbohydrates', '')
+    name = request.form.get("name", "").strip()
+    brand = request.form.get("brand", "").strip()
+    servingSize = request.form.get("servingSize", "").strip()
+    calories = request.form.get("calories", "").strip()
+    protein = request.form.get("protein", "").strip()
+    fat = request.form.get("fat", "").strip()
+    carbohydrates = request.form.get("carbohydrates", "").strip()
 
-    # Validate numeric inputs
-    try:
-        calories = int(calories)
-        protein = int(protein)
-        fat = int(fat)
-        carbohydrates = int(carbohydrates)
-    except ValueError:
-        print("❌ Invalid input: Non-numeric value in numeric fields.")
+    if not name or not calories.isdigit():
+        flash("Name and calories are required. Calories must be a number.")
         return redirect(url_for('food_items'))
 
     try:
@@ -518,172 +470,257 @@ def add_food_item():
             INSERT INTO FoodItems (name, brand, servingSize, calories, protein, fat, carbohydrates)
             VALUES (%s, %s, %s, %s, %s, %s, %s);
         """
-        cursor.execute(query, (name, brand, serving_size, calories, protein, fat, carbohydrates))
+        cursor.execute(query, (
+            name, brand or None, servingSize or None, int(calories),
+            int(protein) if protein.isdigit() else 0,
+            int(fat) if fat.isdigit() else 0,
+            int(carbohydrates) if carbohydrates.isdigit() else 0
+        ))
         mysql.connection.commit()
-        print(f"✅ Food item '{name}' added successfully!")
-    except Exception as e:
-        print("❌ Error adding food item:", e)
+        cursor.close()
 
-    return redirect(url_for('food_items'))
-
-
-# --------------------------------------------------
-# UPDATE - Modify a Food Item
-@app.route('/update_food_item/<int:food_item_id>', methods=['POST'])
-def update_food_item(food_item_id):
-    """
-    Updates an existing food item in the database.
-    """
-    name = request.form.get('name', '').strip()
-    brand = request.form.get('brand', '').strip()
-    serving_size = request.form.get('servingSize', '').strip()
-    calories = request.form.get('calories', '')
-    protein = request.form.get('protein', '')
-    fat = request.form.get('fat', '')
-    carbohydrates = request.form.get('carbohydrates', '')
-
-    # Validate numeric inputs using try-except
-    try:
-        calories = int(calories)
-        protein = int(protein)
-        fat = int(fat)
-        carbohydrates = int(carbohydrates)
-    except ValueError:
-        print("❌ Invalid input: Non-numeric value in numeric fields.")
+        flash(f"Food item '{name}' added successfully!")
         return redirect(url_for('food_items'))
+
+    except Exception as e:
+        print(f"Error adding food item: {e}")
+        flash("Failed to add food item.")
+        return redirect(url_for('food_items'))
+
+
+# ---------------------- Update Food Item ----------------------
+@app.route("/update_food_item/<int:food_item_id>", methods=["POST"])
+def update_food_item(food_item_id):
+    name = request.form.get("name", "").strip()
+    brand = request.form.get("brand", "").strip()
+    servingSize = request.form.get("servingSize", "").strip()
+    calories = request.form.get("calories", "").strip()
+    protein = request.form.get("protein", "").strip()
+    fat = request.form.get("fat", "").strip()
+    carbohydrates = request.form.get("carbohydrates", "").strip()
+
+    print("=== UPDATE RECEIVED ===")
+    print(name, brand, servingSize, calories, protein, fat, carbohydrates)
 
     try:
         cursor = mysql.connection.cursor()
         query = """
             UPDATE FoodItems
-            SET name = %s, brand = %s, servingSize = %s, calories = %s, protein = %s, fat = %s, carbohydrates = %s
-            WHERE foodItemID = %s;
+            SET name=%s, brand=%s, servingSize=%s, calories=%s, protein=%s, fat=%s, carbohydrates=%s
+            WHERE foodItemID=%s;
         """
-        cursor.execute(query, (name, brand, serving_size, calories, protein, fat, carbohydrates, food_item_id))
+        cursor.execute(query, (name, brand or None, servingSize or None, int(calories),
+                               int(protein) if protein else 0, int(fat) if fat else 0, int(carbohydrates) if carbohydrates else 0,
+                               food_item_id))
         mysql.connection.commit()
-        print(f"✅ Food item '{name}' (ID: {food_item_id}) updated successfully!")
+        cursor.close()
+        print("UPDATE SUCCESS")
+        return redirect(url_for('food_items'))
     except Exception as e:
-        print(f"❌ Error updating food item (ID: {food_item_id}):", e)
+        print(f"Error updating food item: {e}")
+        return redirect(url_for('food_items'))
 
-    return redirect(url_for('food_items'))
 
-
-#--------------------------------------------------
-# DELETE - Remove a Food Item
-@app.route('/delete_food_item/<int:food_item_id>', methods=['POST'])
+# ---------------------- Delete (Remove Food Item) ----------------------
+@app.route("/delete_food_item/<int:food_item_id>", methods=["POST"])
 def delete_food_item(food_item_id):
     """
-    Deletes a food item from the database.
+    Delete a food item from the database.
     """
     try:
         cursor = mysql.connection.cursor()
         query = "DELETE FROM FoodItems WHERE foodItemID = %s;"
         cursor.execute(query, (food_item_id,))
         mysql.connection.commit()
-        print(f"✅ Food item ID {food_item_id} deleted successfully!")
+        cursor.close()
+
+        return jsonify({"message": "Food item deleted", "food_item_id": food_item_id}), 200
     except Exception as e:
-        print(f"❌ Error deleting food item (ID: {food_item_id}):", e)
+        print(f"Error deleting food item: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
 
-    return redirect(url_for('food_items'))
 
+# --------------EXERCISES CRUD-----------------------------
 
-# --------------------------------------------------
-# READ - Display Exercises
-@app.route('/exercises', methods=['GET'])
+# --------------Read (Display Exercises)--------------------
+@app.route("/exercises", methods=["GET"])
 def exercises():
     """
-    Fetches all exercises from the database and displays them.
+    Display all exercises in a table format.
     """
     try:
         cursor = mysql.connection.cursor()
-        query = "SELECT exerciseID, name, exerciseMinutes, caloriesBurned FROM Exercises ORDER BY name;"
+        query = "SELECT * FROM Exercises"
         cursor.execute(query)
-        exercises_data = cursor.fetchall()
+        exercises = cursor.fetchall()
+        cursor.close()
 
-        # Recommended Exercises (Hardcoded)
-        recommended_exercises = [
-            {'id': 1, 'name': 'Elliptical', 'exerciseMinutes': 30, 'caloriesBurned': 250},
-            {'id': 2, 'name': 'Hiking', 'exerciseMinutes': 120, 'caloriesBurned': 600},
-            {'id': 3, 'name': 'Swimming', 'exerciseMinutes': 30, 'caloriesBurned': 300},
-            {'id': 4, 'name': 'Pickleball', 'exerciseMinutes': 60, 'caloriesBurned': 400},
-            {'id': 5, 'name': 'Weight Lifting', 'exerciseMinutes': 60, 'caloriesBurned': 150}
-        ]
-
-        return render_template("exercises.html", exercises=exercises_data, recommended_exercises=recommended_exercises)
+        return render_template("exercises.html", exercises=exercises)
     except Exception as e:
-        print("❌ Error fetching exercises:", e)
-        return redirect(url_for('home'))
+        print(f"Error fetching exercises: {e}")
+        return "Internal Server Error", 500
 
 
-# --------------------------------------------------
-# CREATE - Add an Exercise
-@app.route('/add_exercise', methods=['POST'])
-def add_exercise():
+# --------------Create Exercises---------------------------
+@app.route("/create_exercise", methods=["POST"])
+def create_exercise():
     """
-    Adds a new exercise to the database.
+    Create a new exercise in the database.
     """
-    name = request.form.get('name', '').strip()
-    exercise_minutes = request.form.get('exerciseMinutes', '')
-    calories_burned = request.form.get('caloriesBurned', '')
+    name = request.form.get("name", "").strip()
+    exerciseMinutes = request.form.get("exerciseMinutes", "").strip()
+    caloriesBurned = request.form.get("caloriesBurned", "").strip()
 
-    if not name or not exercise_minutes.isdigit() or not calories_burned.isdigit():
-        print("Invalid input for adding exercise.")
+    if not name or not exerciseMinutes.isdigit() or not caloriesBurned.isdigit():
+        flash("All fields are required and exerciseMinutes, caloriesBurned must be numbers.")
         return redirect(url_for('exercises'))
 
     try:
         cursor = mysql.connection.cursor()
         query = "INSERT INTO Exercises (name, exerciseMinutes, caloriesBurned) VALUES (%s, %s, %s);"
-        cursor.execute(query, (name, int(exercise_minutes), int(calories_burned)))
+        cursor.execute(query, (name, int(exerciseMinutes), int(caloriesBurned)))
         mysql.connection.commit()
-        print(f"✅ Exercise '{name}' added successfully!")
+        cursor.close()
+
+        flash(f"Exercise '{name}' added successfully!")
+        return redirect(url_for('exercises'))
+
     except Exception as e:
-        print("❌ Error adding exercise:", e)
+        print(f"Error creating exercise: {e}")
+        flash("Failed to add exercise.")
+        return redirect(url_for('exercises'))
 
-    return redirect(url_for('exercises'))
 
-# --------------------------------------------------
-# UPDATE - Modify an Exercise
+# --------------Update Exercises---------------------------
 @app.route('/update_exercise/<int:exercise_id>', methods=['POST'])
 def update_exercise(exercise_id):
     """
-    Updates an exercise in the database.
+    Update an existing exercise in the database.
     """
-    name = request.form.get('name', '').strip()
-    exerciseMinutes = request.form.get('exerciseMinutes', '')
-    caloriesBurned = request.form.get('caloriesBurned', '')
+    exerciseMinutes = request.form.get("exerciseMinutes", "").strip()
+    caloriesBurned = request.form.get("caloriesBurned", "").strip()
 
-    if not name or not exerciseMinutes.isdigit() or not caloriesBurned.isdigit():
-        print("Invalid input for updating exercise.")
+    if not exerciseMinutes.isdigit() or not caloriesBurned.isdigit():
+        flash("Invalid input. Ensure fields are not empty and numeric.")
         return redirect(url_for('exercises'))
 
     try:
         cursor = mysql.connection.cursor()
-        query = "UPDATE Exercises SET name = %s, exerciseMinutes = %s, caloriesBurned = %s WHERE exerciseID = %s;"
-        cursor.execute(query, (name, int(exerciseMinutes), int(caloriesBurned), exercise_id))
+        query = "UPDATE Exercises SET exerciseMinutes=%s, caloriesBurned=%s WHERE exerciseID=%s;"
+        cursor.execute(query, (int(exerciseMinutes), int(caloriesBurned), exercise_id))
         mysql.connection.commit()
-        print(f"✅ Exercise '{name}' updated successfully!")
+        cursor.close()
+
+        flash(f"Exercise ID {exercise_id} updated successfully!")
+        return redirect(url_for('exercises'))
+
     except Exception as e:
-        print("❌ Error updating exercise:", e)
+        print(f"Error updating exercise: {e}")
+        flash("Failed to update exercise.")
+        return redirect(url_for('exercises'))
 
-    return redirect(url_for('exercises'))
 
-# --------------------------------------------------
-# DELETE - Remove an Exercise
+# --------------Delete Exercises---------------------------
 @app.route('/delete_exercise/<int:exercise_id>', methods=['POST'])
 def delete_exercise(exercise_id):
     """
-    Deletes an exercise from the database.
+    Delete an exercise from the database.
     """
     try:
         cursor = mysql.connection.cursor()
         query = "DELETE FROM Exercises WHERE exerciseID = %s;"
         cursor.execute(query, (exercise_id,))
         mysql.connection.commit()
-        print(f"✅ Exercise ID {exercise_id} deleted successfully!")
+        cursor.close()
+        return jsonify({"message": "Exercise deleted", "exercise_id": exercise_id}), 200
     except Exception as e:
-        print("❌ Error deleting exercise:", e)
+        print(f"❌ Error deleting exercise: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
 
-    return redirect(url_for('exercises'))
+
+
+# ------------------ Reset Users Table ------------------
+@app.route('/reset-users', methods=['POST'])
+def reset_users():
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM Users;")
+        cursor.execute("ALTER TABLE Users AUTO_INCREMENT = 1;")
+        cursor.execute("""
+            INSERT INTO Users (username, email, dailyCalorieGoal) VALUES
+            ('Tyler', 'tyler@gmail.com', 2400),
+            ('Jane', 'jane@yahoo.com', 2000),
+            ('Alex', 'alex@hotmail.com', 2200);
+        """)
+    
+        mysql.connection.commit()
+        cursor.close()
+
+        flash("Users table reset and default users added.")
+        return redirect(url_for('users'))  # Redirect back to the Users page
+
+    except Exception as e:
+        print("Error resetting Users table:", e)
+        flash("Failed to reset Users table.")
+        return redirect(url_for('users'))
+
+
+# ------------------ Reset Exercises Table ------------------
+@app.route('/reset-exercises', methods=['POST'])
+def reset_exercises():
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM Exercises;")
+        cursor.execute("ALTER TABLE Exercises AUTO_INCREMENT = 1;")
+        cursor.execute("""
+            INSERT INTO Exercises (name, exerciseMinutes, caloriesBurned) VALUES
+            ('Elliptical', 30, 250),
+            ('Hiking', 120, 600),
+            ('Swimming', 30, 300),
+            ('Pickleball', 60, 400),
+            ('Weight Lifting', 60, 150);
+        """)
+        mysql.connection.commit()
+        cursor.close()
+
+        flash("Exercises table reset and default exercises added.")
+        return redirect(url_for('exercises'))  # Redirect back to the Exercises page
+
+    except Exception as e:
+        print("Error resetting Exercises table:", e)
+        flash("Failed to reset Exercises table.")
+        return redirect(url_for('exercises'))
+
+
+
+# ------------------ Reset Food Items Table ------------------
+@app.route('/reset-food-items', methods=['POST'])
+def reset_food_items():
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM FoodItems;")
+        cursor.execute("ALTER TABLE FoodItems AUTO_INCREMENT = 1;")
+        cursor.execute("""
+            INSERT INTO FoodItems (name, brand, servingSize, calories, protein, fat, carbohydrates) VALUES
+            ('Oatmeal', 'Quaker', '1 cup', 153, 5, 3, 27),
+            ('Coffee', 'Starbucks', '1 cup (grande)', 15, 1, 0, 2),
+            ('Salad', NULL, '1 bowl', 250, 7, 10, 30),
+            ('Chicken', "Trader Joe's", '113g', 150, 27, 4, 0),
+            ('Brown Rice', 'Nishiki', '210g', 340, 7, 2, 7),
+            ('Big Mac', "McDonald's", '1 burger', 580, 25, 34, 45);
+        """)
+
+        mysql.connection.commit()
+        cursor.close()
+
+        flash("Food Items table reset and default food items added.")
+        return redirect(url_for('food_items'))
+
+    except Exception as e:
+        print("Error resetting Food Items table:", e)
+        flash("Failed to reset Food Items table.")
+        return redirect(url_for('food_items'))
+
 
 # --------------------------------------------------
 # Start Application

@@ -1,0 +1,157 @@
+<!-- Citation for the following function: -->
+<!-- Date: 03/07/2025  (Update to the date you copied/used it) -->
+<!-- Copied from /OR/ Adapted from /OR/ Based on: -->
+<!-- Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriSphere: Food Items</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/food_items.js') }}" defer></script>
+</head>
+
+<body>
+    <header>
+        <h1>NutriSphere: Food Items</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">🏠 Home</a>
+            <a href="{{ url_for('users') }}">👤 Users</a>
+            <a href="{{ url_for('daily_trackers') }}">🗓️ Daily Trackers</a>
+            <a href="{{ url_for('food_entries') }}">🍽️ Food Entries</a>
+            <a href="{{ url_for('food_items') }}">🥗 Food Items</a>
+            <a href="{{ url_for('exercises') }}">🏋️ Exercises</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+<main>
+    <!-- Food Items List -->
+    <section class="user-list">
+        <h2>Food Items List</h2>
+        <table border="1" id="foodTable">
+            <thead>
+                <tr>
+                    <th>Food Item ID</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Serving Size</th>
+                    <th>Calories</th>
+                    <th>Protein</th>
+                    <th>Fat</th>
+                    <th>Carbohydrates</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for food in food_items %}
+                <tr id="foodRow-{{ food.foodItemID }}">
+                    <td>{{ food.foodItemID }}</td>
+                    <td>{{ food.name }}</td>
+                    <td>{{ food.brand }}</td>
+                    <td>{{ food.servingSize }}</td>
+                    <td>{{ food.calories }}</td>
+                    <td>{{ food.protein }}</td>
+                    <td>{{ food.fat }}</td>
+                    <td>{{ food.carbohydrates }}</td>
+                    <td>
+                        <button onclick="populateUpdateFoodForm({{ food.foodItemID }})">✏️ Edit</button>
+                        <button onclick="deleteFoodItem({{ food.foodItemID }})">❌ Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Add Food Item and Update Food Item Section -->
+    <section class="user-forms">
+        <!-- Add Food Item Form -->
+        <div class="form-container add-user">
+            <h2>Add a New Food Item</h2>
+            <form action="{{ url_for('add_food_item') }}" method="POST">
+                <label>Food Name:</label>
+                <input type="text" name="name" required>
+                <label>Brand:</label>
+                <input type="text" name="brand">
+                <label>Serving Size:</label>
+                <input type="text" name="servingSize">
+                <label>Calories:</label>
+                <input type="number" name="calories" required>
+                <label>Protein (g):</label>
+                <input type="number" name="protein">
+                <label>Fat (g):</label>
+                <input type="number" name="fat">
+                <label>Carbohydrates (g):</label>
+                <input type="number" name="carbohydrates">
+                <button type="submit">➕ Add Food Item</button>
+            </form>
+        </div>
+
+        <!-- Update Food Item Form -->
+        <div class="form-container update-user">
+            <h2>Update Food Item</h2>
+            <form id="updateFoodForm" method="POST">
+                <input type="hidden" id="updateFoodID" name="foodItemID">
+                <label>Select Food Item:</label>
+                <select id="foodID" required>
+                    <option value="">-- Select Food Item --</option>
+                    {% for food in food_items %}
+                    <option value="{{ food.foodItemID }}" 
+                            data-name="{{ food.name }}" 
+                            data-brand="{{ food.brand }}" 
+                            data-serving="{{ food.servingSize }}"
+                            data-calories="{{ food.calories }}" 
+                            data-protein="{{ food.protein }}" 
+                            data-fat="{{ food.fat }}" 
+                            data-carbs="{{ food.carbohydrates }}">
+                        {{ food.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <label>Food Name:</label>
+                <input type="text" id="updateName" name="name" required>
+                <label>Brand:</label>
+                <input type="text" id="updateBrand" name="brand">
+                <label>Serving Size:</label>
+                <input type="text" id="updateServingSize" name="servingSize">
+                <label>Calories:</label>
+                <input type="number" id="updateCalories" name="calories" required>
+                <label>Protein (g):</label>
+                <input type="number" id="updateProtein" name="protein">
+                <label>Fat (g):</label>
+                <input type="number" id="updateFat" name="fat">
+                <label>Carbohydrates (g):</label>
+                <input type="number" id="updateCarbohydrates" name="carbohydrates">
+                <button type="submit">💾 Save</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Reset Food Items Database Section -->
+    <section class="reset-database">
+        <h2>Reset Food Items Database</h2>
+        <p>
+            This will <strong>restore default example food items</strong> only if the Food Items table is empty.
+            <br>Use this button <strong>after you have deleted all food items data</strong> and want to restore initial example data.
+            <br><strong>※ Use this when you want to bring back default food items to an empty table.</strong>
+        </p>
+        <form action="{{ url_for('reset_food_items') }}" method="post">
+            <button class="reset-btn" type="submit" onclick="return confirm('Restore default example food items? (Only if Food Items table is empty)')">
+                🔄 Restore Default Food Items
+            </button>
+        </form>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 NutriSphere. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

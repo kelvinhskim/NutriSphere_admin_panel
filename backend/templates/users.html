@@ -6,30 +6,34 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriSphere: Users</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Link to CSS file for styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/users.js') }}" defer></script>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <header>
-        <h1>NutriSphere: Users</h1>
-        <nav>
-            <a href="{{ url_for('home') }}">🏠 Home</a>
-            <a href="{{ url_for('users') }}">👤 Users</a>
-            <a href="{{ url_for('daily_trackers') }}">🗓️ Daily Trackers</a>
-            <a href="{{ url_for('food_entries') }}">🍽️ Food Entries</a>
-            <a href="{{ url_for('food_items') }}">🥗 Food Items</a>
-            <a href="{{ url_for('exercises') }}">🏋️ Exercises</a>
-        </nav>
-    </header>
     
-
-    <!-- User List Section -->
-    <main>
-        <h2>Browse Users</h2>
+<!-- Navigation Bar -->
+<header>
+    <h1>NutriSphere: Users</h1>
+    <nav>
+        <a href="{{ url_for('home') }}">🏠 Home</a>
+        <a href="{{ url_for('users') }}">👤 Users</a>
+        <a href="{{ url_for('daily_trackers') }}">🗓️ Daily Trackers</a>
+        <a href="{{ url_for('food_entries') }}">🍽️ Food Entries</a>
+        <a href="{{ url_for('food_items') }}">🥗 Food Items</a>
+        <a href="{{ url_for('exercises') }}">🏋️ Exercises</a>
+    </nav>
+ </header>
+    
+<!-- Main Content -->
+<main>
+    <!-- User List -->
+    <section class="user-list">
+        <h2>Users List</h2>
         <table border="1">
             <thead>
                 <tr>
@@ -41,21 +45,6 @@
                 </tr>
             </thead>
             <tbody id="userTable">
-                <!-- Sample Data (Static) -->
-                {% for user in recommended_users %}
-                <tr id="rec-{{ user.id }}">
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.dailyCalorieGoal }}</td>
-                    <td>
-                        <button onclick="populateUpdateForm({{ user.id }}, true)">✏️ Edit</button>
-                        <button onclick="deleteRecommendedUser({{ user.id }})">❌ Delete</button>
-                    </td>
-                </tr>
-                {% endfor %}
-
-                <!-- ✅ Database Users -->
                 {% for user in users %}
                 <tr id="userRow-{{ user.userID }}">
                     <td>{{ user.userID }}</td>
@@ -63,106 +52,71 @@
                     <td>{{ user.email }}</td>
                     <td>{{ user.dailyCalorieGoal }}</td>
                     <td>
-                        <button onclick="populateUpdateForm({{ user.userID }}, false)">✏️ Edit</button>
+                        <button onclick="populateUpdateForm({{ user.userID }})">✏️ Edit</button>
                         <button onclick="deleteUser({{ user.userID }})">❌ Delete</button>
-                        </form>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </main>
-
-    <!-- Add User Form -->
-    <section>
-        <h2>Add a New User</h2>
-        <form action="{{ url_for('add_user') }}" method="POST">
-            <label>Username:</label><input type="text" name="username" required>
-            <label>Email:</label><input type="email" name="email" required>
-            <label>Daily Calorie Goal:</label><input type="number" name="dailyCalorieGoal" required>
-            <button type="submit">➕ Add User</button>
-        </form>
     </section>
 
-   <!-- Update User Form -->
-    <section>
-        <h2>Update User</h2>
-        <form id="updateUserForm" method="POST" onsubmit="return handleUserUpdate()">
-            <input type="hidden" id="updateID" name="userID">
-            <input type="hidden" id="isRecommended" name="isRecommended">
-            <label>Username:</label><input type="text" id="updateUsername" name="username" required>
-            <label>Email:</label><input type="email" id="updateEmail" name="email" required>
-            <label>Daily Calorie Goal:</label><input type="number" id="updateCalorieGoal" name="dailyCalorieGoal" required>
-            <button type="submit">💾 Save</button>
-        </form>
+    <!-- Add User and Update User Section (Horizontally Aligned) -->
+    <section class="user-forms">
+        <div class="form-container add-user">
+            <h2>Add a New User</h2>
+            <form action="{{ url_for('create_user') }}" method="POST">
+                <label>Username:</label><input type="text" name="username" required>
+                <label>Email:</label><input type="email" name="email" required>
+                <label>Daily Calorie Goal:</label><input type="number" name="dailyCalorieGoal" required>
+                <button type="submit">➕ Add User</button>
+            </form>
+        </div>
+
+        <div class="form-container update-user">
+            <h2>Update User</h2>
+            <form id="updateUserForm" method="POST">
+                <label>Select User:</label>
+                <select id="userID" name="userID" required>
+                    <option value="">-- Select User --</option>
+                    {% for user in users %}
+                    <option value="{{ user.userID }}" data-email="{{ user.email }}" data-goal="{{ user.dailyCalorieGoal }}">
+                        {{ user.username }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <label>Email:</label>
+                <input type="email" id="updateEmail" name="email" required>
+
+                <label>Daily Calorie Goal:</label>
+                <input type="number" id="updateCalorieGoal" name="dailyCalorieGoal" required>
+
+                <button type="submit">💾 Save</button>
+            </form>
+        </div>
     </section>
 
-    <script>
-        // Data arrays loaded from backend
-        const users = {{ users | tojson | default('[]') }};
-        const recommendedUsers = {{ recommended_users | tojson | default('[]') }};
-        
-        // Populate form for editing user (static or dynamic)
-        function populateUpdateForm(id, isRecommended = false) {
-            let user = isRecommended ? recommendedUsers.find(u => u.id === id) : users.find(u => u.userID === id);
-            if (user) {
-                document.getElementById('updateID').value = isRecommended ? user.id : user.userID;
-                document.getElementById('updateUsername').value = user.username;
-                document.getElementById('updateEmail').value = user.email;
-                document.getElementById('updateCalorieGoal').value = user.dailyCalorieGoal;
-                document.getElementById('isRecommended').value = isRecommended ? 'true' : 'false';
-            }
-        }
-    
-        // Handle form submission to update a user
-        function handleUserUpdate() {
-            const id = document.getElementById('updateID').value;
-            const isRecommended = document.getElementById('isRecommended').value === 'true';
+    <!-- Reset Database Section -->
+<section class="reset-database">
+    <h2>Reset Users Database</h2>
+    <p>
+            This will <strong>restore default example data</strong> only if the Users table is empty. 
+        <br>Use this button <strong>after you have deleted all user data</strong> and want to restore initial example data.
+        <br><strong>※ Use this when you want to bring back default users to an empty table.</strong>
+    </p>
+    <form action="{{ url_for('reset_users') }}" method="post">
+        <button class="reset-btn" type="submit" onclick="return confirm('Restore default example users? (Only if the Users table is empty)')">
+            🔄 Restore Default Users
+        </button>
+    </form>
+</section>
+</main>
 
-            if (!isRecommended) {
-                document.getElementById('updateUserForm').action = `/update_user/${id}`;
-                return true;
-            } else {
-                // Handle inline update for recommended (static) users
-                const row = document.getElementById('rec-' + id);
-                row.children[1].innerText = document.getElementById('updateUsername').value;
-                row.children[2].innerText = document.getElementById('updateEmail').value;
-                row.children[3].innerText = document.getElementById('updateCalorieGoal').value;
-                alert('Recommended user updated!');
-                return false; // Prevent default form behavior
-            }
-        }
-        
-        /// Delete a static recommended user (frontend only)
-        function deleteRecommendedUser(id) {
-            if (confirm('Are you sure you want to delete this recommended user?')) {
-                document.getElementById('rec-' + id).remove(); // Remove row from table
-                alert('Recommended user deleted!');
-            }
-        }
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 NutriSphere. All Rights Reserved.</p>
+</footer>
 
-        function deleteUser(userID) {
-        if (confirm('Are you sure you want to delete this user?')) {
-            fetch(`/delete_user/${userID}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert(`✅ User ${userID} deleted successfully!`);
-                    document.getElementById(`userRow-${userID}`).remove(); // 테이블에서 제거
-                } else {
-                    alert('❌ Failed to delete user.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('❌ Error deleting user.');
-            });
-        }
-    }
-    </script>
-    
 </body>
 </html>

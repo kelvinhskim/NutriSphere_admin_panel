@@ -33,6 +33,7 @@
         <p>This table is sorted by date then username.</p>
         <table border="1">
             <thead>
+ 
                 <!-- Access queried table headers passed from daily-trackers route -->
                 <tr>
                 {% if daily_trackers %}
@@ -76,7 +77,7 @@
 
     <!-- Add Daily Tracker Form -->
     <section id="add-tracker">
-        <form action="{{ url_for("add_tracker") }}" method="post">
+        <form action="{{ url_for('add_tracker') }}" method="post">
             <fieldset>
                 <h2>Add New Daily Tracker</h2>
                 <label>Select a User</label>
@@ -103,7 +104,7 @@
                 <select id="exercise" name="exerciseID">
                     <option value="NULL" selected></option>
                     {% for exercise in exercises %}
-                    <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
+                        <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
                     {% endfor %}
                 </select>
 

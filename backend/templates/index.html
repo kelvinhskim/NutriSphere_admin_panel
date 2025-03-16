@@ -20,13 +20,55 @@
         </nav>
     </header>
 
+<!-- Main Content -->
+<main class="container home-main">
+
     <!-- Welcome Section -->
-    <main class="container">
-        <section class="welcome-section">
-            <h2>Welcome to NutriSphere's Admin Portal</h2>
-            <p>Your ultimate solution for managing the database behind our users' nutrition metrics and exercise patterns.</p>
-            <a href="{{ url_for('users') }}" class="btn">Get Started</a>
-        </section>
-    </main>
+    <section class="welcome-section">
+        <h2>Welcome to NutriSphere's Admin Portal</h2>
+        <p>Your ultimate solution for managing user nutrition and exercise records efficiently.</p>
+    </section>
+
+    <!-- Database Entity Tables Section -->
+    <section class="entity-table-section">
+        <h2>Database Entity Tables</h2>
+        <table class="descriptionTable">
+            <colgroup>
+                <col span="1" style="width: 25%;" />
+                <col span="1" style="width: 75%;" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Table Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="{{ url_for('users') }}"><b>Users</b></a></td>
+                    <td>Stores user profiles including username, email, and daily calorie goals.</td>
+                </tr>
+                <tr>
+                    <td><a href="{{ url_for('daily_trackers') }}"><b>Daily Trackers</b></a></td>
+                    <td>Tracks daily calorie intake and exercise records for each user.</td>
+                </tr>
+                <tr>
+                    <td><a href="{{ url_for('food_entries') }}"><b>Food Entries</b></a></td>
+                    <td>Logs foods consumed by users, linked to daily trackers.</td>
+                </tr>
+                <tr>
+                    <td><a href="{{ url_for('food_items') }}"><b>Food Items</b></a></td>
+                    <td>Contains nutritional data for various food items, including calories, protein, fat, and carbohydrates.</td>
+                </tr>
+                <tr>
+                    <td><a href="{{ url_for('exercises') }}"><b>Exercises</b></a></td>
+                    <td>Lists exercise types, minutes performed, and calories burned.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
 </body>
 </html>
