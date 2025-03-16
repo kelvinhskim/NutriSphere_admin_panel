@@ -302,10 +302,13 @@ footer {
 
 /* Home Page Center Alignment */
 .home-main {
-    min-height: 80vh; /* Take up 80% of the viewport height */
-    display: flex; /* Use flexbox for alignment */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 /* Welcome Section Styling */
@@ -318,4 +321,31 @@ footer {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
     margin: 0 auto; /* Center the box horizontally */
+}
+
+.descriptionTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.descriptionTable th, .descriptionTable td {
+    padding: 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.descriptionTable th {
+    background: #007bff;
+    color: white;
+}
+
+.descriptionTable td a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.descriptionTable td a:hover {
+    text-decoration: underline;
 }
