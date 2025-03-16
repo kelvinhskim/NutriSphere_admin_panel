@@ -196,13 +196,13 @@ VALUES
 -- -----------------------------------------------------
 -- Insert sample data for DailyTrackers
 -- -----------------------------------------------------
-INSERT INTO `DailyTrackers` (`date`, `calorieGoal`, `caloriesConsumed`, `caloriesRemaining`, `userID`, `exerciseID`)
+INSERT INTO `DailyTrackers` (`date`, `calorieGoal`, `userID`, `exerciseID`)
 VALUES
-('2025-01-02', 2400, 0, NULL, 1, 1),
-('2025-01-03', 2400, 0, NULL, 1, NULL),
-('2025-01-20', 2000, 0, NULL, 2, 4),
-('2025-02-01', 2000, 0, NULL, 2, 4),
-('2025-02-04', 2200, 0, NULL, 3, 5);
+('2025-01-02', 2400, 1, 1),
+('2025-01-03', 2400, 1, NULL),
+('2025-01-20', 2000, 2, 4),
+('2025-02-01', 2000, 2, 4),
+('2025-02-04', 2200, 3, 5);
 
 -- -----------------------------------------------------
 -- Insert sample data for FoodEntries
