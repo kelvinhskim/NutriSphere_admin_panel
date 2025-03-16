@@ -203,6 +203,7 @@
 
     function populateUpdateFoodEntry(id) {
         const selectedEntry = foodEntries[id]
+        document.getElementById("selected-food-entry-id").value = id
         document.getElementById("update-meal-category").value = selectedEntry.mealCategory
         document.getElementById("update-food-item-id").value = selectedEntry.foodItemID
         document.getElementById("update-daily-tracker-id").value = selectedEntry.dailyTrackerID
