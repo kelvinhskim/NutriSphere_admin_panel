@@ -79,8 +79,9 @@
         <div class="form-container update-user">
             <h2>Update Exercise</h2>
             <form id="updateExerciseForm" method="POST">
+                <input type="hidden" id="updateExerciseID" name="exerciseID">
                 <label>Select Exercise:</label>
-                <select id="exerciseID" name="exerciseID" required>
+                <select id="exerciseID" required>
                     <option value="">-- Select Exercise --</option>
                     {% for exercise in exercises %}
                     <option value="{{ exercise.exerciseID }}" data-minutes="{{ exercise.exerciseMinutes }}" data-calories="{{ exercise.caloriesBurned }}">

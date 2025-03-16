@@ -473,23 +473,22 @@ def create_exercise():
 
 
 # --------------Update Exercises---------------------------
-@app.route("/update_exercise/<int:exercise_id>", methods=["POST"])
+@app.route('/update_exercise/<int:exercise_id>', methods=['POST'])
 def update_exercise(exercise_id):
     """
     Update an existing exercise in the database.
     """
-    name = request.form.get("name", "").strip()
     exerciseMinutes = request.form.get("exerciseMinutes", "").strip()
     caloriesBurned = request.form.get("caloriesBurned", "").strip()
 
-    if not name or not exerciseMinutes.isdigit() or not caloriesBurned.isdigit():
-        flash("Invalid input. Ensure fields are not empty and exerciseMinutes, caloriesBurned are numbers.")
+    if not exerciseMinutes.isdigit() or not caloriesBurned.isdigit():
+        flash("Invalid input. Ensure fields are not empty and numeric.")
         return redirect(url_for('exercises'))
 
     try:
         cursor = mysql.connection.cursor()
-        query = "UPDATE Exercises SET name=%s, exerciseMinutes=%s, caloriesBurned=%s WHERE exerciseID=%s;"
-        cursor.execute(query, (name, int(exerciseMinutes), int(caloriesBurned), exercise_id))
+        query = "UPDATE Exercises SET exerciseMinutes=%s, caloriesBurned=%s WHERE exerciseID=%s;"
+        cursor.execute(query, (int(exerciseMinutes), int(caloriesBurned), exercise_id))
         mysql.connection.commit()
         cursor.close()
 

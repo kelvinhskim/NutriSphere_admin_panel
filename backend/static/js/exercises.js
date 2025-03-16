@@ -69,18 +69,17 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 updateExerciseMinutes.value = "";
                 updateCaloriesBurned.value = "";
-                updateExerciseForm.action = `/update_exercise/0`;
+                updateExerciseForm.action = "";
             }
         });
     }
 
-    // ---------------------- "Edit" Button Auto-select ----------------------
+    // Function to auto-fill update form based on selected exercise
     window.populateUpdateExerciseForm = function (exerciseID) {
         console.log(`Editing exercise ${exerciseID}`);
-        // Select the exercise in the dropdown
         exerciseDropdown.value = exerciseID;
 
-        // Get corresponding option's data
+
         const selectedOption = exerciseDropdown.querySelector(`option[value="${exerciseID}"]`);
         if (selectedOption) {
             const minutes = selectedOption.dataset.minutes;
@@ -88,14 +87,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             updateExerciseMinutes.value = minutes;
             updateCaloriesBurned.value = calories;
-            updateExerciseForm.action = `/update_exercise/${exerciseID}`;
+            updateExerciseForm.action = `/update_exercise/${exerciseID}`; 
 
             console.log(`Auto-filled minutes: ${minutes}, calories: ${calories}`);
         } else {
             console.error("Selected exercise not found in dropdown.");
         }
 
-        // Scroll into view for better UX
+
         updateExerciseForm.scrollIntoView({ behavior: 'smooth' });
     };
 });
