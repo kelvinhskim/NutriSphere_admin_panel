@@ -318,7 +318,7 @@ def food_entries():
         # print(food_entries_data)
 
         # Query for Users dropdown
-        query2 = "SELECT userID, username, dailyCalorieGoal FROM Users;"
+        query2 = "SELECT userID, username, dailyCalorieGoal FROM Users ORDER BY username;"
         cur.execute(query2)
         users_data = cur.fetchall()
 
@@ -344,7 +344,8 @@ def food_entries():
         query5 = """
             SELECT dt.dailyTrackerID, u.username, dt.date 
                 FROM DailyTrackers dt
-                JOIN Users u ON dt.userID = u.userID;
+                JOIN Users u ON dt.userID = u.userID
+                ORDER BY dt.date DESC, u.username DESC;
             """
         cur.execute(query5)
         daily_tracker_dropdown_data = cur.fetchall()
