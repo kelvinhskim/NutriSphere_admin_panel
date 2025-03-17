@@ -663,9 +663,9 @@ def reset_all():
         cursor.execute("ALTER TABLE Users AUTO_INCREMENT = 1;")
         cursor.execute("""
             INSERT INTO Users (username, email, dailyCalorieGoal) VALUES
-            ('Tyler', 'tyler@gmail.com', 2400),
-            ('Jane', 'jane@yahoo.com', 2000),
-            ('Alex', 'alex@hotmail.com', 2200);
+            ('Tyler', 'tyler@gmail.com', 1800),
+            ('Jane', 'jane@yahoo.com', 2100),
+            ('Alex', 'alex@hotmail.com', 3000);
         """)
 
 
@@ -688,10 +688,10 @@ def reset_all():
             INSERT INTO FoodItems (name, brand, servingSize, calories, protein, fat, carbohydrates) VALUES
             ('Oatmeal', 'Bob''s Red Mill', '1 cup', 153, 5, 3, 27),
             ('Coffee', 'Starbucks', '1 cup (grande)', 15, 1, 0, 2),
-            ('Salad', NULL, '1 bowl', 250, 7, 10, 30),
-            ('Chicken', 'Trader Joe''s', '113g', 150, 27, 4, 0),
-            ('Brown Rice', 'Nishiki', '210g', 340, 7, 2, 7),
-            ('Big Mac', 'McDonald''s', '1 burger', 580, 25, 34, 45);
+            ('Salad', NULL, '1 bowl', 250, 8, 10, 30),
+            ('Chicken', 'Trader Joe''s', '113g', 150, 27, 5, 0),
+            ('Brown Rice', 'Nishiki', '210g', 340, 7, 3, 7),
+            ('Big Mac', 'McDonald''s', '1 burger', 580, 25, 34, NULL;
         """)
 
         # 4. Reset DailyTrackers with default data
@@ -701,7 +701,7 @@ def reset_all():
             INSERT INTO DailyTrackers (date, calorieGoal, userID, exerciseID)
             VALUES
             ('2025-01-02', 2400, (SELECT userID FROM Users WHERE username = 'Tyler'), (SELECT exerciseID FROM Exercises WHERE name = 'Elliptical')),
-            ('2025-01-03', 2400, (SELECT userID FROM Users WHERE username = 'Tyler'), NULL),
+            ('2025-01-03', 2400, (SELECT userID FROM Users WHERE username = 'Tyler'), (SELECT exerciseID FROM Exercises WHERE name IS NULL),
             ('2025-01-20', 2000, (SELECT userID FROM Users WHERE username = 'Jane'), (SELECT exerciseID FROM Exercises WHERE name = 'Pickleball')),
             ('2025-02-01', 2000, (SELECT userID FROM Users WHERE username = 'Jane'), (SELECT exerciseID FROM Exercises WHERE name = 'Pickleball')),
             ('2025-02-04', 2200, (SELECT userID FROM Users WHERE username = 'Alex'), (SELECT exerciseID FROM Exercises WHERE name = 'Weight Lifting'));
