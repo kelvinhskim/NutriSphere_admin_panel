@@ -3,6 +3,8 @@
 -- Group 39
 -- Emily Ho, Hyun Seok Kim
 -- Data Definition Queries
+-- This .SQL file is imported into Maria DB to create the tables aligning
+-- with the defined schema from the project outline.
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
@@ -14,8 +16,8 @@ SET AUTOCOMMIT = 0;
 
 -- -----------------------------------------------------
 -- Table `Users`
--- Stores user information including username, email, and daily calorie goal.
--- Each user can log food entries and exercises daily.
+-- Stores user information including username, email, and default daily calorie goal.
+-- Each user can log food entries and an exercise daily.
 -- -----------------------------------------------------
 CREATE OR REPLACE TABLE `Users` (
   `userID` INT NOT NULL AUTO_INCREMENT,
@@ -41,8 +43,8 @@ CREATE OR REPLACE TABLE `Exercises` (
 
 -- -----------------------------------------------------
 -- Table `DailyTrackers`
--- Stores users' daily calorie intake and exercises performed
--- Links to `Users` and `Exercises` tables.
+-- Stores the tracker date and user's calorie goal for that date.
+-- Links to `Users`, `Exercises`, and `FoodItems` (thru `FoodEntries`) tables.
 -- If a user is deleted, their records in `DailyTrackers` will be removed (ON DELETE CASCADE).
 -- If an exercise is deleted, the reference in `DailyTrackers` is set to NULL (ON DELETE SET NULL).
 -- -----------------------------------------------------
@@ -60,11 +62,12 @@ CREATE OR REPLACE TABLE `DailyTrackers` (
     FOREIGN KEY (`userID`)
     REFERENCES `Users` (`userID`)
     ON DELETE CASCADE     -- If a user is deleted, remove all their trackers
-    ON UPDATE CASCADE,    -- If a user's ID is updated, update the tracker's ID
+    ON UPDATE CASCADE,    -- If a user's ID is updated, update it also on all associated trackers
   CONSTRAINT `fk_DailyTrackers_exerciseID`
     FOREIGN KEY (`exerciseID`)
     REFERENCES `Exercises` (`exerciseID`)
-    ON DELETE SET NULL    -- If an exercise is deleted, dissociate it from the tracker
+    ON DELETE SET NULL    -- If an exercise is deleted, dissociate it from all associated trackers
+    ON UPDATE CASCADE     -- If an exercise ID is updated, update it also on all associated trackers
 );
 
 -- -----------------------------------------------------
@@ -85,10 +88,10 @@ CREATE OR REPLACE TABLE `FoodItems` (
 );
 
 -- -----------------------------------------------------
--- Table `FoodEntries` (M:N Relationship)
--- Links DailyTrackers and FoodItems to track food consumption.
--- If a food item is deleted, remove all associated entries (ON DELETE CASCADE).
--- If a daily tracker is deleted, dissociate its entries (ON DELETE SET NULL).
+-- Table `FoodEntries` (Intersection table for M:N relationship between DailyTrackers and FoodItems)
+-- Links DailyTrackers and FoodItems to track food consumption associated with users and their daily trackers.
+-- If a food item is deleted, all associated food entries are removed (ON DELETE CASCADE).
+-- If a daily tracker is deleted, all associated food entries are removed (ON DELETE CASCADE).
 -- -----------------------------------------------------
 CREATE OR REPLACE TABLE `FoodEntries` (
   `foodEntryID` INT NOT NULL AUTO_INCREMENT,
@@ -101,19 +104,21 @@ CREATE OR REPLACE TABLE `FoodEntries` (
   CONSTRAINT `fk_FoodEntries_foodItemID`
     FOREIGN KEY (`foodItemID`)
     REFERENCES `FoodItems` (`foodItemID`)
-    ON DELETE CASCADE   -- If a food item is deleted, remove all entries
-    ON UPDATE CASCADE,  -- If a food item's ID is updated, update the entries
+    ON DELETE CASCADE   -- If a food item is deleted, remove all associated food entries
+    ON UPDATE CASCADE,  -- If a food item's ID is updated, update it also on all associated food entries
   CONSTRAINT `fk_FoodEntries_dailyTrackerID`
     FOREIGN KEY (`dailyTrackerID`)
     REFERENCES `DailyTrackers` (`dailyTrackerID`)
-    ON DELETE CASCADE   -- If a tracker is deleted, remove all food entries
-    ON UPDATE CASCADE   -- If a tracker's ID is updated, update the entries
+    ON DELETE CASCADE   -- If a tracker is deleted, remove all associated food entries
+    ON UPDATE CASCADE   -- If a tracker's ID is updated, update it also on all associated food entries
 );
 
 -- -----------------------------------------------------
 -- STORED PROCEDURE: `add_food_entry`
--- The stored procedure handles the case if a food entry is attempting to be added for 
--- a specific user and date where the daily tracker for that user and date that has not been created yet.  
+-- The stored procedure handles the case of when a food entry is attempting to be added for 
+-- a specific user and date but the daily tracker for that user and date that has not been created yet.
+-- If the appropriate daily tracker has not been created yet, create a new daily tracker for that user and date.
+-- Then, for both scenarios (whether the tracker did not exist yet or already existed), insert the data into Food Entries.  
 -- -----------------------------------------------------
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `add_food_entry`;
@@ -161,32 +166,65 @@ VALUES
 ('Weight Lifting', 60, 150);
 
 -- -----------------------------------------------------
--- Insert sample data for DailyTrackers
+-- Insert sample data for DailyTrackers (with SELECT subquery to populate FKs)
 -- -----------------------------------------------------
 INSERT INTO `DailyTrackers` (`date`, `calorieGoal`, `userID`, `exerciseID`)
 VALUES
-('2025-01-02', 2400, 1, 1),
-('2025-01-03', 2400, 1, NULL),
-('2025-01-20', 2000, 2, 4),
-('2025-02-01', 2000, 2, 4),
-('2025-02-04', 2200, 3, 5);
+('2025-01-02', 2400, (SELECT userID FROM Users WHERE username = 'tyler'), (SELECT exerciseID FROM Exercises WHERE name = 'Elliptical')),
+('2025-01-03', 2400, (SELECT userID FROM Users WHERE username = 'tyler'), (SELECT exerciseID FROM Exercises WHERE name IS NULL)),
+('2025-01-20', 2000, (SELECT userID FROM Users WHERE username = 'jane'), (SELECT exerciseID FROM Exercises WHERE name = 'Pickleball')),
+('2025-02-01', 2000, (SELECT userID FROM Users WHERE username = 'jane'), (SELECT exerciseID FROM Exercises WHERE name = 'Pickleball')),
+('2025-02-04', 2200, (SELECT userID FROM Users WHERE username = 'alex'), (SELECT exerciseID FROM Exercises WHERE name = 'Weight Lifting'));
 
 -- -----------------------------------------------------
 -- Insert sample data for FoodEntries
 -- -----------------------------------------------------
 INSERT INTO `FoodEntries` (`mealCategory`, `foodItemID`, `dailyTrackerID`)
 VALUES
-('Breakfast', 1, 1),
-('Lunch', 2, 1),
-('Lunch', 3, 1),
-('Dinner', 4, 1),
-('Lunch', 6, 2),
-('Dinner', 3, 2),
-('Dinner', 4, 2),
-('Breakfast', 2, 3),
-('Lunch', 4, 4),
-('Dinner', 6, 5),
-('Breakfast', 1, 3);
+('Breakfast', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Oatmeal' AND brand = "Bob\'s Red Mill"), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 1 AND date = '2025-01-02')
+),
+('Lunch', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Coffee' AND brand = 'Starbucks'), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 1 AND date = '2025-01-02')
+),
+('Lunch', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Salad' AND brand IS NULL), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 1 AND date = '2025-01-02')
+),
+('Dinner', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Chicken' AND brand = "Trader Joe\'s"), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 1 AND date = '2025-01-02')
+),
+('Lunch', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Big Mac' AND brand = "McDonald\'s"), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 1 AND date = '2025-01-03')
+),
+('Dinner', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Salad' AND brand IS NULL), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 1 AND date = '2025-01-03')
+),
+('Dinner', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Chicken' AND brand = "Trader Joe\'s"), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 1 AND date = '2025-01-03')
+),
+('Breakfast', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Coffee' AND brand = 'Starbucks'), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 2 AND date = '2025-01-20')
+),
+('Lunch', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Chicken' AND brand = "Trader Joe\'s"), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 2 AND date = '2025-02-01')
+),
+('Dinner', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Big Mac' AND brand = "McDonald\'s"), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 3 AND date = '2025-02-04')
+),
+('Breakfast', 
+  (SELECT foodItemID FROM FoodItems WHERE name = 'Oatmeal' AND brand = "Bob\'s Red Mill"), 
+  (SELECT dailyTrackerID FROM DailyTrackers WHERE userID = 2 AND date = '2025-01-20')
+);
 
 -- -----------------------------------------------------
 -- Turn commits and foreign key checks back on.
