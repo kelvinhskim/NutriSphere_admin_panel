@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriSphere: Daily Trackers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Link to CSS file for styling -->
+    <script src="{{ url_for('static', filename='js/daily_trackers.js' ) }}"></script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -30,7 +31,6 @@
     <!-- Daily Trackers Table Section -->
     <main id="daily-trackers-table">
         <h2>Daily Trackers</h2>
-        <p>This table is sorted by date then username.</p>
         <p>Calorie Goal - Calories Consumed + Calories Burned = Calories Remaining</p>
         <table border="1">
             <thead>
@@ -81,7 +81,7 @@
             <h2>Add New Daily Tracker</h2>
             <form action="{{ url_for('add_tracker') }}" method="POST">
                 <label>Select a User</label>
-                <select id="selectedUser" name="userID" onchange="getSelectedUser(); getSelectedUserCalorieGoal();" required>
+                <select id="selectedUser" name="userID" onchange="getSelectedUserCalorieGoal();" required>
                     <option value="" selected disabled hidden>-- Select a User --</option>
                     {% for user in users %}
                     <option 
@@ -156,7 +156,6 @@
                 <button type="button" onclick="submitUpdateTracker()">💾 Save</button>
             </form>
         </div>
-
     </section>
 </main>
 
