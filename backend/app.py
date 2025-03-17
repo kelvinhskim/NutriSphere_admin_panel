@@ -159,7 +159,7 @@ def daily_trackers():
             FROM DailyTrackers dt 
             LEFT JOIN Users u ON dt.userID = u.userID 
             LEFT JOIN Exercises e ON dt.exerciseID = e.exerciseID 
-            ORDER BY dt.date DESC, u.username ASC;
+            ORDER BY dt.date ASC, u.username ASC;
         """
         cur = mysql.connection.cursor()
         cur.execute(query)
@@ -311,7 +311,7 @@ def food_entries():
             JOIN DailyTrackers AS dt ON fe.dailyTrackerID = dt.dailyTrackerID 
             JOIN Users AS u ON dt.userID = u.userID 
             JOIN FoodItems AS fi ON fe.foodItemID = fi.foodItemID 
-            ORDER BY dt.date DESC, u.username ASC, 
+            ORDER BY dt.date ASC, u.username ASC, 
                 CASE 
                     WHEN fe.mealCategory = 'Breakfast' then 1 
                     WHEN fe.mealCategory = 'Lunch' then 2 
@@ -650,11 +650,14 @@ def delete_exercise(exercise_id):
 
 
 
-# ------------------ Reset Users Table ------------------
-@app.route('/reset-users', methods=['POST'])
-def reset_users():
+# ------------------ Reset All Tables (Combined Reset) ------------------
+@app.route('/reset-all', methods=['POST'])
+def reset_all():
     try:
         cursor = mysql.connection.cursor()
+
+       
+        # 1. Reset Users table with default data
         cursor.execute("DELETE FROM Users;")
         cursor.execute("ALTER TABLE Users AUTO_INCREMENT = 1;")
         cursor.execute("""
@@ -663,24 +666,9 @@ def reset_users():
             ('Jane', 'jane@yahoo.com', 2000),
             ('Alex', 'alex@hotmail.com', 2200);
         """)
-    
-        mysql.connection.commit()
-        cursor.close()
-
-        flash("Users table reset and default users added.")
-        return redirect(url_for('users'))  # Redirect back to the Users page
-
-    except Exception as e:
-        print("Error resetting Users table:", e)
-        flash("Failed to reset Users table.")
-        return redirect(url_for('users'))
 
 
-# ------------------ Reset Exercises Table ------------------
-@app.route('/reset-exercises', methods=['POST'])
-def reset_exercises():
-    try:
-        cursor = mysql.connection.cursor()
+        # 2. Reset Exercises table with default data
         cursor.execute("DELETE FROM Exercises;")
         cursor.execute("ALTER TABLE Exercises AUTO_INCREMENT = 1;")
         cursor.execute("""
@@ -691,46 +679,98 @@ def reset_exercises():
             ('Pickleball', 60, 400),
             ('Weight Lifting', 60, 150);
         """)
-        mysql.connection.commit()
-        cursor.close()
 
-        flash("Exercises table reset and default exercises added.")
-        return redirect(url_for('exercises'))  # Redirect back to the Exercises page
-
-    except Exception as e:
-        print("Error resetting Exercises table:", e)
-        flash("Failed to reset Exercises table.")
-        return redirect(url_for('exercises'))
-
-
-
-# ------------------ Reset Food Items Table ------------------
-@app.route('/reset-food-items', methods=['POST'])
-def reset_food_items():
-    try:
-        cursor = mysql.connection.cursor()
+        # 3. Reset FoodItems
         cursor.execute("DELETE FROM FoodItems;")
         cursor.execute("ALTER TABLE FoodItems AUTO_INCREMENT = 1;")
         cursor.execute("""
             INSERT INTO FoodItems (name, brand, servingSize, calories, protein, fat, carbohydrates) VALUES
-            ('Oatmeal', 'Quaker', '1 cup', 153, 5, 3, 27),
+            ('Oatmeal', 'Bob''s Red Mill', '1 cup', 153, 5, 3, 27),
             ('Coffee', 'Starbucks', '1 cup (grande)', 15, 1, 0, 2),
             ('Salad', NULL, '1 bowl', 250, 7, 10, 30),
-            ('Chicken', "Trader Joe's", '113g', 150, 27, 4, 0),
+            ('Chicken', 'Trader Joe''s', '113g', 150, 27, 4, 0),
             ('Brown Rice', 'Nishiki', '210g', 340, 7, 2, 7),
-            ('Big Mac', "McDonald's", '1 burger', 580, 25, 34, 45);
+            ('Big Mac', 'McDonald''s', '1 burger', 580, 25, 34, 45);
         """)
 
+        # 4. Reset DailyTrackers with default data
+        cursor.execute("DELETE FROM DailyTrackers;")
+        cursor.execute("ALTER TABLE DailyTrackers AUTO_INCREMENT = 1;")
+        cursor.execute("""
+            INSERT INTO DailyTrackers (date, calorieGoal, userID, exerciseID)
+            VALUES
+            ('2025-01-02', 2400, (SELECT userID FROM Users WHERE username = 'Tyler'), (SELECT exerciseID FROM Exercises WHERE name = 'Elliptical')),
+            ('2025-01-03', 2400, (SELECT userID FROM Users WHERE username = 'Tyler'), NULL),
+            ('2025-01-20', 2000, (SELECT userID FROM Users WHERE username = 'Jane'), (SELECT exerciseID FROM Exercises WHERE name = 'Pickleball')),
+            ('2025-02-01', 2000, (SELECT userID FROM Users WHERE username = 'Jane'), (SELECT exerciseID FROM Exercises WHERE name = 'Pickleball')),
+            ('2025-02-04', 2200, (SELECT userID FROM Users WHERE username = 'Alex'), (SELECT exerciseID FROM Exercises WHERE name = 'Weight Lifting'));
+        """)
+
+        # 5. Reset FoodEntries with default data
+        cursor.execute("DELETE FROM FoodEntries;")
+        cursor.execute("ALTER TABLE FoodEntries AUTO_INCREMENT = 1;")
+
+        food_entry_queries = [
+            ("Breakfast", "Oatmeal", "Bob's Red Mill", '2025-01-02', 'Tyler'),
+            ("Lunch", "Coffee", "Starbucks", '2025-01-02', 'Tyler'),
+            ("Lunch", "Salad", None, '2025-01-02', 'Tyler'),
+            ("Dinner", "Chicken", "Trader Joe's", '2025-01-02', 'Tyler'),
+            ("Lunch", "Big Mac", "McDonald's", '2025-01-03', 'Tyler'),
+            ("Dinner", "Salad", None, '2025-01-03', 'Tyler'),
+            ("Dinner", "Chicken", "Trader Joe's", '2025-01-03', 'Tyler'),
+            ("Breakfast", "Coffee", "Starbucks", '2025-01-20', 'Jane'),
+            ("Lunch", "Chicken", "Trader Joe's", '2025-02-01', 'Jane'),
+            ("Dinner", "Big Mac", "McDonald's", '2025-02-04', 'Alex'),
+            ("Breakfast", "Oatmeal", "Bob's Red Mill", '2025-01-20', 'Jane')
+        ]
+
+        # Loop through each entry and insert dynamically
+        for meal, food_name, brand, date, username in food_entry_queries:
+            # Get foodItemID (handling NULL brand case)
+            if brand is None:
+                cursor.execute("SELECT foodItemID FROM FoodItems WHERE name = %s AND brand IS NULL;", (food_name,))
+            else:
+                cursor.execute("SELECT foodItemID FROM FoodItems WHERE name = %s AND brand = %s;", (food_name, brand))
+            food_item_result = cursor.fetchone()
+
+            if not food_item_result:
+                print(f"FoodItemID not found for: {food_name} / Brand: {brand}")
+                continue
+            food_item_id = food_item_result['foodItemID']
+
+            # Get userID# Get dailyTrackerID
+            cursor.execute("""
+            SELECT dailyTrackerID FROM DailyTrackers 
+            WHERE userID = (SELECT userID FROM Users WHERE username = %s) AND date = %s;
+            """, (username, date))
+            tracker_result = cursor.fetchone()
+
+            if not tracker_result:
+                print(f"DailyTrackerID not found for: {username} on {date}")
+                continue
+            tracker_id = tracker_result['dailyTrackerID']
+
+            # Insert into FoodEntries
+            cursor.execute("""
+                INSERT INTO FoodEntries (mealCategory, foodItemID, dailyTrackerID)
+                VALUES (%s, %s, %s);
+            """, (meal, food_item_id, tracker_id))
+
+        print("FoodEntries reset and populated successfully.")
+
+
+        # Commit changes and close the connection
         mysql.connection.commit()
         cursor.close()
 
-        flash("Food Items table reset and default food items added.")
-        return redirect(url_for('food_items'))
+        # Show success message and redirect to home
+        flash("All tables have been reset to default data!")
+        return redirect(url_for('home'))
 
     except Exception as e:
-        print("Error resetting Food Items table:", e)
-        flash("Failed to reset Food Items table.")
-        return redirect(url_for('food_items'))
+        print("Error resetting all tables:", e)
+        flash("Failed to reset all tables. Please try again.")
+        return redirect(url_for('home'))
 
 
 # --------------------------------------------------

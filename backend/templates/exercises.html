@@ -101,21 +101,6 @@
             </form>
         </div>
     </section>
-
-    <!-- Reset Exercises Database Section -->
-    <section class="reset-database">
-    <h2>Reset Exercises Database</h2>
-    <p>
-            This will <strong>restore default example exercises</strong> only if the Exercises table is empty.
-        <br>Use this button <strong>after you have deleted all exercise data</strong> and want to restore initial example data.
-        <br><strong>※ Use this when you want to bring back default exercise to an empty table.</strong>
-    </p>
-    <form action="{{ url_for('reset_exercises') }}" method="post">
-        <button class="reset-btn" type="submit" onclick="return confirm('Restore default example exercises? (Only if Exercises table is empty)')">
-            🔄 Restore Default Exercises
-        </button>
-    </form>
-</section>
 </main>
 
 <!-- Footer -->
