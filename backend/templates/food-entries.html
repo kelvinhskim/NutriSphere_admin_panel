@@ -63,13 +63,15 @@
         </table>
     </main>
 
-    <!-- Add Food Entry form -->
-    <section id="add-food-entry-section">
-        <form id="add-food-entry-form" action="/food-entries" method="post">
-            <fieldset>
-                <h2>Add a Food Entry</h2>
+<!-- Add & Update Food Entries Forms - Horizontal Layout -->
+<section class="user-forms" style="display: flex; gap: 20px; margin-top: 20px;">
+
+        <!-- Add Food Entry Form -->
+        <div class="form-container add-user" style="flex: 1;">
+            <h2>Add Food Entry</h2>
+            <form action="/food-entries" method="post">
                 <label>Select a User:</label>
-                <select id="selectedUser" name="userID">
+                <select id="selectedUser" name="userID" required>
                     <option value="" selected disabled hidden>-- Select a User --</option>
                     {% for user in users %}
                     <option value="{{ user.userID }}">
@@ -77,6 +79,7 @@
                     </option>
                     {% endfor %}
                 </select>
+
                 <label>Select a Date</label>
                 <input type="date" id="date" name="date" value="">
     
@@ -97,20 +100,14 @@
                     {% endfor %}
                 </select>
     
-                <!-- <label for="calories">Calories:</label>
-                <input type="number" id="calories" name="calories" value="" required> -->
-    
-                <button type="submit" value="submit">➕ Add</button>
+                <button type="submit">➕ Add</button>
+            </form>
+        </div>
 
-            </fieldset>
-        </form>
-    </section>
-
-    <!-- Update a Food Entry -->
-    <section>
+    <!-- Update Form -->
+    <div class="form-container update-user" style="flex: 1;">
+        <h2>Edit Food Entry</h2>
         <form id="update-food-entry-form">
-            <fieldset>
-                <h2>Edit Selected Food Entry</h2>
                 <label for="food-entry">Select a Food Entry Row</label>
                 <select id="selected-food-entry-id" name="food-entry-id" onchange="getSelectedFoodEntry()" required>
                     <option value="" selected disabled hidden>-- Select a Food Entry --</option>
@@ -154,122 +151,19 @@
                 </select>
     
                 <button type="button" onclick="submitUpdateFoodEntry()">Save</button>
+            </form>
+        </div>
 
-            </fieldset>
-        </form>
-    </section>
+</section>
 
-    <!-- Delete a Food Entry -->
-    <!-- <section>
-        <form>
-            <h2>Delete a Food Entry</h2>
-            <p>Are you sure you want to delete this?</p>
-            <label for="foodEntry">Food Entry ID</label>
-            <select name="foodEntry" id="foodEntry" disabled>
-                <option value="1">1</option>
-            </select>
-
-            <label for="mealType">Meal:</label>
-            <select name="mealType" id="mealType" disabled>
-                <option value="Breakfast">Breakfast</option>
-                <option value="Lunch">Lunch</option>
-                <option value="Dinner">Dinner</option>
-                <option value="Snacks">Snacks</option>
-            </select>
-
-            <label for="foodItem">Food:</label>
-            <select name="foodItem" id="foodItem" disabled>
-                <option value="oatmeal">Oatmeal</option>
-            </select>
-
-            <label for="calories">Calories:</label>
-            <input type="number" name="calories" id="calories" value="50" disabled>
-
-            <button>Delete</button>
-        </form>
-    </section> -->
-
-    <script language="Javascript">
-
-        let foodEntries = {}
-        {% for entry in food_entry_update %}
-            foodEntries[{{ entry.foodEntryID }}] = {
-                mealCategory: "{{ entry.mealCategory }}",
-                foodItemID: "{{ entry.foodItemID }}",
-                dailyTrackerID: {{ entry.dailyTrackerID }}
-            }
-        {% endfor %}
-        // console.log("Entries:", foodEntries)
-
-    function populateUpdateFoodEntry(id) {
-        const selectedEntry = foodEntries[id]
-        document.getElementById("selected-food-entry-id").value = id
-        document.getElementById("update-meal-category").value = selectedEntry.mealCategory
-        document.getElementById("update-food-item-id").value = selectedEntry.foodItemID
-        document.getElementById("update-daily-tracker-id").value = selectedEntry.dailyTrackerID
-    }
-
-    function getSelectedFoodEntry() {
-        entryID = document.getElementById("selected-food-entry-id").value
-        selectedEntry = foodEntries[entryID]
-        document.getElementById("update-meal-category").value = selectedEntry.mealCategory
-        document.getElementById("update-food-item-id").value = selectedEntry.foodItemID
-        document.getElementById("update-daily-tracker-id").value = selectedEntry.dailyTrackerID
-        console.log(entryID, selectedEntry, selectedEntry.foodItemID, selectedEntry.dailyTrackerID)
-    }
-
-    function submitUpdateFoodEntry() {
-        id = document.getElementById("selected-food-entry-id").value
-        mealCategory = document.getElementById("update-meal-category").value
-        foodItemID = document.getElementById("update-food-item-id").value
-        dailyTrackerID = document.getElementById("update-daily-tracker-id").value
-
-        const URL = `/food-entries/${id}`;
-        const data = { mealCategory, foodItemID, dailyTrackerID }
-        // use fetch to handle update request to edit a selected food entry row
-        fetch(URL, {
-                method: "PUT",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                } else {
-                    throw Error(`${response.status}`)
-                }
-            })
-            .then(response => window.location = response.redirect_url)
-            .catch(error => console.error(error))
-    }
-
-            // use fetch to handle delete request to remove a selected food entry
-            function deleteFoodEntry(id, mealCategory, food, dailyTracker) {
-            const URL = `/food-entries/${id}`
-            if (confirm(
-                `Are you sure you want to delete this food entry?
-                Food Entry ID: ${id}
-                Meal Category: ${mealCategory}
-                Food: ${food}
-                Daily Tracker: ${dailyTracker}
-                `
-            )) {
-                fetch(URL, {
-                    method: "DELETE"
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json()
-                    } else {
-                        throw Error(`${response.status}`)
-                    }
-                })
-                .then(data => window.location = data.redirect_url)
-                .catch(error => console.error(error));
-            }
-        }
-
+    <script>
+        loadFoodEntries({{ food_entry_update | tojson | safe }});
     </script>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 NutriSphere. All Rights Reserved.</p>
+</footer>
 
 </body>
 </html>

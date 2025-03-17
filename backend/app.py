@@ -131,6 +131,8 @@ def delete_user(user_id):
 
 
 
+# --------------Daily Trackers CRUD-----------------------------
+
 # --------------------------------------------------
 # Read - Retrieves DailyTrackers data (GET Request)
 @app.route('/daily-trackers', methods=["GET"])
@@ -199,6 +201,8 @@ def daily_trackers():
     except Exception as e:
         print("❌ Error fetching daily trackers data:", e)
         return "An error occurred while fetching data", 500
+
+
 # --------------------------------------------------
 # Create - Inserts a new daily tracker into the DailyTrackers table (POST Request)
 @app.route('/daily-trackers', methods=["POST"])
@@ -224,13 +228,14 @@ def add_tracker():
             cur.execute(query, (date, calorieGoal, userID, exerciseID))
             mysql.connection.commit()
             cur.close()     
-        print(f"✅  DailyTracker added successfully!")
+        print(f"DailyTracker added successfully!")
         return redirect("/daily-trackers")
     except Exception as e:
-        print("❌ Error adding new daily tracker:", e)    
+        print("Error adding new daily tracker:", e)    
         return "An error occurred while adding a tracker", 500
 
 
+# --------------------------------------------------
 # Update - Updates a selected daily tracker (PUT Request)
 @app.route('/daily-trackers/<int:tracker_id>', methods=["PUT"])
 def update_tracker(tracker_id):
@@ -255,16 +260,17 @@ def update_tracker(tracker_id):
             cur.execute(query, (date, calorie_goal, user_id, exercise_id, tracker_id))
             mysql.connection.commit()
             cur.close()   
-        print(f"✅  DailyTracker {tracker_id} updated successfully!")
+        print(f"DailyTracker {tracker_id} updated successfully!")
         return jsonify({
             "message": f"DailyTracker {tracker_id} updated successfully.",
             "redirect_url": "/daily-trackers"
             }), 200
     except Exception as e: 
-        print("❌ Error updating tracker {tracker_id}:", e)   
+        print("Error updating tracker {tracker_id}:", e)   
         return "An error occurred while updating tracker {tracker_id}", 500
 
 
+# --------------------------------------------------
 # Delete - Deletes a selected daily tracker (DELETE Request)
 @app.route('/daily-trackers/<int:tracker_id>', methods=["DELETE"])
 def delete_tracker(tracker_id):
@@ -273,15 +279,17 @@ def delete_tracker(tracker_id):
         cur = mysql.connection.cursor()
         cur.execute(query, (tracker_id,))
         mysql.connection.commit()
-        print(f"✅  DailyTracker {tracker_id} deleted successfully!")
+        print(f"DailyTracker {tracker_id} deleted successfully!")
         return jsonify({
             "message": f"DailyTracker {tracker_id} deleted successfully.",
             "redirect_url": "/daily-trackers"
             }), 200
     except Exception as e:
-        print("❌ Error deleting DailyTracker {tracker_id}:", e)
+        print("Error deleting DailyTracker {tracker_id}:", e)
         return "An error occurred while deleting tracker {tracker_id}", 500
     
+
+# --------------Foor Entries CRUD-------------------
 
 # --------------------------------------------------
 # Read - Retrieves FoodEntries data (GET Request)
@@ -360,10 +368,11 @@ def food_entries():
             daily_tracker_dropdown=daily_tracker_dropdown_data
         )
     except Exception as e:
-        print("❌ Error fetching food entries data:", e)
+        print("Error fetching food entries data:", e)
         return "An error occurred while fetching food entries data", 500
 
 
+# --------------------------------------------------
 # CREATE - Inserts an entry into the Food Entries table (POST Request)
 @app.route('/food-entries', methods=['POST'])
 def add_food_entry():
@@ -378,13 +387,14 @@ def add_food_entry():
         cur.execute(query, (user_id, date, meal_category, food_item_id))
         mysql.connection.commit()
         cur.close()  
-        print(f"✅  FoodEntry added successfully!")
+        print(f"FoodEntry added successfully!")
         return redirect("/food-entries")
     except Exception as e:
-        print("❌ Error adding food entries data:", e)
+        print("Error adding food entries data:", e)
         return f"An error occurred while adding food entries data: {e}", 500
     
 
+# --------------------------------------------------
 # UPDATE - Updates a selected food entry in the Food Entries table (PUT Request)
 @app.route('/food-entries/<int:food_entry_id>', methods=["PUT"])
 def update_food_entry(food_entry_id):
@@ -398,16 +408,17 @@ def update_food_entry(food_entry_id):
         cur.execute(query, (meal_category, food_item_id, daily_tracker_id, food_entry_id))
         mysql.connection.commit()
         cur.close()
-        print(f"✅  FoodEntry updated successfully!")
+        print(f"FoodEntry updated successfully!")
         return jsonify({
             "message": f"FoodEntry {food_entry_id} updated successfully.",
             "redirect_url": "/food-entries"
         }), 200
     except Exception as e:
-        print("❌ Error updating food entries data:", e)
+        print("Error updating food entries data:", e)
         return "An error occurred while updating a food entry", 500
 
 
+# --------------------------------------------------
 # DELETE - Deletes a selected food entry in the Food Entries table (DELETE Request)
 @app.route("/food-entries/<int:entry_id>", methods=["DELETE"])
 def delete_food_entry(entry_id):
@@ -416,13 +427,13 @@ def delete_food_entry(entry_id):
         cur = mysql.connection.cursor()
         cur.execute(query, (entry_id,))
         mysql.connection.commit()
-        print(f"✅  FoodEntry {entry_id} deleted successfully!")
+        print(f"FoodEntry {entry_id} deleted successfully!")
         return jsonify({
             "message": f"FoodEntry {entry_id} deleted successfully.",
             "redirect_url": "/food-entries"
             }), 200
     except Exception as e:
-        print("❌ Error deleting FoodEntry {entry_id}:", e)
+        print("Error deleting FoodEntry {entry_id}:", e)
         return "An error occurred while deleting an entry", 500
 
 
