@@ -101,5 +101,15 @@ document.addEventListener("DOMContentLoaded", function () {
             // Scroll into view for better UX
             updateForm.scrollIntoView({ behavior: 'smooth' });
         };
+    }
+  
+    // Auto-fill update form in Users page when user is selected from dropdown
+    window.populateUserForm = function () {
+        const selectedUser = document.getElementById("userID");
+        const email = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-email");
+        const goal = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-goal");
+
+        document.getElementById("updateEmail").value = email;
+        document.getElementById("updateCalorieGoal").value = goal;
     };
 });

@@ -81,7 +81,7 @@
             <h2>Add New Daily Tracker</h2>
             <form action="{{ url_for('add_tracker') }}" method="POST">
                 <label>Select a User</label>
-                <select id="selectedUser" name="userID" onchange="getSelectedUser()" required>
+                <select id="selectedUser" name="userID" onchange="getSelectedUser(); getSelectedUserCalorieGoal();" required>
                     <option value="" selected disabled hidden>-- Select a User --</option>
                     {% for user in users %}
                     <option 
@@ -124,8 +124,8 @@
                         {{ tracker.dailyTrackerID }}: {{ tracker.username }}, {{ tracker.date }}
                     </option>
                     {% endfor %}
-                    
                 </select>
+
                 <label>Username:</label>
                 <select id="update-user-id" name="userID" required>
                     <option value="" selected disabled hidden></option>
@@ -138,6 +138,7 @@
                     </option>
                     {% endfor %}
                 </select>
+                
                 <label>Date:</label>
                 <input type="date" id="update-date" name="date" value="" required>
 

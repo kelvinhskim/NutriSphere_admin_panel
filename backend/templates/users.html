@@ -88,7 +88,7 @@
             <h2>Update User</h2>
             <form id="updateUserForm" method="POST">
                 <label>Select User:</label>
-                <select id="userID" name="userID" required>
+                <select id="userID" name="userID" required onchange="populateUserForm()">
                     <option value="">-- Select User --</option>
                     {% for user in users %}
                     <option value="{{ user.userID }}" data-email="{{ user.email }}" data-goal="{{ user.dailyCalorieGoal }}">
