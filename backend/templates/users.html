@@ -68,9 +68,20 @@
             <form action="{{ url_for('create_user') }}" method="POST">
                 <label>Username:</label><input type="text" name="username" required>
                 <label>Email:</label><input type="email" name="email" required>
-                <label>Daily Calorie Goal:</label><input type="number" name="dailyCalorieGoal" required>
+                <label>Daily Calorie Goal:</label><input type="number" name="dailyCalorieGoal" min="1" required>
                 <button type="submit">➕ Add User</button>
             </form>
+
+            <script>
+                function validateCalorieGoal() {
+                    let calorieGoal = document.getElementById("calorieGoal").value;
+                    if (calorieGoal <= 0) {
+                        alert("Calorie Goal must be a positive number.");
+                        return false; 
+                    }
+                    return true; 
+                }
+            </script>
         </div>
 
         <div class="form-container update-user">
@@ -90,28 +101,27 @@
                 <input type="email" id="updateEmail" name="email" required>
 
                 <label>Daily Calorie Goal:</label>
-                <input type="number" id="updateCalorieGoal" name="dailyCalorieGoal" required>
+                <input type="number" id="updateCalorieGoal" name="dailyCalorieGoal" min="1" required>
+                <p id="calorieGoalWarning" style="color: red; display: none; margin-top: 5px;">Calorie Goal must be a positive number.</p>
+
+                <script>
+                const calorieGoalInput = document.getElementById('calorieGoal');
+                const warningMessage = document.getElementById('calorieGoalWarning');
+
+                calorieGoalInput.addEventListener('input', function (e) {
+                const value = parseInt(e.target.value);
+                if (value < 1) {
+                    warningMessage.style.display = 'block';
+                } else {
+                    warningMessage.style.display = 'none';
+                }
+            });
+                </script>
 
                 <button type="submit">💾 Save</button>
             </form>
         </div>
     </section>
-
-    <!-- Reset Database Section -->
-<section class="reset-database">
-    <h2>Reset Users Database</h2>
-    <p>
-            This will <strong>restore default example data</strong> only if the Users table is empty. 
-        <br>Use this button <strong>after you have deleted all user data</strong> and want to restore initial example data.
-        <br><strong>※ Use this when you want to bring back default users to an empty table.</strong>
-    </p>
-    <form action="{{ url_for('reset_users') }}" method="post">
-        <button class="reset-btn" type="submit" onclick="return confirm('Restore default example users? (Only if the Users table is empty)')">
-            🔄 Restore Default Users
-        </button>
-    </form>
-</section>
-</main>
 
 <!-- Footer -->
 <footer>

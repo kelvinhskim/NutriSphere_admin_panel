@@ -35,7 +35,6 @@
         <table border="1">
             <thead>
  
- 
                 <!-- Access queried table headers passed from daily-trackers route -->
                 <tr>
                 {% if daily_trackers %}
@@ -68,20 +67,19 @@
                     </td>
                 </tr>
                 {% endfor %}
-                {% else %}
-                <tr>
-                    <td colspan="100%">No trackers found.</td>
-                </tr>
-            {% endif %}  
-            </tbody>
-        </table>
-    </main>
+            {% else %}
+                <tr><td colspan="100%">No trackers found.</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
 
-    <!-- Add Daily Tracker Form -->
-    <section id="add-tracker">
-        <form action="{{ url_for('add_tracker') }}" method="post">
-            <fieldset>
-                <h2>Add New Daily Tracker</h2>
+    <!-- Add & Update Forms - Horizontal Layout -->
+    <section class="user-forms" style="display: flex; gap: 20px; margin-top: 20px;">
+        
+        <!-- Add Daily Tracker Form -->
+        <div class="form-container add-user" style="flex: 1;">
+            <h2>Add New Daily Tracker</h2>
+            <form action="{{ url_for('add_tracker') }}" method="POST">
                 <label>Select a User</label>
                 <select id="selectedUser" name="userID" onchange="getSelectedUser()" required>
                     <option value="" selected disabled hidden>-- Select a User --</option>
@@ -106,21 +104,18 @@
                 <select id="exercise" name="exerciseID">
                     <option value="NULL" selected></option>
                     {% for exercise in exercises %}
-                        <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
+                    <option id="exercise" name="exerciseID" value={{ exercise.exerciseID }}>{{ exercise.name }}</option>
                     {% endfor %}
                 </select>
 
-                <button type="submit" name="Add_Daily_Tracker" value="submit">Add</button>
+                <button type="submit">➕ Add</button>
+            </form>
+        </div>
 
-            </fieldset>
-        </form>
-    </section>
-
-    <!-- Update Daily Tracker Form -->
-    <section id="update-tracker-section">
-        <form id="update-tracker-form">
-            <fieldset>
-                <h2>Edit Selected Daily Tracker</h2>
+        <!-- Update Daily Tracker Form -->
+        <div class="form-container update-user" style="flex: 1;">
+            <h2>Edit Selected Daily Tracker</h2>
+            <form id="update-tracker-form">
                 <label>Select a Daily Tracker:</label>
                 <select id="selectedTracker" name="trackerID" onchange="getSelectedTracker()">
                     <option value="" selected disabled hidden>-- Select a Daily Tracker --</option>
@@ -157,153 +152,22 @@
                     {% endfor %}
                 </select>
 
-                <button type="button" onclick="submitUpdateTracker()">Save</button>
-                
-            </fieldset>
-        </form>
+                <button type="button" onclick="submitUpdateTracker()">💾 Save</button>
+            </form>
+        </div>
+
     </section>
+</main>
 
-    
-    <script language="Javascript">
-        // dynamically populates calorie goal on Add New Tracker form when a user is selected from the dropdown
-        function getSelectedUser() {
-            let selectedUser = document.getElementById("selectedUser");
-            let userID = selectedUser.value;
-            let username = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-username")
-            let calorieGoal = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-calorie-goal")
-            // console.log("selectedUser:", userID, username, calorieGoal)
-            
-            // populates default field value for Calorie Goal in Add Daily Tracker form
-            document.getElementById("calorieGoal").value = calorieGoal
-        }
+    <footer>
+        <p>&copy; 2025 NutriSphere. All Rights Reserved.</p>
+    </footer>
 
-        let trackers = {}
-        {% for tracker in daily_trackers_dropdown %}
-            {% if not tracker.exerciseID %}
-            trackers[{{ tracker.dailyTrackerID }}] = {
-                userID: {{ tracker.userID }},
-                username: "{{ tracker.username }}",
-                date: "{{ tracker.date }}",
-                calorieGoal: {{ tracker.calorieGoal }},
-                exerciseID: "NULL"
-            }
-            {% else %}
-                trackers[{{ tracker.dailyTrackerID }}] = {
-                    userID: {{ tracker.userID }},
-                    username: "{{ tracker.username }}",
-                    date: "{{ tracker.date }}",
-                    calorieGoal: {{ tracker.calorieGoal }},
-                    exerciseID: {{ tracker.exerciseID }}
-                }
-            {% endif %}
-        {% endfor %}
-        // console.log("Trackers:", trackers)
+   <!-- Tracker Data to JS -->
+<script>
+    loadTrackers({{ daily_trackers_dropdown | tojson | safe }});
+</script>
 
-        // populates Update Tracker on selection of tracker from dropdown
-        function getSelectedTracker() {
-            let selectedTracker = document.getElementById("selectedTracker");
-            let trackerID = selectedTracker.value;
-            document.getElementById("update-user-id").value = trackers[trackerID].userID
-            document.getElementById("update-date").value = trackers[trackerID].date
-            document.getElementById("update-calorie-goal").value = trackers[trackerID].calorieGoal
-            document.getElementById("update-exercise").value = trackers[trackerID].exerciseID
-            // console.log("selectedTracker:", trackerID);
-        }
-
-        // populates Update Tracker on click Edit button
-        function populateUpdateTracker(id) {
-            // populates selected tracker on Update Daily Tracker form when corresponding Edit button is clicked
-            const tracker = trackers[id]
-            document.getElementById("selectedTracker").value = id
-            document.getElementById("update-user-id").value = tracker.userID
-            document.getElementById("update-date").value = tracker.date
-            document.getElementById("update-calorie-goal").value = tracker.calorieGoal
-            document.getElementById("update-exercise").value = tracker.exerciseID
-            // console.log("populating update tracker:", id, tracker.username, tracker.date, tracker.calorieGoal, tracker.exerciseID)
-        }
-
-        function submitUpdateTracker() {
-            id = document.getElementById("selectedTracker").value
-            userID = document.getElementById("update-user-id").value
-            date = document.getElementById("update-date").value
-            calorieGoal = document.getElementById("update-calorie-goal").value
-            exerciseID = document.getElementById("update-exercise").value
-            
-            const URL = `/daily-trackers/${id}`;
-            const data = { date, calorieGoal, userID, exerciseID };
-            // use fetch to handle update request to edit a selected tracker
-            fetch(URL, {
-                method: "PUT",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                } else {
-                    throw Error(`${response.status}`)
-                }
-            })
-            .then(response => window.location = response.redirect_url)
-            .catch(error => console.error(error))
-        }
-
-        // use fetch to handle delete request to remove a selected tracker
-        function deleteTracker(id, username, date) {
-            const URL = `/daily-trackers/${id}`
-            if (confirm(
-                `Are you sure you want to delete this tracker?
-                Daily Tracker ID: ${id}
-                Username: ${username}
-                Date: ${date}
-                `
-            )) {
-                fetch(URL, {
-                    method: "DELETE"
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json()
-                    } else {
-                        throw Error(`${response.status}`)
-                    }
-                })
-                .then(data => window.location = data.redirect_url)
-                .catch(error => console.error(error));
-            }
-        }
-    </script>
-
-
-    <!-- <script>
-        function showUpdateForm() {
-            let updateForm = document.getElementById("update-daily-tracker");
-            let deleteForm = document.getElementById("delete-daily-tracker");
-            if (updateForm.style.display = "none") {
-                updateForm.style.display = "block";
-                document.getElementById("daily-trackers-table").style.display = "none";
-                document.getElementById("add-daily-tracker").style.display = "none";
-            } else if (deleteForm.style.display = "none") {
-                deleteForm.style.display = "block";
-                document.getElementById("daily-trackers-table").style.display = "none";
-                document.getElementById("add-daily-tracker").style.display = "none";
-            }
-            else {
-                updateForm.style.display = "none"
-            }
-        }
-        function showDeleteForm() {
-            let deleteForm = document.getElementById("delete-daily-tracker");
-            if (deleteForm.style.display = "none") {
-                deleteForm.style.display = "block";
-                document.getElementById("daily-trackers-table").style.display = "none";
-                document.getElementById("add-daily-tracker").style.display = "none";
-            }
-            else {
-                updateForm.style.display = "none"
-            }
-        }
-    </script> -->
 
 </body>
 </html>
