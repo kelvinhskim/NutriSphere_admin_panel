@@ -1,11 +1,19 @@
+// Citation for getSelectedTracker function:
+// Date: 03/17/2025
+// Adapted the method to convert date format from
+// Source URL: https://stackoverflow.com/questions/51985791/convert-date-string-with-timezone-to-format-yyyy-mm-dd
+
 let trackers = {}; // Object to store all daily tracker data
 
 // Function to load tracker data passed from Flask (Jinja2)
 function loadTrackers(data) {
-    trackers = data;
+    data.forEach(tracker => {
+        trackers[tracker.dailyTrackerID] = tracker
+    }) 
+    // console.log("Loaded trackers:", trackers)
 }
 
-// Function to auto-fill calorie goal when a user is selected in the Add Tracker form
+// Function to auto-fill user's default calorie goal when a user is selected from the dropdown of the Add Tracker form
 function getSelectedUserCalorieGoal() {
     const selectedUser = document.getElementById("selectedUser");
     const calorieGoal = selectedUser.options[selectedUser.selectedIndex].getAttribute("data-calorie-goal");
@@ -17,9 +25,23 @@ function getSelectedTracker() {
     const trackerID = document.getElementById("selectedTracker").value;
     const tracker = trackers[trackerID];
 
+    // convert datetime format
+    let date = tracker.date
+    const format = (d) => (d < 10 ? '0' : '') + d;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    // parse date string
+    const [day, dd, m, yyyy, ...time] = date.split(' ');
+
+    // two digit format for month
+    const mm = format(months.indexOf(m) + 1);
+
+    // format date as yyyy-mm-dd
+    date = `${yyyy}-${mm}-${dd}`;
+
     if (tracker) {
         document.getElementById("update-user-id").value = tracker.userID;
-        document.getElementById("update-date").value = tracker.date;
+        document.getElementById("update-date").value = date;
         document.getElementById("update-calorie-goal").value = tracker.calorieGoal;
         document.getElementById("update-exercise").value = tracker.exerciseID || "NULL"; // handle null case
     }
