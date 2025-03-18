@@ -3,7 +3,7 @@ from flask_mysqldb import MySQL
 import os
 
 # Citation for the following function:
-# Date: 02/27/2025  (Update to the date you copied/used it)
+# Date: 02/27/2025
 # Originality: Adapted
 # Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 # Description: Adapted from the OSU CS340 Flask Starter App for database connections and routing.
@@ -321,7 +321,6 @@ def food_entries():
             """
         cur = mysql.connection.cursor()
         cur.execute(query)
-        # print(query)
         food_entries_data = cur.fetchall()
         # print(food_entries_data)
 
@@ -334,7 +333,7 @@ def food_entries():
         query3 = "SELECT foodItemID, name, brand FROM FoodItems;"
         cur.execute(query3)
         food_item_dropdown_data = cur.fetchall()
-        print(food_item_dropdown_data)
+        # print(food_item_dropdown_data)
 
         # Query for Food Entry Update 
         query4 = """
@@ -437,7 +436,7 @@ def delete_food_entry(entry_id):
         return "An error occurred while deleting an entry", 500
 
 
-# --------------Foor Items CRUD-----------------------------
+# --------------Food Items CRUD-----------------------------
 
 # ---------------------- Read (Display Food Items) ----------------------
 @app.route("/food_items", methods=["GET"])
