@@ -5,6 +5,8 @@
 -- Data Definition Queries
 -- This .SQL file is imported into Maria DB to create the tables aligning
 -- with the defined schema from the project outline.
+-- Instructions: Navigate to the database directory of this project from the command line, 
+-- connect to your MariaDB server, use your database, and run "source DDL.sql;" to import this file. 
 -- -----------------------------------------------------
 
 -- Citation for DDL queries
