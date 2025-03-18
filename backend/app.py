@@ -23,7 +23,7 @@ app.secret_key = "secret key"
 # database connection info
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
 app.config['MYSQL_USER'] = 'cs340_kimh22'
-app.config['MYSQL_PASSWORD'] = '0612' #last 4 of onid
+app.config['MYSQL_PASSWORD'] = 'XXXX' #last 4 of onid
 app.config['MYSQL_DB'] = 'cs340_kimh22'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
@@ -662,7 +662,7 @@ def delete_exercise(exercise_id):
 @app.route('/reset-all', methods=['POST'])
 def reset_all():
     try:
-        cmd = f"mysql -h classmysql.engr.oregonstate.edu -u cs340_kimh22 -p'0612' cs340_kimh22 < /nfs/stak/users/kimh22/public_html/cs340_group39/NutriSphere_admin_panel/database/DDL.sql"
+        cmd = f"mysql -h classmysql.engr.oregonstate.edu -u cs340_kimh22 -p'PASSWORD' cs340_kimh22 < /nfs/stak/users/kimh22/public_html/cs340_group39/NutriSphere_admin_panel/database/DDL.sql"
 
         result = subprocess.run(cmd, shell=True, text=True, capture_output=True)
         
