@@ -11,6 +11,8 @@
 // Source URL: https://flask.palletsprojects.com/en/stable/patterns/javascript/#making-a-request-with-fetch
 // Source URL: https://www.geeksforgeeks.org/javascript-fetch-method/
 
+
+
 let trackers = {}; // Object to store all daily tracker data
 
 // Function to load tracker data passed from Flask (Jinja2)

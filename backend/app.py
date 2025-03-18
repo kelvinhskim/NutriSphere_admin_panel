@@ -9,6 +9,31 @@ import subprocess
 # Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 # Description: Copied and adapted from the OSU CS340 Flask Starter App for database connections and routing.
 
+# Citation for the following references:
+# Date: 03/14/2025
+# Originality: Referenced
+# Source URL: https://www.geeksforgeeks.org/sql-ddl-dml-tcl-dcl/
+# Description: Used as a reference for understanding SQL command classifications (DDL, DML, TCL, DCL).
+
+# Date: 03/14/2025
+# Originality: Referenced
+# Source URL: https://www.w3schools.com/sql/sql_syntax.asp
+# Description: Referenced for SQL syntax rules and query structure.
+
+# Date: 03/14/2025
+# Originality: Referenced
+# Source URL: https://www.geeksforgeeks.org/how-to-serve-static-files-in-flask/
+# Description: Used as a guide for serving static files in Flask applications.
+
+# Date: 03/14/2025
+# Originality: Referenced
+# Source URL: https://flask.palletsprojects.com/en/stable/patterns/javascript/
+# Description: Referenced for integrating JavaScript patterns within Flask applications.
+
+# Date: 03/14/2025
+# Originality: Referenced
+# Source URL: https://www.geeksforgeeks.org/flask-app-routing/
+# Description: Used as a reference for understanding Flask routing mechanisms.
 
 app = Flask(__name__)
 app.secret_key = "secret key"

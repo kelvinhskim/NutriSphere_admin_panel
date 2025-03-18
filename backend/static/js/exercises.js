@@ -1,3 +1,11 @@
+// Citation for the following reference:
+// Date: 03/14/2025
+// Originality: Referenced
+// Source URL: https://www.w3schools.com/js/js_examples.asp
+// Description: Referenced for JavaScript examples and syntax usage.
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     console.log("Exercise JavaScript loaded!");
 
