@@ -7,6 +7,16 @@
 -- with the defined schema from the project outline.
 -- -----------------------------------------------------
 
+-- Citation for DDL queries
+-- Date: 2/6/25
+-- Learned and adapted from examples in Canvas and MySQL exports to create own queries
+-- Source URL: https://canvas.oregonstate.edu/courses/1987790/pages/activity-3-creating-transaction-and-category-tables?module_item_id=25022977
+
+-- Citation for stored procedure
+-- Date: 3/15/25
+-- Adapted from MySQL documentation on how to write and call a stored procedure
+-- Source URL: https://dev.mysql.com/doc/connector-python/en/connector-python-api-mysqlcursor-callproc.html
+
 -- -----------------------------------------------------
 -- Disable commits and foreign key checks to prevent issues during table creation.
 -- -----------------------------------------------------
