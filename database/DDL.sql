@@ -182,11 +182,11 @@ VALUES
 -- -----------------------------------------------------
 INSERT INTO `DailyTrackers` (`date`, `calorieGoal`, `userID`, `exerciseID`)
 VALUES
-('2025-01-02', 2400, (SELECT userID FROM Users WHERE username = 'tyler'), (SELECT exerciseID FROM Exercises WHERE name = 'Elliptical')),
-('2025-01-03', 2400, (SELECT userID FROM Users WHERE username = 'tyler'), (SELECT exerciseID FROM Exercises WHERE name IS NULL)),
-('2025-01-20', 2000, (SELECT userID FROM Users WHERE username = 'jane'), (SELECT exerciseID FROM Exercises WHERE name = 'Pickleball')),
-('2025-02-01', 2000, (SELECT userID FROM Users WHERE username = 'jane'), (SELECT exerciseID FROM Exercises WHERE name = 'Pickleball')),
-('2025-02-04', 2200, (SELECT userID FROM Users WHERE username = 'alex'), (SELECT exerciseID FROM Exercises WHERE name = 'Weight Lifting'));
+('2025-01-02', 2400, (SELECT userID FROM Users WHERE username = 'Tyler'), (SELECT exerciseID FROM Exercises WHERE name = 'Elliptical')),
+('2025-01-03', 2400, (SELECT userID FROM Users WHERE username = 'Tyler'), (SELECT exerciseID FROM Exercises WHERE name IS NULL)),
+('2025-01-20', 2000, (SELECT userID FROM Users WHERE username = 'Jane'), (SELECT exerciseID FROM Exercises WHERE name = 'Pickleball')),
+('2025-02-01', 2000, (SELECT userID FROM Users WHERE username = 'Jane'), (SELECT exerciseID FROM Exercises WHERE name = 'Pickleball')),
+('2025-02-04', 2200, (SELECT userID FROM Users WHERE username = 'Alex'), (SELECT exerciseID FROM Exercises WHERE name = 'Weight Lifting'));
 
 -- -----------------------------------------------------
 -- Insert sample data for FoodEntries
