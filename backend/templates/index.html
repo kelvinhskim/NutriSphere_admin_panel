@@ -25,55 +25,63 @@
 
     <!-- Welcome Section -->
     <section class="welcome-section">
-        <h2>Welcome to NutriSphere's Admin Portal</h2>
-        <p>Your ultimate solution for managing user nutrition and exercise records efficiently.</p>
+        <div class="welcome-content">
+            <h2>Welcome to NutriSphere's Admin Portal</h2>
+            <p>NutriSphere is building a database-driven calorie-tracking system to help health coaches manage 
+                client nutrition and exercise data more efficiently.</p>
+            <p>The system replaces manual tracking with a structured approach, integrating 
+                <strong>Users, Exercises, DailyTrackers, FoodItems, and FoodEntries</strong> to store profiles, 
+                calorie goals, exercise logs, and food intake.</p>
+            <p>Initially supporting <strong>300 users</strong>, the platform provides actionable insights into nutrition 
+                and fitness, streamlining data management and improving user experience.</p>
+            <p>By transitioning to a digital solution, NutriSphere enhances efficiency, accuracy, and long-term health tracking.</p>
+        </div>
     </section>
 
     <!-- Database Entity Tables Section -->
-    <section class="entity-table-section">
-        <h2>Database Entity Tables</h2>
-        <table class="descriptionTable">
-            <colgroup>
-                <col span="1" style="width: 25%;" />
-                <col span="1" style="width: 75%;" />
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Table Name</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><a href="{{ url_for('users') }}"><b>Users</b></a></td>
-                    <td>Stores user profiles including username, email, and daily calorie goals.</td>
-                </tr>
-                <tr>
-                    <td><a href="{{ url_for('daily_trackers') }}"><b>Daily Trackers</b></a></td>
-                    <td>Tracks daily calorie intake and exercise records for each user.</td>
-                </tr>
-                <tr>
-                    <td><a href="{{ url_for('food_entries') }}"><b>Food Entries</b></a></td>
-                    <td>Logs foods consumed by users, linked to daily trackers.</td>
-                </tr>
-                <tr>
-                    <td><a href="{{ url_for('food_items') }}"><b>Food Items</b></a></td>
-                    <td>Contains nutritional data for various food items, including calories, protein, fat, and carbohydrates.</td>
-                </tr>
-                <tr>
-                    <td><a href="{{ url_for('exercises') }}"><b>Exercises</b></a></td>
-                    <td>Lists exercise types, minutes performed, and calories burned.</td>
-                </tr>
-            </tbody>
-        </table>
+    <section class="database-overview">
+        <h2>Database Overview</h2>
+        <p>NutriSphere's database consists of key tables to track users, food, and exercise data efficiently.</p>
+        <div class="table-container">
+            <table class="descriptionTable">
+                <thead>
+                    <tr>
+                        <th>Table</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="{{ url_for('users') }}"><b>Users</b></a></td>
+                        <td>Stores user profiles including username, email, and daily calorie goals.</td>
+                    </tr>
+                    <tr>
+                        <td><a href="{{ url_for('daily_trackers') }}"><b>Daily Trackers</b></a></td>
+                        <td>Tracks daily calorie intake and exercise records for each user.</td>
+                    </tr>
+                    <tr>
+                        <td><a href="{{ url_for('food_entries') }}"><b>Food Entries</b></a></td>
+                        <td>Logs foods consumed by users, linked to daily trackers.</td>
+                    </tr>
+                    <tr>
+                        <td><a href="{{ url_for('food_items') }}"><b>Food Items</b></a></td>
+                        <td>Contains nutritional data for various food items, including calories, protein, fat, and carbohydrates.</td>
+                    </tr>
+                    <tr>
+                        <td><a href="{{ url_for('exercises') }}"><b>Exercises</b></a></td>
+                        <td>Lists exercise types, minutes performed, and calories burned.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 
 <!-- Reset All Data Button Section (Add Here) -->
 <section style="margin-top: 40px;">
     <h2>Reset All Data</h2>
     <p>
-        This will reset <strong>Users, Exercises, Food Items</strong> tables with default data, and fully clear <strong>Daily Trackers</strong> and <strong>Food Entries</strong> (empty state).<br>
-        <strong>Warning:</strong> This action cannot be undone.
+        Resets <strong>Users, Exercises, Food Items</strong> tables with default data, and fully clear <strong>Daily Trackers</strong> and <strong>Food Entries</strong> (empty state).<br>
+        <strong>Warning:</strong> This action is irreversible.
     </p>
     <form action="{{ url_for('reset_all') }}" method="post">
         <button type="submit" onclick="return confirm('Are you sure you want to reset ALL data to default? This cannot be undone.')">
@@ -83,6 +91,11 @@
 </section>
 
 </main>
+
+ <!-- Footer -->
+ <footer style="text-align: center; padding: 15px; background-color: #f8f8f8; color: #555; border-top: 1px solid #ddd;">
+    <p>&copy; 2025 NutriSphere. All Rights Reserved.</p>
+</footer>
 
 </body>
 </html>
