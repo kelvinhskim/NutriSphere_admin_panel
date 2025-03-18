@@ -5,6 +5,11 @@
 -- Data Manipulation Queries
 -- -----------------------------------------------------
 
+-- Citation for DML queries
+-- Date: 2/13/25
+-- Adapted from example on Canvas
+-- Source URL: https://canvas.oregonstate.edu/courses/1987790/files/108859857?wrap=1 
+
 -- -----------------------------------------------------
 -- PURPOSE:
 -- This file contains Data Manipulation Language (DML) queries for CRUD operations.
