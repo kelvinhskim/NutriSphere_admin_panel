@@ -47,9 +47,9 @@ app.secret_key = "secret key"
 
 # database connection info
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_kimh22'
+app.config['MYSQL_USER'] = 'cs340_xxxx'
 app.config['MYSQL_PASSWORD'] = 'XXXX' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_kimh22'
+app.config['MYSQL_DB'] = 'cs340_xxxx'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 mysql = MySQL(app) # Initialize MySQL with Flask app
