@@ -25,16 +25,16 @@ function getSelectedTracker() {
     const trackerID = document.getElementById("selectedTracker").value;
     const tracker = trackers[trackerID];
 
-    // convert datetime format
+    // set date as retrieved date in GMT datetime format
     let date = tracker.date
-    const format = (d) => (d < 10 ? '0' : '') + d;
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     // parse date string
     const [day, dd, m, yyyy, ...time] = date.split(' ');
-
-    // two digit format for month
-    const mm = format(months.indexOf(m) + 1);
+    
+    // convert date and month values
+    const format = (d) => (d < 10 ? '0' : '') + d; // two digit format for date
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const mm = format(months.indexOf(m) + 1); // convert month text to number
 
     // format date as yyyy-mm-dd
     date = `${yyyy}-${mm}-${dd}`;
