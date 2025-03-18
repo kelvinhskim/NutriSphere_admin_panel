@@ -1,3 +1,11 @@
+// Citation for Fetch API:
+// Date: 03/11/2025
+// Adapted from Making a Request with Fetch Following Redirects from Flask documentation
+// Copied from Handling Response Status Codes from GeeksForGeeks
+// Combined code from listed sources for functions to handle PUT and DELETE requests
+// Source URL: https://flask.palletsprojects.com/en/stable/patterns/javascript/#making-a-request-with-fetch
+// Source URL: https://www.geeksforgeeks.org/javascript-fetch-method/
+
 // Preload food entries for editing
 let foodEntries = {}
 
@@ -12,7 +20,7 @@ function loadFoodEntries(entries) {
     }, {});
 }
 
-// Populate update form when edit button clicked
+// Update Form - Auto-populate fields of selected entry after clicking Edit button
 function populateUpdateFoodEntry(id) {
     const entry = foodEntries[id];
     document.getElementById("selected-food-entry-id").value = id;
@@ -27,7 +35,7 @@ function getSelectedFoodEntry() {
     populateUpdateFoodEntry(id);
 }
 
-// Submit update via PUT
+// Submit update via PUT request
 function submitUpdateFoodEntry() {
     const id = document.getElementById("selected-food-entry-id").value;
     const data = {
@@ -46,7 +54,7 @@ function submitUpdateFoodEntry() {
     .catch(console.error);
 }
 
-// Delete entry via DELETE
+// Delete entry via DELETE request
 function deleteFoodEntry(id, mealCategory, food, dailyTracker) {
     if (confirm(`Delete this entry?\nID: ${id}\nMeal: ${mealCategory}\nFood: ${food}\nTracker: ${dailyTracker}`)) {
         fetch(`/food-entries/${id}`, { method: "DELETE" })
